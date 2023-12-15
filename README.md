@@ -1,2 +1,2 @@
-# openapi
-Open API specifications for iSHARE roles.
+# iSHARE OpenAPI specifications
+This repository contains OpenAPI specifications for iSHARE roles. The final and most recent versions are published on [Swaggerhub](https://app.swaggerhub.com/apis/iSHARE). This repository is kept for versioning purposes.

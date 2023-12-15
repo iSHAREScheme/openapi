@@ -2191,13 +2191,13 @@ components:
           items:
             $ref: '#/components/schemas/Dataspace'
     DataspacesResponse:
-      title: TrustedListResponse
+      title: DataspacesResponse
       type: object
       properties:
         dataspace_list_token:
           type: string
     jwt_payload_dataspace_list_token:
-      title: jwt_payload_dataspace_token
+      title: jwt_payload_dataspace_list_token
       required:
         - iss
         - sub
@@ -2205,7 +2205,7 @@ components:
         - jti
         - exp
         - iat
-        - parties_info
+        - dataspaces_info
       type: object
       properties:
         iss:

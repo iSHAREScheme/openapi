@@ -852,9 +852,9 @@ components:
         role:
           nullable: true
           description: >-
-            Should be one the following values: Service Consumer, Service
-            Provider, Entitled Party, Authorisation Registry, Identity Provider,
-            Identity Broker, iSHARE Satellite
+            Possible roles are ServiceConsumer, ServiceProvider, 
+            EntitledParty, AuthorisationRegistry, IdentityProvider, IdentityBroker 
+            and iShareSatellite.
           type: string
     Adherence:
       title: Adherence
@@ -1633,10 +1633,9 @@ components:
       properties:
         role:
           description: >-
-            Name of the role as defined in iSHARE role framework. Available
-            options are Service Consumer, Service Provider, Entitled Party,
-            Authorisation Registry, Identity Provider, Identity Broker, iSHARE
-            Satellite
+            Name of the role as defined in iSHARE role framework. Possible roles are 
+            ServiceConsumer, ServiceProvider, EntitledParty, AuthorisationRegistry, 
+            IdentityProvider, IdentityBroker and iShareSatellite.
           type: string
           example: ServiceConsumer
         start_date:

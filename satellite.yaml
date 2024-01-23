@@ -137,7 +137,6 @@ paths:
     get:
       tags:
         - Satellite
-        - Capabilities
       parameters:
         - $ref: '#/components/parameters/authorization-optional'
       responses:
@@ -217,7 +216,6 @@ paths:
     get:
       tags:
         - Satellite
-        - Trusted List
       parameters:
         - $ref: '#/components/parameters/authorization-required'
       responses:
@@ -272,7 +270,6 @@ paths:
     get:
       tags:
         - Satellite
-        - Parties
       parameters:
         - style: simple
           name: party_id
@@ -315,7 +312,6 @@ paths:
     get:
       tags:
         - Satellite
-        - Parties
       parameters:
         - style: form
           explode: true
@@ -333,10 +329,7 @@ paths:
             single * as wildcard.
           schema:
             type: string
-            example: |-
-              ABC Corporation
-              ABC*
-              *Corporation
+            example: '*Corporation'
           in: query
         - style: form
           explode: true
@@ -346,10 +339,7 @@ paths:
             a single * as wildcard.
           schema:
             type: string
-            example: |-
-              EU.EORI.NL123456789
-              EU.EORI.NL*
-              *123456789
+            example: EU.EORI.NL123456789
           in: query
         - style: form
           explode: true
@@ -378,11 +368,7 @@ paths:
             "Revoked","Not Active", "Pending"
           schema:
             type: string
-            example: |-
-              "Active"
-              "Revoked"
-              "Not Active"
-              "Pending"
+            example: Active
           in: query
         - style: form
           explode: true
@@ -473,28 +459,19 @@ paths:
             certificates. Usually to find a party who is requesting tokens
           schema:
             type: string
-            example: >-
-              "SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFM
-              International,C=US"
+            example: SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFMInternational,C=US
           in: query
         - style: form
           explode: true
           name: role
           description: >-
             Search parties based on their roles as defined in iSHARE role
-            framework. Possible roles are Service Consumer/Service
-            Provider/Entitled Party/Authorisation Registry/Identity
-            Provider/Identity Broker/iSHARE Satellite
+            framework. Possible roles are ServiceConsumer, ServiceProvider, 
+            EntitledParty, AuthorisationRegistry, IdentityProvider, IdentityBroker 
+            and iShareSatellite.
           schema:
             type: string
-            example: |-
-              Service Consumer
-              Service Provider
-              Entitled Party
-              Authorisation Registry
-              Identity Provider
-              Identity Broker
-              iSHARE Satellite
+            example: ServiceConsumer
           in: query
         - style: form
           explode: true
@@ -504,10 +481,7 @@ paths:
             in the participant list. Possible values are Low/Substantial/High
           schema:
             type: string
-            example: |-
-              Low
-              Substantial
-              High
+            example: Substantial
           in: query
         - style: form
           explode: true
@@ -553,7 +527,7 @@ paths:
             participant record
           schema:
             type: string
-            example: '"Askme anything"'
+            example: 'Askme anything'
           in: query
         - style: form
           explode: true
@@ -573,7 +547,7 @@ paths:
             the data-space must be provided
           schema:
             type: string
-            example: '"Dutch Mobility Dataspace"'
+            example: 'Dutch Mobility Dataspace'
           in: query
         - style: form
           explode: true
@@ -613,9 +587,7 @@ paths:
             certificates. Usually to find a party who is requesting tokens
           schema:
             type: string
-            example: >-
-              "SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFM
-              International,C=US"
+            example: SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFMInternational,C=US
           in: query
         - $ref: '#/components/parameters/authorization-required'
       responses:
@@ -671,7 +643,6 @@ paths:
     get:
       tags:
         - Satellite
-        - Versions
       responses:
         '200':
           content:
@@ -720,7 +691,6 @@ paths:
     get:
       tags:
         - Satellite
-        - dataspaces
       parameters:
         - $ref: '#/components/parameters/authorization-required'
       responses:
@@ -810,7 +780,6 @@ paths:
         required: true
       tags:
         - Satellite
-        - Access Token
       parameters: []
       responses:
         '200':
@@ -844,7 +813,6 @@ paths:
         required: true
       tags:
         - Satellite
-        - Entitled Party Creation
       parameters:
         - $ref: '#/components/parameters/authorization-required'
       responses:
@@ -1133,9 +1101,7 @@ components:
           items:
             $ref: '#/components/schemas/Certificate'
           example:
-            - subject_name: >-
-                SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFM
-                International,C=US
+            - subject_name: SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFMInternational,C=US
               certificate_type: Pkio
               enabled_from: '2023-01-31T00:00:00.000Z'
               x5c: ''
@@ -1447,9 +1413,7 @@ components:
             with the party that is being requested from the iSHARE Satellite.
             Used by the iSHARE Satellite to match the certificate identifier.
           type: string
-          example: >-
-            SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFM
-            International,C=US
+          example: SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFMInternational,C=US
         certificate_type:
           description: type of certificate
           type: string
@@ -2051,20 +2015,6 @@ components:
   headers: {}
   responses: {}
 tags:
-  - name: Capabilities
-    description: ''
-  - name: Parties
-    description: ''
-  - name: ServiceConsumer
-    description: ''
-  - name: Versions
-    description: ''
-  - name: Access Token
-    description: ''
   - name: Satellite
-    description: ''
-  - name: Service Provider
-    description: ''
-  - name: epcreation
-    description: ''
+    description: 'Endpoints the form the iSHARE Satellite API specification.'
 security: []

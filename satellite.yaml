@@ -1740,8 +1740,8 @@ components:
           description: ''
         - name: planned
           description: ''
-    jwt_payload_ep_creation:
-      title: jwt_payload_ep_creation
+    jwt_payload_ep_creation_token:
+      title: jwt_payload_ep_creation_token
       required:
         - iss
         - sub

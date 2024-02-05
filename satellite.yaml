@@ -3,128 +3,12 @@ info:
   title: iSHARE API Definitions
   version: '1.1'
   description: >-
-    Collection of API endpoints for iSHARE roles. The endpoints are categorised per role and are further explained on https://dev.ishare.eu.
+    Collection of API endpoints for iSHARE roles. The endpoints are categorised
+    per role and are further explained on https://dev.ishare.eu.
   contact:
     name: iSHARE Support
     url: https://support.ishare.eu
     email: support@iSHARE.eu
-  x-codegen-settings:
-    Nullify404: false
-    GenerateAsyncCode: true
-    UseMethodPrefix: false
-    UseModelPostfix: false
-    UseControllerPrefix: true
-    UseEnumPostfix: true
-    CollectParameters: false
-    UseConstructorsForConfig: false
-    UseCommonSDKLibrary: false
-    iOSUseAppInfoPlist: false
-    AndroidUseAppManifest: false
-    BodySerialization: 0
-    EnableAdditionalModelProperties: false
-    PreserveParameterOrder: true
-    AppendContentHeaders: true
-    iOSGenerateCoreData: false
-    GenerateInterfaces: false
-    NodeHttpClient: NODE_REQUEST
-    ValidateRequiredParameters: false
-    JavaUsePropertiesConfig: false
-    Timeout: 0
-    StoreTimezoneInformation: false
-    EnablePHPComposerVersionString: false
-    EnableLogging: false
-    ArraySerialization: Indexed
-    ModelSerializationScheme: Json
-    UseExceptionPrefix: true
-    RunscopeEnabled: false
-    AndroidHttpClient: ANDROID_OK
-    ObjCHttpClient: UNIREST
-    CSharpHttpClient: UNIREST
-    PHPHttpClient: UNIREST
-    JavaHttpClient: JAVA_OK
-    ParameterArrayFormat: ParamArrayWithIndex
-    SecurityProtocols:
-      - Ssl3
-      - Tls
-    GenerateTravisConfig: false
-    GenerateCircleConfig: false
-    GenerateAppveyorConfig: false
-    GenerateJenkinsConfig: false
-    EnableHttpCache: false
-    Retries: 0
-    RetryInterval: 1
-    GenerateAdvancedDocs: true
-    UnderscoreNumbers: true
-    UseSingletonPattern: true
-    DisableLinting: false
-    ApplyCustomizations: []
-    SortResources: false
-    AllowSkippingSSLCertVerification: false
-    DoNotSplitWords: []
-    EnableGlobalUserAgent: true
-    ReturnCompleteHttpResponse: false
-    GenerateModels: true
-    GenerateExceptions: true
-    IgnoreIfNullJson: false
-    DisableDocs: false
-    LiftParameterDescriptionFromCustomType: false
-    ThrowForHttpErrorStatusCodes: true
-    ResponseMapping:
-      Type: Simple
-    ForceKeywordArgsInRuby: false
-    SymbolizeHashKeysInRuby: false
-    UsageExampleEndpoint:
-      Description: ''
-      EndpointGroupName: ''
-      EndpointName: ''
-    IsLatestVersion: false
-    EnableImmutableModels: false
-    GenerateEnums: true
-    BackoffFactor: 2
-    StatusCodesToRetry:
-      - 408
-      - 413
-      - 429
-      - 500
-      - 502
-      - 503
-      - 504
-      - 521
-      - 522
-      - 524
-    RequestMethodsToRetry:
-      - GET
-      - PUT
-    UserConfigurableRetries: true
-    UseEndpointMethodName: false
-    EncodeTemplateParameters: true
-    GenerateExamplesForOptionalFields: false
-    MultitargetDotnetVersions: false
-    BackoffMax: 0
-    RetryOnTimeout: true
-    EnableCookies: false
-    EnableJsonPassThroughForAny: false
-    PascalCaseEnumForCSharp: false
-    PascalCaseEnumForTypeScript: false
-    EnableExperimentalTypeCombinatorGeneration: false
-    ErrorTemplates: {}
-  x-server-configuration:
-    default-environment: production
-    default-server: default
-    environments:
-      - name: production
-        servers:
-          - name: default
-            url: https://{defaultHost}
-    parameters:
-      - name: defaultHost
-        schema:
-          type: string
-          default: www.example.com
-        example: www.example.com
-  x-image-uri: ''
-  x-logo:
-    url: ''
 servers:
   - url: https://{defaultHost}
     variables:
@@ -149,7 +33,7 @@ paths:
           description: OK
       deprecated: false
       operationId: /capabilities
-      summary: /capabilities
+      summary: Retrieves iSHARE capabilities
       description: >-
         The /capabilities endpoint is required for every participant that
         provides services. The endpoint returns iSHARE capabilities (supported
@@ -168,51 +52,6 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_capabilities_token' which indicate
         what the decoded response will look like.
-      x-operation-settings:
-        CollectParameters: false
-        AllowDynamicQueryParameters: false
-        AllowDynamicFormParameters: false
-        IsMultiContentStreaming: false
-        ErrorTemplates: {}
-        SkipAdditionalHeaders: false
-      x-unitTests:
-        - request:
-            method: GET
-            uri: /capabilities
-            headers:
-              Authorization: Bearer IIeDIrdnYo2ngwDQYJKoZIhvcNAQELBQAwSDEZMBcGA1UEAwwQaVNIQ
-          expectedResponse:
-            x-allowExtraHeaders: true
-            x-bodyMatchMode: NONE
-            x-arrayOrderedMatching: false
-            x-arrayCheckCount: false
-            x-matchResponseSchema: true
-            statusCode: '200'
-            headers:
-              Content-Type: application/json
-          x-testShouldPass: true
-          x-testEnabled: true
-          x-testName: Test /capabilities
-          x-testDescription: >-
-            The /capabilities endpoint is required for every participant that
-            provides services. The endpoint returns iSHARE capabilities
-            (supported versions & optional features) of the iSHARE party. Server
-            response is an iSHARE signed JSON Web Token.
-
-
-            The capabilities endpoint should only return the public endpoints if
-            no access token is provided. If an access token is provided, the
-            capabilities endpoint will also provide the restricted endpoints. A
-            party may also have private endpoints, which are endpoints for their
-            own internal organization, also known as endpoints that are
-            implemented, but not to share with the others. These endpoints are
-            not within the scope of iSHARE and should not be returned to other
-            iSHARE parties.
-
-
-            Server response is an iSHARE signed JSON Web Token. Please refer to
-            the models 'jwt_header' and 'jwt_payload_capabilities_token' which
-            indicate what the decoded response will look like.
   /trusted_list:
     get:
       tags:
@@ -230,43 +69,15 @@ paths:
       security:
         - Bearer: []
       operationId: /trusted_list
-      summary: /trusted_list
+      summary: Retrieves list of trusted certificate authorities
       description: >
-        Used to obtain the iSHARE trusted list of certificate authorities
+        Used to obtain the iSHARE list of trusted certificate authorities
         (currently, eIDAS certificate issuer certificate authorities). 
 
 
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_trusted_list_token' which indicate
         what the decoded response will look like.
-      x-operation-settings:
-        CollectParameters: false
-        AllowDynamicQueryParameters: false
-        AllowDynamicFormParameters: false
-        IsMultiContentStreaming: false
-        ErrorTemplates: {}
-        SkipAdditionalHeaders: false
-      x-unitTests:
-        - request:
-            method: GET
-            uri: /trusted_list
-            headers:
-              Authorization: Bearer IIeDIrdnYo2ngwDQYJKoZIhvcNAQELBQAwSDEZMBcGA1UEAwwQaVNIQ
-          expectedResponse:
-            x-allowExtraHeaders: true
-            x-bodyMatchMode: NONE
-            x-arrayOrderedMatching: false
-            x-arrayCheckCount: false
-            x-matchResponseSchema: true
-            statusCode: '200'
-            headers:
-              Content-Type: application/json
-          x-testShouldPass: true
-          x-testEnabled: true
-          x-testName: Test /trusted_list
-          x-testDescription: >-
-            Used to obtain the iSHARE trusted list of certificate authorities.
-            Currently, eIDAS certificate issuer certificate authorities.
   /parties/{party_id}:
     get:
       tags:
@@ -292,7 +103,7 @@ paths:
       security:
         - Bearer: []
       operationId: /parties/{party_id}
-      summary: /parties/{party_id}
+      summary: Retrieves one party
       description: >-
         Used to obtain information on an iSHARE participant from the iSHARE
         Satellite. It returns exact participant matched using its ID.
@@ -301,14 +112,6 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_party_token' which indicate what
         the decoded response will look like.
-      x-operation-settings:
-        CollectParameters: false
-        AllowDynamicQueryParameters: false
-        AllowDynamicFormParameters: false
-        IsMultiContentStreaming: false
-        ErrorTemplates: {}
-        SkipAdditionalHeaders: false
-      x-unitTests: []
   /parties:
     get:
       tags:
@@ -460,7 +263,8 @@ paths:
             certificates. Usually to find a party who is requesting tokens
           schema:
             type: string
-            example: SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFMInternational,C=US
+            example: >-
+              SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFMInternational,C=US
           in: query
         - style: form
           explode: true
@@ -468,8 +272,8 @@ paths:
           description: >-
             Search parties based on their roles as defined in iSHARE role
             framework. Possible roles are ServiceConsumer, ServiceProvider, 
-            EntitledParty, AuthorisationRegistry, IdentityProvider, IdentityBroker 
-            and iShareSatellite.
+            EntitledParty, AuthorisationRegistry, IdentityProvider,
+            IdentityBroker  and iShareSatellite.
           schema:
             type: string
             example: ServiceConsumer
@@ -528,7 +332,7 @@ paths:
             participant record
           schema:
             type: string
-            example: 'Askme anything'
+            example: Askme anything
           in: query
         - style: form
           explode: true
@@ -548,7 +352,7 @@ paths:
             the data-space must be provided
           schema:
             type: string
-            example: 'Dutch Mobility Dataspace'
+            example: Dutch Mobility Dataspace
           in: query
         - style: form
           explode: true
@@ -588,7 +392,8 @@ paths:
             certificates. Usually to find a party who is requesting tokens
           schema:
             type: string
-            example: SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFMInternational,C=US
+            example: >-
+              SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFMInternational,C=US
           in: query
         - $ref: '#/components/parameters/authorization-required'
       responses:
@@ -600,7 +405,7 @@ paths:
           description: ''
       deprecated: false
       operationId: /parties
-      summary: /parties
+      summary: Lists and searches parties
       description: >-
         Search for participant information from your satellite. Various search
         parameters are supported as shown below. When results are more then 10
@@ -611,35 +416,6 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_party_token' which indicate what
         the decoded response will look like.
-      x-operation-settings:
-        CollectParameters: false
-        AllowDynamicQueryParameters: false
-        AllowDynamicFormParameters: false
-        IsMultiContentStreaming: false
-        ErrorTemplates: {}
-        SkipAdditionalHeaders: false
-      x-unitTests:
-        - request:
-            method: GET
-            uri: >-
-              /parties?active_only=true&name=ABC%20Corporation%0AABC%2A%0A%2ACorporation&eori=EU.EORI.NL123456789%0AEU.EORI.NL%2A%0A%2A123456789&certified_only=true&date_time=2023-01-31T00%3A00%3A00.000Z&adherenceStatus=%22Active%22%0A%22Revoked%22%0A%22Not%20Active%22%0A%22Pending%22&adherenceStartdate=2023-01-31T00%3A00%3A00.000Z&adherenceEnddate=2023-01-31T00%3A00%3A00.000Z&registarSatelliteID=EU.EORI.NL012345678&webSiteUrl=https%3A%2F%2Fwww.example.com&companyEmail=John.doe%40example.com&publiclyPublishable=true&tags=mobility&framework=iSHARE&subjectName=%22SERIALNUMBER%3DEU.EORI.US000000005%2CCN%3DCFMInternational%2CO%3DCFM%20International%2CC%3DUS%22&role=Service%20Consumer%0AService%20Provider%0AEntitled%20Party%0AAuthorisation%20Registry%0AIdentity%20Provider%0AIdentity%20Broker%0AiSHARE%20Satellite&loA=Low%0ASubstantial%0AHigh&compliancyVerified=true&legalAdherence=true&authorizationRegistryID=EU.EORI.NL000000004&authorizationRegistryName=%22Askme%20anything%22&dataSpaceID=EU.DSP.NLLOGISTICS_DLDS&dataSpaceTitle=%22Dutch%20Mobility%20Dataspace%22&countriesOfOperation=Belgium&sectorIndustry=Energy&page=2&certificate_subject_name=%22SERIALNUMBER%3DEU.EORI.US000000005%2CCN%3DCFMInternational%2CO%3DCFM%20International%2CC%3DUS%22
-          expectedResponse:
-            x-allowExtraHeaders: true
-            x-bodyMatchMode: NONE
-            x-arrayOrderedMatching: false
-            x-arrayCheckCount: false
-            x-matchResponseSchema: true
-            statusCode: '200'
-            headers:
-              Content-Type: application/json
-          x-testShouldPass: true
-          x-testEnabled: true
-          x-testName: Test /parties
-          x-testDescription: >-
-            Search for participant information from your satellite. Various
-            search parameters are supported as shown below. When results are
-            more then 10 participants, pagination is used in response and each
-            page contains up to 10 participants
   /versions:
     get:
       tags:
@@ -653,41 +429,12 @@ paths:
           description: OK
       deprecated: false
       operationId: /versions
-      summary: /versions
+      summary: Retrieves active and planned versions of iSHARE
       description: >-
         Retrieves active and planned versions of iSHARE. By default returns
         current state. Server response is an iSHARE signed JSON Web Token.
         Please refer to the models 'jwt_header' and 'jwt_payload_versions_token'
         which indicate what the decoded response will look like. 
-      x-operation-settings:
-        CollectParameters: false
-        AllowDynamicQueryParameters: false
-        AllowDynamicFormParameters: false
-        IsMultiContentStreaming: false
-        ErrorTemplates: {}
-        SkipAdditionalHeaders: false
-      x-unitTests:
-        - request:
-            method: GET
-            uri: /versions
-          expectedResponse:
-            x-allowExtraHeaders: true
-            x-bodyMatchMode: NONE
-            x-arrayOrderedMatching: false
-            x-arrayCheckCount: false
-            x-matchResponseSchema: true
-            statusCode: '200'
-            headers:
-              Content-Type: application/json
-          x-testShouldPass: true
-          x-testEnabled: true
-          x-testName: Test /versions
-          x-testDescription: >-
-            Retrieves active and planned versions of iSHARE. By default returns
-            current state. Server response is an iSHARE signed JSON Web Token.
-            Please refer to the models 'jwt_header' and
-            'jwt_payload_versions_token' which indicate what the decoded
-            response will look like.
   /dataspaces:
     get:
       tags:
@@ -700,10 +447,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DataspacesResponse'
-          description: ''
+          description: OK
       deprecated: false
       operationId: /dataspaces
-      summary: /dataspaces
+      summary: Retrieves list of dataspaces
       description: >-
         Used to obtain a list of dataspaces. 
 
@@ -711,37 +458,18 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_dataspaces_token' which indicate
         what the decoded response will look like.
-      x-operation-settings:
-        CollectParameters: false
-        AllowDynamicQueryParameters: false
-        AllowDynamicFormParameters: false
-        IsMultiContentStreaming: false
-        ErrorTemplates: {}
-        SkipAdditionalHeaders: false
-      x-unitTests:
-        - request:
-            method: GET
-            uri: /dataspaces
-            headers:
-              Authorization: Bearer IIeDIrdnYo2ngwDQYJKoZIhvcNAQELBQAwSDEZMBcGA1UEAwwQaVNIQ
-          expectedResponse:
-            x-allowExtraHeaders: true
-            x-bodyMatchMode: NONE
-            x-arrayOrderedMatching: false
-            x-arrayCheckCount: false
-            x-matchResponseSchema: true
-            statusCode: '200'
-            headers: {}
-          x-testShouldPass: true
-          x-testEnabled: false
-          x-testName: Test RequestdataspacesfromSatellite
-          x-testDescription: Request dataspaces from Satellite
   /connect/token:
     post:
       requestBody:
         content:
           application/x-www-form-urlencoded:
             schema:
+              required:
+                - grant_type
+                - scope
+                - client_id
+                - client_assertion_type
+                - client_assertion
               type: object
               properties:
                 grant_type:
@@ -783,29 +511,21 @@ paths:
         - iSHARE Satellite
         - Authorisation Registry
         - Service Provider
-      parameters: []
+        - Identity Provider
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConnectTokenResponse'
-          description: Ok
+          description: OK
       deprecated: false
       operationId: /connect/token
-      summary: /connect/token
+      summary: Obtains access token
       description: >-
         Used to obtain an OAuth access token from the Satellite. The access
         token must be added under "Authorisation" header attribute for secured
         endpoints. Refer to relevant endpoints on proper usage.
-      x-operation-settings:
-        CollectParameters: false
-        AllowDynamicQueryParameters: false
-        AllowDynamicFormParameters: false
-        IsMultiContentStreaming: false
-        ErrorTemplates: {}
-        SkipAdditionalHeaders: false
-      x-unitTests: []
   /ep_creation:
     post:
       requestBody:
@@ -828,7 +548,7 @@ paths:
           description: ''
       deprecated: false
       operationId: /ep_creation
-      summary: /ep_creation
+      summary: Create Entitled Party
       description: >-
         Used to programatically create an Entitled Party, without providing a
         certificate.
@@ -838,14 +558,208 @@ paths:
         JSON Web Token. Please refer to the models 'jwt_header' and
         'jwt_payload_ep_creation_token' which indicate what the decoded request
         and response look like.
-      x-operation-settings:
-        CollectParameters: false
-        AllowDynamicQueryParameters: false
-        AllowDynamicFormParameters: false
-        IsMultiContentStreaming: false
-        ErrorTemplates: {}
-        SkipAdditionalHeaders: false
-      x-unitTests: []
+  /service:
+    get:
+      tags:
+        - Service Provider
+      parameters:
+        - $ref: '#/components/parameters/authorization-required'
+        - $ref: '#/components/parameters/delegation_evidence_header'
+        - $ref: '#/components/parameters/service_consumer_id_token_sc'
+        - $ref: '#/components/parameters/purpose'
+        - $ref: '#/components/parameters/service_headers'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/service_content'
+          description: OK
+      operationId: /service
+      summary: >-
+        Abstract endpoint for Service Provider (parameters apply to other HTTP
+        methods as well)
+      description: >-
+        This is an abstract service (business specific) endpoint to show how any
+        Service Provider that adheres to iSHARE MUST apply iSHARE conformant
+        OAuth to every iSHARE enabled service.
+
+        Request can make use of any HTTP method and can contain any extra
+        headers. For convenience this documentation only defines the GET method.
+        Parameters are undefined because they vary for each Service Provider due
+        to their business specific logic. Note: Additional headers for security,
+        statefulnes, application functionality could be added and is out of
+        scope of this specification.
+  /delegation:
+    summary: ''
+    description: ''
+    post:
+      requestBody:
+        description: >-
+          Delegation Mask that defines of which delegation the delegation
+          evidence is requested.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DelegationRequestBody'
+        required: true
+      tags:
+        - Authorisation Registry
+      parameters:
+        - $ref: '#/components/parameters/authorization-required'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DelegationResponse'
+          description: ''
+      operationId: /delegation
+      summary: Obtains delegation evidence
+      description: >-
+        Used to obtain delegation evidence from an Authorization Registry. The
+        response is a signed JSON Web Token. Please refer to the models
+        ‘jwt_header’ and ‘jwt_payload_delegationevidence’ which indicate what
+        the decoded response will look like. Please refer to the iSHARE language
+        of delegation in order to understand the decoded response data model.
+  /connect/userinfo:
+    get:
+      tags:
+        - Identity Provider
+      parameters:
+        - $ref: '#/components/parameters/authorization-required'
+        - $ref: '#/components/parameters/content-type_jwt'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserinfoResponse'
+              example: ''
+          description: OK
+          headers: {}
+          links: {}
+      deprecated: false
+      operationId: /connect/userinfo
+      summary: Obtaining attributes of a Human Service Consumer
+      description: >-
+        OpenID Connect endpoint for obtaining attributes of a Human Service
+        Consumer conform scope defined in access token.
+
+
+        Server response is an iSHARE signed JSON Web Token. Please refer to the
+        models 'jwt_header' and 'jwt_payload_userinfo_token' which indicate what
+        the decoded response will look like.
+  /connect/authorize:
+    post:
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+                - response_type
+                - scope
+                - client_id
+                - request
+              type: object
+              properties:
+                response_type:
+                  description: >-
+                    OAuth 2.0 Response Type. For iSHARE using the Authorization 
+                    Code Flow, with value ‘code’ is REQUIRED. MUST be identical 
+                    to the response_type value in the request JWT.
+                  type: string
+                  example: response_type
+                scope:
+                  description: >-
+                    OAuth 2.0 scope for OpenID Connect 1.0. MUST contain the 
+                    ‘openid’ scope value and one or more scopes identifying the 
+                    attributes from the Human Service Consumer that are 
+                    requested. Supported scopes under iSHARE are described on 
+                    the Technical Agreements page, in the Human2Machine 
+                    interaction section. MUST be identical to the scope value 
+                    in the request JWT. Scope values determine the permissions 
+                    to be asked to the user.
+                  type: string
+                  example: scope
+                client_id:
+                  description: >-
+                    OpenID Connect 1.0 client ID. Used in iSHARE for all client 
+                    identification for OAuth/OpenID Connect. MUST contain a 
+                    valid iSHARE identifier. MUST be identical to the client_id 
+                    value in the request JWT.
+                  type: string
+                  example: client_id
+                request:
+                  description: >-
+                    OpenID Connect 1.0 signed JWT containing all request 
+                    parameters. See also Generic iSHARE JWT specifications for 
+                    a.o. basic content and signing requirements. Additionally 
+                    JWT MUST be encrypted using JWE as a user can access this 
+                    JWT itself and decode the data contained therein.
+                  type: string
+                  example: request
+        required: true
+      tags:
+        - Identity Provider
+      parameters:
+        - $ref: '#/components/parameters/content-type_form'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/openid-authorize'
+          description: OK
+      deprecated: false
+      operationId: /authorize
+      summary: Redirect human service consumer for authentication
+      description: >-
+        OpenID Connect endpoint for redirecting Human Service Consumer for 
+        authentication by the Identity Provider. Server response is directed  to
+        the /service_provider/openid_connect1.0/return endpoint.
+  /login:
+    post:
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+                - username
+                - password
+              type: object
+              properties:
+                username:
+                  description: >-
+                    Human user’s login name. Could be email, mobile phone 
+                    number, nickname etc.
+                  type: string
+                  example: username
+                password:
+                  description: Human user’s password.
+                  example: password
+        required: true
+      tags:
+        - Identity Provider
+      parameters:
+        - $ref: '#/components/parameters/content-type_form'
+      responses:
+        '200':
+          description: >-
+            Login was successful and single page application will be responsible
+            for redirection to returnUrl parameter.
+        '302':
+          description: >-
+            Login was successful and back-end application redirects user to
+            returnUrl parameter by itself.
+      deprecated: false
+      operationId: /login
+      summary: Allow Conformance Test Tool (CTT) to login
+      description: >-
+        The /login endpoint is required in order to pass Conformance Test Tool
+        (CTT). The endpoint allows user to authenticate himself using username
+        and password. After successful authentication if user grants permit to
+        requested scopes redirection to Service Provider should happen.
 components:
   schemas:
     SchemeRole:
@@ -855,9 +769,9 @@ components:
         role:
           nullable: true
           description: >-
-            Possible roles are ServiceConsumer, ServiceProvider, 
-            EntitledParty, AuthorisationRegistry, IdentityProvider, IdentityBroker 
-            and iShareSatellite.
+            Possible roles are ServiceConsumer, ServiceProvider,  EntitledParty,
+            AuthorisationRegistry, IdentityProvider, IdentityBroker  and
+            iShareSatellite.
           type: string
     Adherence:
       title: Adherence
@@ -1104,7 +1018,8 @@ components:
           items:
             $ref: '#/components/schemas/Certificate'
           example:
-            - subject_name: SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFMInternational,C=US
+            - subject_name: >-
+                SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFMInternational,C=US
               certificate_type: Pkio
               enabled_from: '2023-01-31T00:00:00.000Z'
               x5c: ''
@@ -1347,6 +1262,12 @@ components:
           allOf:
             - $ref: '#/components/schemas/jwt_payload_party_token'
             - {}
+    service_content:
+      properties:
+        service_content_1:
+          type: string
+        service_content_n:
+          type: string
     AdditionalInfo:
       title: AdditionalInfo
       description: >-
@@ -1416,7 +1337,8 @@ components:
             with the party that is being requested from the iSHARE Satellite.
             Used by the iSHARE Satellite to match the certificate identifier.
           type: string
-          example: SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFMInternational,C=US
+          example: >-
+            SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFMInternational,C=US
         certificate_type:
           description: type of certificate
           type: string
@@ -1636,9 +1558,10 @@ components:
       properties:
         role:
           description: >-
-            Name of the role as defined in iSHARE role framework. Possible roles are 
-            ServiceConsumer, ServiceProvider, EntitledParty, AuthorisationRegistry, 
-            IdentityProvider, IdentityBroker and iShareSatellite.
+            Name of the role as defined in iSHARE role framework. Possible roles
+            are  ServiceConsumer, ServiceProvider, EntitledParty,
+            AuthorisationRegistry,  IdentityProvider, IdentityBroker and
+            iShareSatellite.
           type: string
           example: ServiceConsumer
         start_date:
@@ -1714,18 +1637,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SupportedVersion'
-    Content-Type1:
-      title: Content-Type1
-      description: >-
-        Defines request body content type. MUST be equal to
-        application/x-www-form-urlencoded.
-      enum:
-        - application/x-www-form-urlencoded
-      type: string
-      example: application/x-www-form-urlencoded
-      x-enum-elements:
-        - name: Enum_applicationxwwwformurlencoded
-          description: ''
     VersionStatus:
       title: VersionStatus
       description: Status of the version. Available values are active and planned.
@@ -1983,6 +1894,225 @@ components:
       properties:
         ep_creation_token:
           type: string
+    DelegationRequestBody:
+      description: >-
+        The model used for request body in /delegation endpoint, for obtaining
+        delegation evidence.
+      required:
+        - delegationRequest
+        - policyIssuer
+        - target
+        - policySets
+      type: object
+      properties:
+        delegationRequest:
+          required:
+            - policyIssuer
+            - target
+            - policySets
+          type: object
+          properties:
+            policyIssuer:
+              type: string
+            target:
+              required:
+                - accessSubject
+              type: object
+              properties:
+                accessSubject:
+                  type: string
+            policySets:
+              type: array
+              items:
+                $ref: '#/components/schemas/PolicySet_evidence_request'
+        delegation_path:
+          type: array
+          items:
+            type: string
+        previous_steps:
+          type: array
+          items:
+            type: string
+    PolicySet:
+      required:
+        - policies
+      type: object
+      properties:
+        maxDelegationDepth:
+          type: integer
+        target:
+          type: object
+          properties:
+            environment:
+              type: object
+              properties:
+                licenses:
+                  type: array
+                  items:
+                    type: string
+        policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Policy'
+    PolicySet_evidence_request:
+      required:
+        - policies
+      type: object
+      properties:
+        target:
+          type: object
+          properties:
+            environment:
+              type: object
+              properties:
+                licenses:
+                  type: array
+                  items:
+                    type: string
+        policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Policy_request_evidence'
+    Policy:
+      required:
+        - target
+        - rules
+      type: object
+      properties:
+        target:
+          required:
+            - resource
+            - actions
+          type: object
+          properties:
+            resource:
+              required:
+                - type
+                - identifiers
+                - attributes
+              type: object
+              properties:
+                type:
+                  type: string
+                identifiers:
+                  type: array
+                  items:
+                    type: string
+                attributes:
+                  type: array
+                  items:
+                    type: string
+            actions:
+              type: array
+              items:
+                type: string
+            environment:
+              type: object
+              properties:
+                serviceProviders:
+                  type: array
+                  items:
+                    type: string
+        rules:
+          type: array
+          items:
+            required:
+              - effect
+            type: object
+            properties:
+              effect:
+                type: string
+    Policy_request_evidence:
+      required:
+        - target
+        - rules
+      type: object
+      properties:
+        target:
+          required:
+            - resource
+            - actions
+          type: object
+          properties:
+            resource:
+              required:
+                - type
+                - identifiers
+                - attributes
+              type: object
+              properties:
+                type:
+                  type: string
+                identifiers:
+                  type: array
+                  items:
+                    type: string
+                attributes:
+                  type: array
+                  items:
+                    type: string
+            actions:
+              type: array
+              items:
+                type: string
+        rules:
+          type: array
+          items:
+            required:
+              - effect
+            type: object
+            properties:
+              effect:
+                type: string
+    jwt_payload_delegation_evidence:
+      required:
+        - delegationEvidence
+      type: object
+      properties:
+        delegationEvidence:
+          required:
+            - notBefore
+            - notOnOrAfter
+            - policyIssuer
+            - target
+            - policySets
+          type: object
+          properties:
+            notBefore:
+              type: integer
+            notOnOrAfter:
+              type: integer
+            policyIssuer:
+              type: string
+            target:
+              required:
+                - accessSubject
+              type: object
+              properties:
+                accessSubject:
+                  type: string
+            policySets:
+              type: array
+              items:
+                $ref: '#/components/schemas/PolicySet'
+    DelegationResponse:
+      title: DataspacesResponse
+      type: object
+      properties:
+        delegation_token:
+          type: string
+    openid-authorize:
+      required:
+        - code
+        - state
+      properties:
+        code:
+          type: string
+        state:
+          type: string
+    UserinfoResponse:
+      title: DataspacesResponse
+      type: string
   parameters:
     authorization-optional:
       deprecated: false
@@ -2006,6 +2136,71 @@ components:
         type: string
       in: header
       required: true
+    delegation-evidence:
+      deprecated: false
+      name: delegation_evidence
+      description: >-
+        iSHARE delegation evidence regarding the requested service. The Service
+        Consumer can obtain this evidence from an Authorization Registry /
+        Entitled Party before requesting a specific service.
+      schema:
+        type: string
+      in: header
+      required: false
+    delegation_evidence_header:
+      name: delegation_evidence
+      description: >-
+        iSHARE delegation evidence regarding the requested service. The Service 
+        Consumer can obtain this evidence from an Authorization Registry / 
+        Entitled Party before requesting a specific service.
+      schema:
+        type: string
+      in: header
+    service_consumer_id_token_sc:
+      name: service_consumer_assertion
+      description: >-
+        iSHARE specific optional client assertion. Used when a Service Consumer
+        is requesting a service on behalf of another Service Consumer in a 
+        'service broker' pattern. It is used to prove that the 'brokering' 
+        Service Consumer indeed has had a request from the original Service 
+        Consumer
+      schema:
+        type: string
+      in: header
+    purpose:
+      name: LicensePurpose
+      description: >-
+        Optional iSHARE specific value describing the purpose of the license the
+        Service Consuming Entity requests for the data in the service response
+      schema:
+        type: string
+      in: header
+    service_headers:
+      name: Service-Headers
+      description: Any service specific headers
+      schema:
+        type: string
+      in: header
+    content-type_form:
+      deprecated: false
+      name: Content-Type
+      description: >-
+        Defines request body content type. MUST be equal to
+        application/x-www-form-urlencoded.
+      schema:
+        type: string
+      in: header
+      required: true
+      example: x-www-form-urlencoded
+    content-type_jwt:
+      deprecated: false
+      name: Content-Type
+      description: Defines request body content type. MUST be equal to application/jwt.
+      schema:
+        type: string
+      in: header
+      required: true
+      example: application/jwt
   securitySchemes:
     Bearer:
       type: apiKey
@@ -2018,11 +2213,11 @@ components:
   responses: {}
 tags:
   - name: iSHARE Satellite
-    description: 'Endpoints that form the iSHARE Satellite API specification.'
+    description: Endpoints that form the iSHARE Satellite API specification.
   - name: Service Provider
-    description: 'Endpoints that form the Service Provider API specification.'
+    description: Endpoints that form the Service Provider API specification.
   - name: Identity Provider
-    description: 'Endpoints that form the Identity Provider API specification.'
+    description: Endpoints that form the Identity Provider API specification.
   - name: Authorisation Registry
-    description: 'Endpoints that form the Authorisation Registry API specification.'
+    description: Endpoints that form the Authorisation Registry API specification.
 security: []

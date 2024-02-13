@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: iSHARE API Definitions
-  version: '1.1'
+  version: '1.2'
   description: >-
     Collection of API endpoints for iSHARE roles. The endpoints are categorised
     per role and are further explained on https://dev.ishare.eu.
@@ -591,8 +591,6 @@ paths:
         statefulnes, application functionality could be added and is out of
         scope of this specification.
   /delegation:
-    summary: ''
-    description: ''
     post:
       requestBody:
         description: >-
@@ -628,17 +626,13 @@ paths:
         - Identity Provider
       parameters:
         - $ref: '#/components/parameters/authorization-required'
-        - $ref: '#/components/parameters/content-type_jwt'
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserinfoResponse'
-              example: ''
           description: OK
-          headers: {}
-          links: {}
       deprecated: false
       operationId: /connect/userinfo
       summary: Obtaining attributes of a Human Service Consumer
@@ -760,6 +754,46 @@ paths:
         (CTT). The endpoint allows user to authenticate himself using username
         and password. After successful authentication if user grants permit to
         requested scopes redirection to Service Provider should happen.
+  /return:
+    get:
+      tags:
+        - Service Provider
+      operationId: /return
+      summary: Receiving the redirect from the Identity Provider
+      description: >-
+        OpenID Connect 1.0 endpoint for receiving the redirect from the Identity
+        Provider or Identity Broker after successful human authentication.
+      parameters:
+        - name: code
+          in: query
+          description: >-
+            Authorization code which is going to be used to request for an
+            access token. The authorization code MUST expire shortly after it is
+            issued to mitigate the risk of leaks. A maximum authorization code
+            lifetime of 10 minutes is RECOMMENDED. The client MUST NOT use the
+            authorization code more than once.
+          required: true
+          deprecated: false
+          schema:
+            type: string
+        - name: state
+          in: query
+          description: >-
+            OpenID Connect 1.0 opaque value used to maintain state between the
+            request and the callback. The Service Provider needs to verify if
+            initially sent value towards authorize endpoint is equal to this
+            returned value.
+          required: true
+          deprecated: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: >-
+            On successful user redirect to the Service Provider, the Service
+            Provider needs to verify state parameter and make use of code
+            parameter in order to retrieve the access token. There are no
+            specific response requirements for this endpoint.
 components:
   schemas:
     SchemeRole:
@@ -921,29 +955,6 @@ components:
           allOf:
             - $ref: '#/components/schemas/Party'
             - {}
-    Authregistery:
-      title: Authregistery
-      required:
-        - authregistery_name
-        - authregistery_id
-        - authregistery_url
-      type: object
-      properties:
-        authregistery_name:
-          type: string
-          example: iSHARE Test Authorization Registry
-        authregistery_id:
-          type: string
-          example: EU.EORI.NL000000004
-        authregistery_url:
-          type: string
-          example: http://ar.isharetest.net/
-        dataspace_id:
-          type: string
-          example: ContaktDS1
-        dataspace_title:
-          type: string
-          example: ContaktDS1
     Party:
       title: Party
       required:
@@ -2112,7 +2123,10 @@ components:
           type: string
     UserinfoResponse:
       title: DataspacesResponse
-      type: string
+      type: object
+      properties:
+        userinfo_token:
+          type: string
   parameters:
     authorization-optional:
       deprecated: false
@@ -2183,6 +2197,7 @@ components:
       in: header
     content-type_form:
       deprecated: false
+      example: x-www-form-urlencoded
       name: Content-Type
       description: >-
         Defines request body content type. MUST be equal to
@@ -2191,16 +2206,6 @@ components:
         type: string
       in: header
       required: true
-      example: x-www-form-urlencoded
-    content-type_jwt:
-      deprecated: false
-      name: Content-Type
-      description: Defines request body content type. MUST be equal to application/jwt.
-      schema:
-        type: string
-      in: header
-      required: true
-      example: application/jwt
   securitySchemes:
     Bearer:
       type: apiKey

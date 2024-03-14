@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: iSHARE API Definitions
-  version: '1.2'
+  version: '2.0'
   description: >-
     Collection of API endpoints for iSHARE roles. The endpoints are categorised
     per role and are further explained on https://dev.ishare.eu.
@@ -2107,7 +2107,7 @@ components:
               items:
                 $ref: '#/components/schemas/PolicySet'
     DelegationResponse:
-      title: DataspacesResponse
+      title: DelegationResponse
       type: object
       properties:
         delegation_token:
@@ -2122,7 +2122,7 @@ components:
         state:
           type: string
     UserinfoResponse:
-      title: DataspacesResponse
+      title: UserinfoResponse
       type: object
       properties:
         userinfo_token:

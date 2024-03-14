@@ -617,7 +617,7 @@ paths:
       description: >-
         Used to obtain delegation evidence from an Authorization Registry. The
         response is a signed JSON Web Token. Please refer to the models
-        ‘jwt_header’ and ‘jwt_payload_delegationevidence’ which indicate what
+        ‘jwt_header’ and ‘jwt_payload_delegation_evidence_token’ which indicate what
         the decoded response will look like. Please refer to the iSHARE language
         of delegation in order to understand the decoded response data model.
   /connect/userinfo:
@@ -1936,14 +1936,14 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/PolicySet_evidence_request'
-        delegation_path:
-          type: array
-          items:
-            type: string
-        previous_steps:
-          type: array
-          items:
-            type: string
+            delegation_path:
+              type: array
+              items:
+                type: string
+            previous_steps:
+              type: array
+              items:
+                type: string
     PolicySet:
       required:
         - policies
@@ -2075,11 +2075,43 @@ components:
             properties:
               effect:
                 type: string
-    jwt_payload_delegation_evidence:
+    jwt_payload_delegation_evidence_token:
       required:
         - delegationEvidence
+        - iss
+        - sub
+        - aud
+        - jti
+        - exp
+        - iat
       type: object
       properties:
+        iss:
+          description: The id of the issuer of this JWT.
+          type: string
+          example: EU.EORI.NL123456789
+        sub:
+          description: The id of the subject of this JWT.
+          type: string
+          example: EU.EORI.NL123456789
+        aud:
+          description: The id of the audience of this JWT.
+          type: string
+          example: EU.EORI.NL123456789
+        jti:
+          description: jti value of JWT.
+          type: string
+          example: 378a47c4-2822-4ca5-a49a-7e5a1cc7ea59
+        exp:
+          format: int32
+          description: UNIX timestamp in seconds until when this JWT is valid.
+          type: integer
+          example: 1504684475
+        iat:
+          format: int32
+          description: UNIX timestamp in seconds when this JWT was issued.
+          type: integer
+          example: 1504683475
         delegationEvidence:
           required:
             - notBefore

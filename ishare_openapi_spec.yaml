@@ -10,9 +10,6 @@ info:
     url: https://support.ishare.eu
     email: support@iSHARE.eu
 servers:
-  # Added by API Auto Mocking Plugin
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/GERARDHUISINTVELD_1/ishare-satellite/2.0
   - url: https://{defaultHost}
     variables:
       defaultHost:

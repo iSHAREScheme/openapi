@@ -22,8 +22,9 @@ paths:
         - Authorisation Registry
         - Service Provider
         - Identity Provider
-      parameters:
-        - $ref: '#/components/parameters/authorization-optional'
+      security:
+        - BearerAuth: []
+        - {}
       responses:
         '200':
           content:
@@ -56,8 +57,8 @@ paths:
     get:
       tags:
         - iSHARE Satellite
-      parameters:
-        - $ref: '#/components/parameters/authorization-required'
+      security:
+        - BearerAuth: []
       responses:
         '200':
           content:
@@ -66,8 +67,6 @@ paths:
                 $ref: '#/components/schemas/TrustedListResponse'
           description: OK
       deprecated: false
-      security:
-        - Bearer: []
       operationId: /trusted_list
       summary: Retrieves list of trusted certificate authorities
       description: >
@@ -82,6 +81,8 @@ paths:
     get:
       tags:
         - iSHARE Satellite
+      security:
+        - BearerAuth: []
       parameters:
         - style: simple
           name: party_id
@@ -91,7 +92,6 @@ paths:
             example: EU.EORI.NL123456789
           in: path
           required: true
-        - $ref: '#/components/parameters/authorization-required'
       responses:
         '200':
           content:
@@ -100,8 +100,6 @@ paths:
                 $ref: '#/components/schemas/PartyResponse'
           description: OK
       deprecated: false
-      security:
-        - Bearer: []
       operationId: /parties/{party_id}
       summary: Retrieves one party
       description: >-
@@ -116,6 +114,8 @@ paths:
     get:
       tags:
         - iSHARE Satellite
+      security:
+        - BearerAuth: []
       parameters:
         - style: form
           explode: true
@@ -395,7 +395,6 @@ paths:
             example: >-
               SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFMInternational,C=US
           in: query
-        - $ref: '#/components/parameters/authorization-required'
       responses:
         '200':
           content:
@@ -420,6 +419,9 @@ paths:
     get:
       tags:
         - iSHARE Satellite
+      security:
+        - BearerAuth: []
+        - {}
       responses:
         '200':
           content:
@@ -439,8 +441,8 @@ paths:
     get:
       tags:
         - iSHARE Satellite
-      parameters:
-        - $ref: '#/components/parameters/authorization-required'
+      security:
+        - BearerAuth: []
       responses:
         '200':
           content:
@@ -536,8 +538,8 @@ paths:
         required: true
       tags:
         - iSHARE Satellite
-      parameters:
-        - $ref: '#/components/parameters/authorization-required'
+      security:
+        - BearerAuth: []
       responses:
         '200':
           content:
@@ -562,8 +564,9 @@ paths:
     get:
       tags:
         - Service Provider
+      security:
+        - BearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/authorization-required'
         - $ref: '#/components/parameters/delegation_evidence_header'
         - $ref: '#/components/parameters/service_consumer_id_token_sc'
         - $ref: '#/components/parameters/purpose'
@@ -603,8 +606,8 @@ paths:
         required: true
       tags:
         - Authorisation Registry
-      parameters:
-        - $ref: '#/components/parameters/authorization-required'
+      security:
+        - BearerAuth: []
       responses:
         '200':
           content:
@@ -624,8 +627,8 @@ paths:
     get:
       tags:
         - Identity Provider
-      parameters:
-        - $ref: '#/components/parameters/authorization-required'
+      security:
+        - BearerAuth: []
       responses:
         '200':
           content:
@@ -2160,28 +2163,6 @@ components:
         userinfo_token:
           type: string
   parameters:
-    authorization-optional:
-      deprecated: false
-      name: Authorization
-      description: >-
-        OAuth 2.0 authorization based on bearer token. MUST contain “Bearer ” +
-        access token value. How to retrieve the access token can be found at
-        Access Token Endpoint section.
-      schema:
-        type: string
-      in: header
-      required: false
-    authorization-required:
-      deprecated: false
-      name: Authorization
-      description: >-
-        OAuth 2.0 authorization based on bearer token. MUST contain “Bearer ” +
-        access token value. How to retrieve the access token can be found at
-        Access Token Endpoint section.
-      schema:
-        type: string
-      in: header
-      required: true
     delegation-evidence:
       deprecated: false
       name: delegation_evidence
@@ -2239,13 +2220,9 @@ components:
       in: header
       required: true
   securitySchemes:
-    Bearer:
-      type: apiKey
-      description: >-
-        Oauth 2.0 authorization based on bearer token. MUST contain ”Bearer” +
-        access token value
-      name: Authorization
-      in: header
+    BearerAuth:
+      type: http
+      scheme: bearer
   headers: {}
   responses: {}
 tags:

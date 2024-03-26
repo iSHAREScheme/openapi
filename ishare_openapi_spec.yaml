@@ -1013,7 +1013,7 @@ components:
               framework: iSHARE
               dataspace_id: ''
               dataspace_title: ''
-              complaiancy_verified: 'yes'
+              compliancy_verified: 'yes'
             - type: AccessionAgreement
               title: AA
               status: Accepted
@@ -1023,7 +1023,7 @@ components:
               framework: iSHARE
               dataspace_id: ''
               dataspace_title: ''
-              complaiancy_verified: 'yes'
+              compliancy_verified: 'yes'
         certificates:
           description: >-
             Object which contains the details of the PKI/x509 certificates of
@@ -1492,7 +1492,7 @@ components:
         - sign_date
         - expiry_date
         - framework
-        - complaiancy_verified
+        - compliancy_verified
       type: object
       properties:
         type:
@@ -1548,7 +1548,7 @@ components:
           description: The name of the selected dataspace
           type: string
           example: Dutch Test Dataspace
-        complaiancy_verified:
+        compliancy_verified:
           description: >-
             Legal compliance to this agreement has been verified in accordance
             with the process set in trust framework as we as data space
@@ -1726,24 +1726,28 @@ components:
       properties:
         trusted_list_token:
           type: string
+          format: application/jwt
     VersionsResponse:
       title: VersionsResponse
       type: object
       properties:
         versions_token:
           type: string
+          format: application/jwt
     CapabilitiesResponse:
       title: CapabilitiesResponse
       type: object
       properties:
         capabilities_token:
           type: string
+          format: application/jwt
     PartiesResponse:
       title: PartiesResponse
       type: object
       properties:
         parties_token:
           type: string
+          format: application/jwt
     DataspaceInfo:
       title: DataspaceInfo
       type: object
@@ -1771,6 +1775,7 @@ components:
       properties:
         dataspace_list_token:
           type: string
+          format: application/jwt
     jwt_payload_dataspace_list_token:
       title: jwt_payload_dataspace_list_token
       required:
@@ -1900,6 +1905,7 @@ components:
       properties:
         ep_creation_token:
           type: string
+          format: application/jwt
     EpCreationResponse:
       title: ep_creation_response
       required:
@@ -1908,6 +1914,7 @@ components:
       properties:
         ep_creation_token:
           type: string
+          format: application/jwt
     DelegationRequestBody:
       description: >-
         The model used for request body in /delegation endpoint, for obtaining
@@ -2147,6 +2154,7 @@ components:
       properties:
         delegation_token:
           type: string
+          format: application/jwt
     openid-authorize:
       required:
         - code
@@ -2162,6 +2170,7 @@ components:
       properties:
         userinfo_token:
           type: string
+          format: application/jwt
   parameters:
     delegation-evidence:
       deprecated: false

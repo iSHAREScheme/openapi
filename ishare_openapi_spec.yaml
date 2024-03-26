@@ -1013,7 +1013,7 @@ components:
               framework: iSHARE
               dataspace_id: ''
               dataspace_title: ''
-              compliancy_verified: 'yes'
+              complaiancy_verified: 'yes'
             - type: AccessionAgreement
               title: AA
               status: Accepted
@@ -1023,7 +1023,7 @@ components:
               framework: iSHARE
               dataspace_id: ''
               dataspace_title: ''
-              compliancy_verified: 'yes'
+              complaiancy_verified: 'yes'
         certificates:
           description: >-
             Object which contains the details of the PKI/x509 certificates of
@@ -1492,7 +1492,7 @@ components:
         - sign_date
         - expiry_date
         - framework
-        - compliancy_verified
+        - complaiancy_verified
       type: object
       properties:
         type:
@@ -1548,7 +1548,7 @@ components:
           description: The name of the selected dataspace
           type: string
           example: Dutch Test Dataspace
-        compliancy_verified:
+        complaiancy_verified:
           description: >-
             Legal compliance to this agreement has been verified in accordance
             with the process set in trust framework as we as data space

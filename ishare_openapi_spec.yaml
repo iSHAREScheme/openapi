@@ -1,19 +1,40 @@
 openapi: 3.0.0
 info:
-  title: iSHARE API Definitions
-  version: '2.0'
+  version: "2.0"
+  title: generic iSHARE API specifications
   description: >-
-    Collection of API endpoints for iSHARE roles. The endpoints are categorised
-    per role and are further explained on https://dev.ishare.eu.
+    These are the generic API specifications of iSHARE Scheme v2.0.
+
+
+    These specifications describe the standardised identification,
+    authentication and authorization mechanisms to be implemented by iSHARE
+    participants. Depending on the role your organisation fulfils within the
+    iSHARE Scheme, you need to provide an iSHARE API according to the
+    specifications below.
+
+
+    It is essential to understand that this page describes the generic API
+    specifications for participants. The endpoints described are not actual
+    functioning endpoints. For example, any Service Provider in iSHARE needs to
+    implement the API endpoints as described in the Service Provider section,
+    but his exact endpoints may vary. The /capabilities endpoint, which is
+    required for every participant, displays the actual endpoints exposed under
+    iSHARE for participants.
   contact:
-    name: iSHARE Support
-    url: https://support.ishare.eu
+    url: http://dev.ishare.eu
     email: support@iSHARE.eu
 servers:
-  - url: https://{defaultHost}
-    variables:
-      defaultHost:
-        default: www.example.com
+  - description: iSHARE test network base domain
+    url: https://isharetest.net
+tags:
+  - name: iSHARE Satellite
+    description: Endpoints that form the iSHARE Satellite API specification.
+  - name: Service Provider
+    description: Endpoints that form the Service Provider API specification.
+  - name: Identity Provider
+    description: Endpoints that form the Identity Provider API specification.
+  - name: Authorisation Registry
+    description: Endpoints that form the Authorisation Registry API specification.
 paths:
   /capabilities:
     get:
@@ -525,7 +546,7 @@ paths:
       summary: Obtains access token
       description: >-
         Used to obtain an OAuth access token from the Satellite. The access
-        token must be added under "Authorisation" header attribute for secured
+        token must be added under "Authorization" header attribute for secured
         endpoints. Refer to relevant endpoints on proper usage.
   /ep_creation:
     post:
@@ -2237,15 +2258,7 @@ components:
     BearerAuth:
       type: http
       scheme: bearer
+      description: OAuth 2.0 authorization based on bearer token. MUST contain “Bearer “ + access token value. Must be provided if restricted endpoints are needed.
   headers: {}
   responses: {}
-tags:
-  - name: iSHARE Satellite
-    description: Endpoints that form the iSHARE Satellite API specification.
-  - name: Service Provider
-    description: Endpoints that form the Service Provider API specification.
-  - name: Identity Provider
-    description: Endpoints that form the Identity Provider API specification.
-  - name: Authorisation Registry
-    description: Endpoints that form the Authorisation Registry API specification.
 security: []

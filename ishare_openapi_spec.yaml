@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: "2.0"
+  version: "2.1"
   title: generic iSHARE API specifications
   description: >-
     These are the generic API specifications of iSHARE Scheme v2.0.
@@ -816,6 +816,30 @@ paths:
             Provider needs to verify state parameter and make use of code
             parameter in order to retrieve the access token. There are no
             specific response requirements for this endpoint.
+  /policies:
+    post:
+      tags:
+        - Authorisation Registry
+      security:
+        - BearerAuth: []
+      description: >-
+        The Policy Creation Request Endpoint can receives policy creation
+        requests. The POST body accepts a JWT token: the Policy Creation Request
+        Token (see jwt_payload_policy_request_token).
+      operationId: /policies
+      summary: Request creation of a policy
+      requestBody:
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+              description: JWT token formatted as jwt_payload_policy_request_token.
+              format: application/jwt
+      responses:
+        '200':
+          description: >-
+            After evaluating Authorisation Rules, the requested policy has been created.
 components:
   schemas:
     SchemeRole:
@@ -2197,6 +2221,75 @@ components:
         userinfo_token:
           type: string
           format: application/jwt
+    PolicyRequest:
+      description: >-
+        The model used for requesting policy creation.
+      required:
+        - notBefore
+        - notAfter
+        - policyIssuer
+        - target
+        - policySets
+      type: object
+      properties:
+        notBefore:
+          type: integer
+        notOnOrAfter:
+          type: integer
+        policyIssuer:
+          type: string
+        target:
+          required:
+            - accessSubject
+          type: object
+          properties:
+            accessSubject:
+              type: string
+        policySets:
+          type: array
+          items:
+            $ref: '#/components/schemas/PolicySet_evidence_request'
+    jwt_payload_policy_request_token:
+      title: jwt_payload_policy_request_token
+      required:
+        - iss
+        - sub
+        - aud
+        - jti
+        - exp
+        - iat
+        - dataspaces_info
+      type: object
+      properties:
+        iss:
+          description: The id of the issuer of this JWT.
+          type: string
+          example: EU.EORI.NL123456789
+        sub:
+          description: The id of the subject of this JWT.
+          type: string
+          example: EU.EORI.NL123456789
+        aud:
+          description: The id of the audience of this JWT.
+          type: string
+          example: EU.EORI.NL123456789
+        jti:
+          description: jti value of JWT.
+          type: string
+          example: 378a47c4-2822-4ca5-a49a-7e5a1cc7ea59
+        exp:
+          format: int32
+          description: UNIX timestamp in seconds until when this JWT is valid.
+          type: integer
+          example: 1504684475
+        iat:
+          format: int32
+          description: UNIX timestamp in seconds when this JWT was issued.
+          type: integer
+          example: 1504683475
+        policyRequest:
+          allOf:
+            - $ref: '#/components/schemas/PolicyRequest'
   parameters:
     delegation-evidence:
       deprecated: false

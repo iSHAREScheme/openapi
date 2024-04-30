@@ -3,15 +3,13 @@ info:
   version: "2.0"
   title: generic iSHARE API specifications
   description: >-
-    These are the generic API specifications of iSHARE Scheme v2.0.
-
+    These are the generic API specifications of iSHARE Scheme v2.1.
 
     These specifications describe the standardised identification,
     authentication and authorization mechanisms to be implemented by iSHARE
     participants. Depending on the role your organisation fulfils within the
     iSHARE Scheme, you need to provide an iSHARE API according to the
     specifications below.
-
 
     It is essential to understand that this page describes the generic API
     specifications for participants. The endpoints described are not actual
@@ -24,6 +22,9 @@ info:
     url: http://dev.ishare.eu
     email: support@iSHARE.eu
 servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/GERARDHUISINTVELD_1/ishare-satellite/2.1
   - description: iSHARE test network base domain
     url: https://isharetest.net
 tags:
@@ -860,60 +861,6 @@ components:
             established.
           type: string
           example: '2024-02-01T00:00:00.000Z'
-    FeatureObject:
-      title: FeatureObject
-      required:
-        - id
-        - feature
-        - description
-        - url
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the feature.
-          type: string
-          example: A51D413F-B3CC-477D-96C4-E37A9003BFE3
-        feature:
-          description: Friendly name of the feature.
-          type: string
-          example: capabilities
-        description:
-          description: Short description about the feature.
-          type: string
-          example: Retrieves iSHARE capabilities
-        url:
-          description: URL to the feature.
-          type: string
-          example: https://www.example.com/capabilities
-        token_endpoint:
-          nullable: true
-          description: >-
-            URL where access token for the feature could be retrieved. This is
-            optional because if feature is access token, it is not needed to
-            mention it twice.
-          type: string
-          example: https://www.example.com/connect/token
-    SupportedFeature:
-      title: SupportedFeature
-      type: object
-      properties:
-        public:
-          nullable: true
-          description: Contains supported public features.
-          type: array
-          items:
-            $ref: '#/components/schemas/FeatureObject'
-        restricted:
-          nullable: true
-          description: >-
-            Contains supported restricted features. The structure and parameters
-            are exactly the same as defined in public parameter above. It should
-            only be shown to the parties which provided a valid access token. If
-            an access token was not provided or restricted endpoints does not
-            exist, this value can be not returned, empty or null.
-          type: array
-          items:
-            $ref: '#/components/schemas/FeatureObject'
     jwt_header:
       title: jwt_header
       required:
@@ -1137,21 +1084,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Party'
-    SupportedVersion:
-      title: SupportedVersion
-      description: Contains information about supported version endpoints for each version.
-      type: object
-      properties:
-        version:
-          nullable: true
-          description: Version of the system which is under support.
-          type: string
-        supported_features:
-          nullable: true
-          description: Contins a list of supported features for different access levels.
-          type: array
-          items:
-            $ref: '#/components/schemas/SupportedFeature'
     CertificateAuthority:
       title: CertificateAuthority
       type: object
@@ -1648,28 +1580,89 @@ components:
       title: CapabilitiesInfo
       type: object
       properties:
-        party_id:
-          nullable: true
+        public_services:
           description: >-
-            Party ID, also known as EORI number of the party which provides the
-            capabilities info.
+            When no Authorization header is presented when invoking the 
+            /capabilities endpoint, only public_services are returned.
+            Public_services themselves may (and usually will) require 
+            authentication to invoke them.
+          type: array
+          items:
+            $ref: '#/components/schemas/Service'
+        restricted_services:
+          description: >-
+            When an Authorization header is presented when invoking the
+            /capabilities endpoint, restricted services may be returned, based
+            on the information provided on the participant by the Authorization
+            header. This could for example be implemented to expose services 
+            only to participants of a dataspaces.
+          type: array
+          items:
+            $ref: '#/components/schemas/Service'
+    Service:
+      title: Service
+      type: object
+      required:
+        - identifier
+        - title
+        - description
+        - status
+      properties:
+        identifier: 
+          description: >-
+            Unique identifier of the service. For iSHARE defined services, it 
+            must contain the predefined identifier (defined as operationId in 
+            the iSHARE generic OpenAPI specification). For other services, it 
+            might for instance refer operationId in OpenAPI specifications, or 
+            other forms of identifiers in other specification formats.
           type: string
-        ishare_roles:
-          nullable: true
+          example: /capabilities
+        title:
+          description: Human readable name of the service
+          type: string
+          example: Capabilities
+        description:
           description: >-
-            Contains array of role objects that provide the information about
-            the roles of the party in iSHARE.
-          type: array
-          items:
-            $ref: '#/components/schemas/SchemeRole'
-        supported_versions:
-          nullable: true
+            Description of the service.
+          type: string
+          example: Retrieves iSHARE capabilities
+        descriptionURL: 
           description: >-
-            Contains information about supported version endpoints for each
-            version.
-          type: array
-          items:
-            $ref: '#/components/schemas/SupportedVersion'
+            URL that provides a description of the service endpoint. Could be
+            for instance a URL to an OpenAPI description, a WSDL document, 
+            a a SPARQL Service Description, a DCAT Data Catalog, etc.
+          type: string
+          example: https://api.swaggerhub.com/apis/iSHARE/iSHARE_Scheme_Specification/2.0
+          format: uri
+        endpointURL:
+          description: >-
+            URL of the endpoint, including the correct host. Depending on the 
+            setup, this information could also already be included in the 
+            description that is provided via the description_url.
+          type: string
+          example: https://api.example.com/someservice
+          format: uri
+        tokenEndpoint:
+          description: >-
+            URL where access token for the feature can be retrieved. This is 
+            optional because if feature is access token, it is not needed to 
+            mention it twice.
+          type: string
+          example: https://api.example.com/connect/token
+          format: uri
+        version:
+          description: >-
+            Version of the provided service. The version numbering of services 
+            is not related to the version numbering of the iSHARE Trust 
+            Framework.
+          type: string
+          example: 1.0
+        status:
+          description: >-
+            Provides information on the status of the service. Must be either
+            "deprecated" or "active".
+          type: string
+          example: active
     VersionStatus:
       title: VersionStatus
       description: Status of the version. Available values are active and planned.

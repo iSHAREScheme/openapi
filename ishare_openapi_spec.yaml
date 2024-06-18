@@ -2228,12 +2228,13 @@ components:
         userinfo_token:
           type: string
           format: application/jwt
-    PolicyRequest:
+    delegationPolicyRequest:
       description: >-
-        The model used for requesting policy creation.
+        The model used for requesting delegation policy creation.
       required:
         - notBefore
         - notAfter
+        - policyRequestor
         - policyIssuer
         - target
         - policySets
@@ -2243,6 +2244,8 @@ components:
           type: integer
         notOnOrAfter:
           type: integer
+        policyRequestor:
+          type: string
         policyIssuer:
           type: string
         target:
@@ -2255,7 +2258,7 @@ components:
         policySets:
           type: array
           items:
-            $ref: '#/components/schemas/PolicySet_evidence_request'
+            $ref: '#/components/schemas/PolicySet'
     jwtPayloadDelegationPolicyRequestToken:
       title: jwtPayloadDelegationPolicyRequestToken
       required:
@@ -2294,9 +2297,9 @@ components:
           description: UNIX timestamp in seconds when this JWT was issued.
           type: integer
           example: 1504683475
-        policyRequest:
+        delegationPolicyRequest:
           allOf:
-            - $ref: '#/components/schemas/PolicyRequest'
+            - $ref: '#/components/schemas/delegationPolicyRequest'
   parameters:
     delegation-evidence:
       deprecated: false

@@ -817,24 +817,26 @@ paths:
             Provider needs to verify state parameter and make use of code
             parameter in order to retrieve the access token. There are no
             specific response requirements for this endpoint.
-  /delegationPolicy:
+  /policies:
     post:
       tags:
         - Authorisation Registry
       security:
         - BearerAuth: []
       description: >-
-        The Delegation policy request endpoint is an API endpoint that receives 
-        policy creation requests. The POST body accepts a JWT token: the Policy 
-        Creation Request Token.
-      operationId: /delegationPolicy
-      summary: Request creation of a delegation policy
+        The Policy Creation Request Endpoint can receives policy creation
+        requests. The POST body accepts a JWT token: the Policy Creation Request
+        Token (see jwt_payload_policy_request_token).
+      operationId: /policies
+      summary: Request creation of a policy
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DelegationPolicyCreationRequest'
         required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+              description: JWT token formatted as jwt_payload_policy_request_token.
+              format: application/jwt
       responses:
         '200':
           description: >-
@@ -1936,15 +1938,6 @@ components:
           type: string
         expires_in:
           type: number
-    DelegationPolicyCreationRequest:
-      title: DelegationPolicyCreationRequest
-      required:
-        - delegationPolicyRequestToken
-      type: object
-      properties:
-        delegationPolicyRequestToken:
-          type: string
-          format: application/jwt
     EpCreationRequest:
       title: ep_creation_request
       required:
@@ -2249,8 +2242,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PolicySet_evidence_request'
-    jwtPayloadDelegationPolicyRequestToken:
-      title: jwtPayloadDelegationPolicyRequestToken
+    jwt_payload_policy_request_token:
+      title: jwt_payload_policy_request_token
       required:
         - iss
         - sub

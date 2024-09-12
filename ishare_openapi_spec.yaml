@@ -1075,7 +1075,7 @@ components:
           example:
             - subject_name: >-
                 SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFMInternational,C=US
-              certificate_type: Pkio
+              certificate_type: eSEAL
               enabled_from: '2023-01-31T00:00:00.000Z'
               x5c: ''
               x5t#s256: ''
@@ -1397,7 +1397,7 @@ components:
         certificate_type:
           description: type of certificate
           type: string
-          example: eIDAS eSEAL
+          example: eSEAL
         enabled_from:
           format: date-time
           description: UTC timestamp which states since when certificate is valid.

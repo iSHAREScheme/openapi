@@ -1595,7 +1595,8 @@ components:
             /capabilities endpoint, restricted services may be returned, based
             on the information provided on the participant by the Authorization
             header. This could for example be implemented to expose services 
-            only to participants of a dataspaces.
+            only to participants of a dataspaces. Private_services themselves may 
+            (and usually will) require authentication to invoke them.
           type: array
           items:
             $ref: '#/components/schemas/Service'
@@ -1605,32 +1606,36 @@ components:
       required:
         - identifier
         - title
-        - description
+        - endpointURL
         - status
+        - serviceType
+        - version
       properties:
         identifier: 
           description: >-
-            Unique identifier of the service. For iSHARE defined services, it 
-            must contain the predefined identifier (defined as operationId in 
-            the iSHARE generic OpenAPI specification). For other services, it 
-            might for instance refer operationId in OpenAPI specifications, or 
-            other forms of identifiers in other specification formats.
+            Free text identifier of the service. Must be unique within the capabilities 
+            definition, a URI is preferred. For iSHARE defined services, it must contain 
+            the predefined identifier (defined as operationId in the iSHARE generic 
+            OpenAPI specification). For other services, it might for instance refer an 
+            operationId in OpenAPI specifications, or other forms of identifiers in 
+            other specification formats.
           type: string
           example: /capabilities
         title:
-          description: Human readable name of the service
+          description: >-
+            Free text human readable name of the service.
           type: string
           example: Capabilities
         description:
           description: >-
-            Description of the service.
+            Free text description of the service.
           type: string
           example: Retrieves iSHARE capabilities
         descriptionURL: 
           description: >-
-            URL that provides a description of the service endpoint. Could be
-            for instance a URL to an OpenAPI description, a WSDL document, 
-            a a SPARQL Service Description, a DCAT Data Catalog, etc.
+            URL that points to the definition of the service. Could be for instance a URL 
+            to an OpenAPI description, a WSDL document, a SPARQL Service Description, a 
+            DCAT Data Catalog, etc.
           type: string
           example: https://api.swaggerhub.com/apis/iSHARE/iSHARE_Scheme_Specification/2.0
           format: uri
@@ -1650,19 +1655,73 @@ components:
           type: string
           example: https://api.example.com/connect/token
           format: uri
-        version:
-          description: >-
-            Version of the provided service. The version numbering of services 
-            is not related to the version numbering of the iSHARE Trust 
-            Framework.
-          type: string
-          example: 1.0
         status:
           description: >-
             Provides information on the status of the service. Must be either
             "deprecated" or "active".
           type: string
           example: active
+          x-enum-elements:
+            - name: deprecated
+              description: ''
+            - name: active
+              description: ''
+        serviceType:
+          description: >-
+            Can be either "framework-defined", "dataspace-defined" or "self-defined". 
+            A framework-defined service is required from a framework perspective 
+            (including for instance the /capabilities endpoint), a dataspace-defined 
+            service is required from a dataspace perspective and a self-defined 
+            service is define by the provider of the service (actual data services 
+            are part of this category).
+          type: string
+          example: active
+          x-enum-elements:
+            - name: framework-defined
+              description: ''
+            - name: dataspace-defined
+              description: ''
+            - name: self-defined
+              description: ''
+        version:
+          title: version
+          type: object
+          required:
+            - capabilityVersion
+          properties:
+            compliesWithFrameworkVersions:
+              description: >-
+                Array of framework versions that the service complies with, at a 
+                framework level. If not included, the service is assumed to be compliant 
+                with the latest version. The versions can be retrieved using the 
+                /versions endpoint: https://dev.ishare.eu/satellite/versions.html. 
+                Required for framework-defined services.
+              type: array
+              items:
+                type: string
+              example: ["2.0.1", "2.1"]
+            compliesWithDataspaceVersions:
+              description: >-
+                Array of dataspace  versions that the service complies with, at a 
+                dataspace level.
+              type: array
+              items:
+                type: string
+              example: ["1.0", "1.1"]
+            capabilityVersion:
+              description: >-
+                Version of the provided service. The version numbering of services is 
+                not related to the version numbering of the framework or of a dataspace.
+              type: string
+              example: "1.0"
+            methods:
+              description: >-
+                Array of operations supported by the endpoint. It could be HTTP methods 
+                when the endpoint is HTTP based, for example: GET, POST, etc.
+              type: array
+              items:
+                type: string
+              example: ["GET", "POST"]
     VersionStatus:
       title: VersionStatus
       description: Status of the version. Available values are active and planned.

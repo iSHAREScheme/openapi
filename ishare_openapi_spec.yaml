@@ -160,8 +160,9 @@ paths:
           explode: true
           name: party_id
           description: >-
-            Optional parameter used to search by party's ID . Can contain
-            a single * as wildcard.
+            Optional parameter used to search by party's ID. Can contain
+            a single * as wildcard. It searches through the party_id array 
+            for matching party_id.
           schema:
             type: string
             example: did:ishare:NTRNL-12345678
@@ -993,7 +994,11 @@ components:
           type: array
           items:
             type: string
-            example: "did:ishare:NTRNL-12345678"
+          example: 
+            - "did:ishare:NTRNL-12345678"
+            - "did:elsi:LEIXG-724500AZSGBRY55MNS59"
+            - "did:web:example.com"
+            - "CoC:123456789"
         party_name:
           description: Name of the party.
           type: string
@@ -1653,8 +1658,7 @@ components:
         party_id:
           nullable: true
           description: >-
-            Party ID, also known as iSHARE-ID of the party which provides the
-            capabilities info.
+            Party ID of the party which provides the capabilities info.
           type: string
         ishare_roles:
           nullable: true

@@ -285,7 +285,7 @@ paths:
           schema:
             type: string
             example: >-
-              CN=ABC Trucking,organizationIdentifier=NTRNL-00000001,O=ABC Trucking,C=NL
+              CN=Test Service Consumer,organizationIdentifier=NTRNL-10000001,O=Test Service Consumer,C=NL
           in: query
         - style: form
           explode: true
@@ -414,7 +414,7 @@ paths:
           schema:
             type: string
             example: >-
-              CN=ABC Trucking,organizationIdentifier=NTRNL-00000001,O=ABC Trucking,C=NL
+              CN=Test Service Consumer,organizationIdentifier=NTRNL-10000001,O=Test Service Consumer,C=NL
           in: query
       responses:
         '200':
@@ -1054,7 +1054,7 @@ components:
             $ref: '#/components/schemas/Certificate'
           example:
             - subject_name: >-
-                CN=ABC Trucking,organizationIdentifier=NTRNL-00000001,O=ABC Trucking,C=NL
+                CN=Test Service Consumer,organizationIdentifier=NTRNL-10000001,O=Test Service Consumer,C=NL
               certificate_type: Pkio
               enabled_from: '2023-01-31T00:00:00.000Z'
               x5c: ''
@@ -1373,7 +1373,7 @@ components:
             Used by the iSHARE Satellite to match the certificate identifier.
           type: string
           example: >-
-            CN=ABC Trucking,organizationIdentifier=NTRNL-00000001,O=ABC Trucking,C=NL
+            CN=Test Service Consumer,organizationIdentifier=NTRNL-10000001,O=Test Service Consumer,C=NL
         certificate_type:
           description: type of certificate
           type: string

@@ -110,7 +110,7 @@ paths:
           description: The id of the party whose record must be fetched
           schema:
             type: string
-            example: EU.EORI.NL123456789
+            example: did:ishare:NTRNL-12345678
           in: path
           required: true
       responses:
@@ -158,13 +158,13 @@ paths:
           in: query
         - style: form
           explode: true
-          name: eori
+          name: party_id
           description: >-
-            Optional parameter used to search by party's ID (EORI). Can contain
+            Optional parameter used to search by party's ID . Can contain
             a single * as wildcard.
           schema:
             type: string
-            example: EU.EORI.NL123456789
+            example: did:ishare:NTRNL-12345678
           in: query
         - style: form
           explode: true
@@ -216,10 +216,10 @@ paths:
         - style: form
           explode: true
           name: registarSatelliteID
-          description: Search parties by their registrar satellite's ID (EORI) number
+          description: Search parties by their registrar satellite's iSHARE-ID number
           schema:
             type: string
-            example: EU.EORI.NL012345678
+            example: did:ishare:NTRNL-12345678
           in: query
         - style: form
           explode: true
@@ -285,7 +285,7 @@ paths:
           schema:
             type: string
             example: >-
-              SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFMInternational,C=US
+              CN=ABC Trucking,O=ABC Trucking,C=NL,organizationIdentifier=NTRNL-00000001
           in: query
         - style: form
           explode: true
@@ -336,12 +336,12 @@ paths:
           name: authorizationRegistryID
           description: >-
             Search parties based on their authorisation registry provider. The
-            ID (EORI) of the authorisation registry must be provided in search
+            ID of the authorisation registry must be provided in search
             parameter and this must be listed as authorisation registry in the
             participant record
           schema:
             type: string
-            example: EU.EORI.NL000000004
+            example: did:ishare:NTRNL-12345678
           in: query
         - style: form
           explode: true
@@ -414,7 +414,7 @@ paths:
           schema:
             type: string
             example: >-
-              SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFMInternational,C=US
+              CN=ABC Trucking,O=ABC Trucking,C=NL,organizationIdentifier=NTRNL-00000001
           in: query
       responses:
         '200':
@@ -509,10 +509,10 @@ paths:
                 client_id:
                   description: >-
                     Used in iSHARE for all client identification for
-                    OAuth/OpenID Connect. MUST contain a valid iSHARE identifier
+                    OAuth/OpenID Connect. MUST contain a valid party identifier
                     of the Service Consumer
                   type: string
-                  example: EU.EORI.NL123456789
+                  example: did:ishare:NTRNL-12345678
                 client_assertion_type:
                   description: >-
                     Used in iSHARE for all client identification for
@@ -950,15 +950,15 @@ components:
         iss:
           description: The id of the issuer of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         sub:
           description: The id of the subject of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         aud:
           description: The id of the audience of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         jti:
           description: JTI value of JWT.
           type: string
@@ -989,9 +989,11 @@ components:
       type: object
       properties:
         party_id:
-          description: Identifier of the party as registered. Should be EORI number.
-          type: string
-          example: EU.EORI.US000000005
+          description: Array of registered party ids of the party.
+          type: array
+          items:
+            type: string
+            example: "did:ishare:NTRNL-12345678"
         party_name:
           description: Name of the party.
           type: string
@@ -1006,7 +1008,7 @@ components:
             Identifier of the party who registered the participant identified by
             the party_id attribute above
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         adherence:
           allOf:
             - $ref: '#/components/schemas/Adherence'
@@ -1052,7 +1054,7 @@ components:
             $ref: '#/components/schemas/Certificate'
           example:
             - subject_name: >-
-                SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFMInternational,C=US
+                CN=ABC Trucking,O=ABC Trucking,C=NL,organizationIdentifier=NTRNL-00000001
               certificate_type: Pkio
               enabled_from: '2023-01-31T00:00:00.000Z'
               x5c: ''
@@ -1085,7 +1087,7 @@ components:
             $ref: '#/components/schemas/auth_registry'
           example:
             - name: iSHARE Test Authorization Registry
-              id: EU.EORI.NL000000004
+              id: did:ishare:NTRNL-12345678
               url: http://ar.isharetest.net/
               dataspace_id: ContaktDS1
               dataspace_name: ContaktDS1
@@ -1107,7 +1109,7 @@ components:
         id:
           description: The Id of the authorisation registry provider
           type: string
-          example: EU.EORI.NL000000004
+          example: did:ishare:NTRNL-12345678
         url:
           description: >-
             The URL pointer specific to the party where authorisations can be
@@ -1217,15 +1219,15 @@ components:
         iss:
           description: The id of the issuer of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         sub:
           description: The id of the subject of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         aud:
           description: The id of the audience of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         jti:
           description: JTI value of the JWT.
           type: string
@@ -1260,15 +1262,15 @@ components:
         iss:
           description: The id of the issuer of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         sub:
           description: The id of the subject of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         aud:
           description: The id of the audience of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         jti:
           description: jti value of JWT.
           type: string
@@ -1371,7 +1373,7 @@ components:
             Used by the iSHARE Satellite to match the certificate identifier.
           type: string
           example: >-
-            SERIALNUMBER=EU.EORI.US000000005,CN=CFMInternational,O=CFMInternational,C=US
+            CN=ABC Trucking,O=ABC Trucking,C=NL,organizationIdentifier=NTRNL-00000001
         certificate_type:
           description: type of certificate
           type: string
@@ -1437,15 +1439,15 @@ components:
         iss:
           description: The id of the issuer of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         sub:
           description: The id of the subject of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         aud:
           description: The id of the audience of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         jti:
           description: JTI value of JWT.
           type: string
@@ -1477,13 +1479,13 @@ components:
       properties:
         iss:
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         sub:
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         aud:
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         jti:
           type: string
           example: 378a47c4-2822-4ca5-a49a-7e5a1cc7ea59
@@ -1651,7 +1653,7 @@ components:
         party_id:
           nullable: true
           description: >-
-            Party ID, also known as EORI number of the party which provides the
+            Party ID, also known as iSHARE-ID of the party which provides the
             capabilities info.
           type: string
         ishare_roles:
@@ -1703,15 +1705,15 @@ components:
         iss:
           description: The id of the issuer of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         sub:
           description: The id of the subject of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         aud:
           description: The id of the audience of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         jti:
           description: JTI value of JWT.
           type: string
@@ -1815,15 +1817,15 @@ components:
         iss:
           description: The id of the issuer of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         sub:
           description: The id of the subject of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         aud:
           description: The id of the audience of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         jti:
           description: jti value of JWT.
           type: string
@@ -2124,15 +2126,15 @@ components:
         iss:
           description: The id of the issuer of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         sub:
           description: The id of the subject of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         aud:
           description: The id of the audience of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:NTRNL-12345678
         jti:
           description: jti value of JWT.
           type: string

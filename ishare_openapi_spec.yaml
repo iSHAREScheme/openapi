@@ -1615,9 +1615,11 @@ components:
             Free text identifier of the service. Must be unique within the capabilities 
             definition, a URI is preferred. For iSHARE defined services, it must contain 
             the predefined identifier (defined as operationId in the iSHARE generic 
-            OpenAPI specification). For other services, it might for instance refer an 
+            OpenAPI specification). For other services, it might for instance refer to an 
             operationId in OpenAPI specifications, or other forms of identifiers in 
-            other specification formats.
+            other specification formats. If an iSHARE defined service is being extended, 
+            for example for specific purposes in a data space, then the identifier of the
+            extended service must be used.
           type: string
           example: /capabilities
         title:

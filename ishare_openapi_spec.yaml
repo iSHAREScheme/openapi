@@ -1578,7 +1578,7 @@ components:
       title: CapabilitiesInfo
       type: object
       properties:
-        public_services:
+        publicServices:
           description: >-
             When no Authorization header is presented when invoking the 
             /capabilities endpoint, only public_services are returned.
@@ -1587,7 +1587,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Service'
-        restricted_services:
+        restrictedServices:
           description: >-
             When an Authorization header is presented when invoking the
             /capabilities endpoint, in addition to the public services, 

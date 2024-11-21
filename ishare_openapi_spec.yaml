@@ -2274,15 +2274,15 @@ components:
         iss:
           description: The id of the issuer of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:EU.NL.NTRNL-10000004
         sub:
           description: The id of the subject of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:EU.NL.NTRNL-10000004
         aud:
           description: The id of the audience of this JWT.
           type: string
-          example: EU.EORI.NL123456789
+          example: did:ishare:EU.NL.NTRNL-10000001
         jti:
           description: jti value of JWT.
           type: string

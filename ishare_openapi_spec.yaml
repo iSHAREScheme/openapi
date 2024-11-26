@@ -1594,7 +1594,7 @@ components:
             restricted services may be returned, based on the information 
             provided on the participant by the Authorization  header. This 
             could for example be implemented to expose services only to 
-            participants of a dataspaces. Private_services themselves may 
+            participants of a dataspaces. restrictedServices themselves may 
             (and usually will) require authentication to invoke them.
           type: array
           items:

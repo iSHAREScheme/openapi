@@ -1711,14 +1711,14 @@ components:
                 not related to the version numbering of the framework or of a dataspace.
               type: string
               example: "1.0"
-            methods:
-              description: >-
-                Array of operations supported by the endpoint. It could be HTTP methods 
-                when the endpoint is HTTP based, for example: GET, POST, etc.
-              type: array
-              items:
-                type: string
-              example: ["GET", "POST"]
+        methods:
+          description: >-
+            Array of operations supported by the endpoint. It could be HTTP methods 
+            when the endpoint is HTTP based, for example: GET, POST, etc.
+          type: array
+          items:
+            type: string
+          example: ["GET", "POST"]
     VersionStatus:
       title: VersionStatus
       description: Status of the version. Available values are active and planned.

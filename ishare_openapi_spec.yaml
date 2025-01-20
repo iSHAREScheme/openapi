@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: "2.0"
+  version: "2.1"
   title: generic iSHARE API specifications
   description: >-
     These are the generic API specifications of iSHARE Scheme v2.1.
@@ -818,6 +818,28 @@ paths:
             Provider needs to verify state parameter and make use of code
             parameter in order to retrieve the access token. There are no
             specific response requirements for this endpoint.
+  /delegationPolicy:
+    post:
+      tags:
+        - Authorisation Registry
+      security:
+        - BearerAuth: []
+      description: >-
+        The Delegation policy request endpoint is an API endpoint that receives 
+        policy creation requests. The POST body accepts a JWT token: the Policy 
+        Creation Request Token.
+      operationId: /delegationPolicy
+      summary: Request creation of a delegation policy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DelegationPolicyCreationRequest'
+        required: true
+      responses:
+        '200':
+          description: >-
+            After evaluating Authorisation Rules, the requested policy has been created.
 components:
   schemas:
     SchemeRole:
@@ -1008,7 +1030,7 @@ components:
           example:
             - subject_name: >-
                 CN=Test Service Consumer,organizationIdentifier=NTRNL-10000001,O=Test Service Consumer,C=NL
-              certificate_type: Pkio
+              certificate_type: eSEAL
               enabled_from: '2023-01-31T00:00:00.000Z'
               x5c: ''
               x5t#s256: ''
@@ -1315,7 +1337,7 @@ components:
         certificate_type:
           description: type of certificate
           type: string
-          example: eIDAS eSEAL
+          example: eSEAL
         enabled_from:
           format: date-time
           description: UTC timestamp which states since when certificate is valid.
@@ -1982,6 +2004,15 @@ components:
           type: string
         expires_in:
           type: number
+    DelegationPolicyCreationRequest:
+      title: DelegationPolicyCreationRequest
+      required:
+        - delegationPolicyRequestToken
+      type: object
+      properties:
+        delegationPolicyRequestToken:
+          type: string
+          format: application/jwt
     EpCreationRequest:
       title: ep_creation_request
       required:
@@ -2258,6 +2289,78 @@ components:
         userinfo_token:
           type: string
           format: application/jwt
+    delegationPolicyRequest:
+      description: >-
+        The model used for requesting delegation policy creation.
+      required:
+        - notBefore
+        - notAfter
+        - policyRequestor
+        - policyIssuer
+        - target
+        - policySets
+      type: object
+      properties:
+        notBefore:
+          type: integer
+        notOnOrAfter:
+          type: integer
+        policyRequestor:
+          type: string
+        policyIssuer:
+          type: string
+        target:
+          required:
+            - accessSubject
+          type: object
+          properties:
+            accessSubject:
+              type: string
+        policySets:
+          type: array
+          items:
+            $ref: '#/components/schemas/PolicySet'
+    jwtPayloadDelegationPolicyRequestToken:
+      title: jwtPayloadDelegationPolicyRequestToken
+      required:
+        - iss
+        - sub
+        - aud
+        - jti
+        - exp
+        - iat
+        - dataspaces_info
+      type: object
+      properties:
+        iss:
+          description: The id of the issuer of this JWT.
+          type: string
+          example: did:ishare:EU.NL.NTRNL-10000004
+        sub:
+          description: The id of the subject of this JWT.
+          type: string
+          example: did:ishare:EU.NL.NTRNL-10000004
+        aud:
+          description: The id of the audience of this JWT.
+          type: string
+          example: did:ishare:EU.NL.NTRNL-10000001
+        jti:
+          description: jti value of JWT.
+          type: string
+          example: 378a47c4-2822-4ca5-a49a-7e5a1cc7ea59
+        exp:
+          format: int32
+          description: UNIX timestamp in seconds until when this JWT is valid.
+          type: integer
+          example: 1504684475
+        iat:
+          format: int32
+          description: UNIX timestamp in seconds when this JWT was issued.
+          type: integer
+          example: 1504683475
+        delegationPolicyRequest:
+          allOf:
+            - $ref: '#/components/schemas/delegationPolicyRequest'
   parameters:
     delegation-evidence:
       deprecated: false

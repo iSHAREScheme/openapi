@@ -599,10 +599,10 @@ paths:
           description: OK
       operationId: /service
       summary: >-
-        Abstract endpoint for Service Provider (parameters apply to other HTTP
+        Example endpoint for Service Provider (parameters apply to other HTTP
         methods as well)
       description: >-
-        This is an abstract service (business specific) endpoint to show how any
+        This is an example service (business specific) endpoint to show how any
         Service Provider that adheres to iSHARE MUST apply iSHARE conformant
         OAuth to every iSHARE enabled service.
 

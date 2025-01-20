@@ -280,7 +280,7 @@ paths:
           explode: true
           name: subjectName
           description: >-
-            Search parties based on the subject name of their PKI (x509)
+            Search parties based on the subject name of their eSeal
             certificates. Usually to find a party who is requesting tokens
           schema:
             type: string
@@ -411,7 +411,7 @@ paths:
           explode: true
           name: certificate_subject_name
           description: >-
-            Search parties based on the subject name of their PKI (x509)
+            Search parties based on the subject name of their eSeal
             certificates. Usually to find a party who is requesting tokens
           schema:
             type: string
@@ -1022,7 +1022,7 @@ components:
               complaiancy_verified: 'yes'
         certificates:
           description: >-
-            Object which contains the details of the PKI/x509 certificates of
+            Object which contains the details of the eSeal certificates of
             the party. Either certificates or SPOR must be present.
           type: array
           items:
@@ -1316,7 +1316,7 @@ components:
     Certificate:
       title: Certificate
       description: >-
-        Object which contains the details of the PKI/x509 certificates of the
+        Object which contains the details of the eSeal certificates of the
         party.
       required:
         - subject_name

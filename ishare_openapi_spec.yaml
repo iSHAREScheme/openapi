@@ -3,15 +3,13 @@ info:
   version: "2.0"
   title: generic iSHARE API specifications
   description: >-
-    These are the generic API specifications of iSHARE Scheme v2.0.
-
+    These are the generic API specifications of iSHARE Scheme v2.1.
 
     These specifications describe the standardised identification,
     authentication and authorization mechanisms to be implemented by iSHARE
     participants. Depending on the role your organisation fulfils within the
     iSHARE Scheme, you need to provide an iSHARE API according to the
     specifications below.
-
 
     It is essential to understand that this page describes the generic API
     specifications for participants. The endpoints described are not actual
@@ -24,6 +22,7 @@ info:
     url: http://dev.ishare.eu
     email: support@iSHARE.eu
 servers:
+  # Added by API Auto Mocking Plugin
   - description: iSHARE test network base domain
     url: https://isharetest.net
 tags:
@@ -864,60 +863,6 @@ components:
             established.
           type: string
           example: '2024-02-01T00:00:00.000Z'
-    FeatureObject:
-      title: FeatureObject
-      required:
-        - id
-        - feature
-        - description
-        - url
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the feature.
-          type: string
-          example: A51D413F-B3CC-477D-96C4-E37A9003BFE3
-        feature:
-          description: Friendly name of the feature.
-          type: string
-          example: capabilities
-        description:
-          description: Short description about the feature.
-          type: string
-          example: Retrieves iSHARE capabilities
-        url:
-          description: URL to the feature.
-          type: string
-          example: https://www.example.com/capabilities
-        token_endpoint:
-          nullable: true
-          description: >-
-            URL where access token for the feature could be retrieved. This is
-            optional because if feature is access token, it is not needed to
-            mention it twice.
-          type: string
-          example: https://www.example.com/connect/token
-    SupportedFeature:
-      title: SupportedFeature
-      type: object
-      properties:
-        public:
-          nullable: true
-          description: Contains supported public features.
-          type: array
-          items:
-            $ref: '#/components/schemas/FeatureObject'
-        restricted:
-          nullable: true
-          description: >-
-            Contains supported restricted features. The structure and parameters
-            are exactly the same as defined in public parameter above. It should
-            only be shown to the parties which provided a valid access token. If
-            an access token was not provided or restricted endpoints does not
-            exist, this value can be not returned, empty or null.
-          type: array
-          items:
-            $ref: '#/components/schemas/FeatureObject'
     jwt_header:
       title: jwt_header
       required:
@@ -1147,21 +1092,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Party'
-    SupportedVersion:
-      title: SupportedVersion
-      description: Contains information about supported version endpoints for each version.
-      type: object
-      properties:
-        version:
-          nullable: true
-          description: Version of the system which is under support.
-          type: string
-        supported_features:
-          nullable: true
-          description: Contins a list of supported features for different access levels.
-          type: array
-          items:
-            $ref: '#/components/schemas/SupportedFeature'
     CertificateAuthority:
       title: CertificateAuthority
       type: object
@@ -1660,27 +1590,147 @@ components:
       title: CapabilitiesInfo
       type: object
       properties:
-        party_id:
-          nullable: true
+        publicServices:
           description: >-
-            Party ID of the party which provides the capabilities info.
+            When no Authorization header is presented when invoking the 
+            /capabilities endpoint, only public_services are returned.
+            Public_services themselves may (and usually will) require 
+            authentication to invoke them.
+          type: array
+          items:
+            $ref: '#/components/schemas/Service'
+        restrictedServices:
+          description: >-
+            When an Authorization header is presented when invoking the
+            /capabilities endpoint, in addition to the public services, 
+            restricted services may be returned, based on the information 
+            provided on the participant by the Authorization  header. This 
+            could for example be implemented to expose services only to 
+            participants of a dataspaces. restrictedServices themselves may 
+            (and usually will) require authentication to invoke them.
+          type: array
+          items:
+            $ref: '#/components/schemas/Service'
+    Service:
+      title: Service
+      type: object
+      required:
+        - identifier
+        - title
+        - endpointURL
+        - status
+        - serviceType
+        - version
+      properties:
+        identifier: 
+          description: >-
+            Free text identifier of the service. Must be unique within the capabilities 
+            definition, a URI is preferred. For iSHARE defined services, it must contain 
+            the predefined identifier (defined as operationId in the iSHARE generic 
+            OpenAPI specification). For other services, it might for instance refer to an 
+            operationId in OpenAPI specifications, or other forms of identifiers in 
+            other specification formats. If an iSHARE defined service is being extended, 
+            for example for specific purposes in a data space, then the identifier of the
+            extended service must be used.
           type: string
-        ishare_roles:
-          nullable: true
+          example: /capabilities
+        title:
           description: >-
-            Contains array of role objects that provide the information about
-            the roles of the party in iSHARE.
+            Free text human readable name of the service.
+          type: string
+          example: Capabilities
+        description:
+          description: >-
+            Free text description of the service.
+          type: string
+          example: Retrieves iSHARE capabilities
+        descriptionURL: 
+          description: >-
+            URL that points to the definition of the service. Could be for instance a URL 
+            to an OpenAPI description, a WSDL document, a SPARQL Service Description, a 
+            DCAT Data Catalog, etc.
+          type: string
+          example: https://api.swaggerhub.com/apis/iSHARE/iSHARE_Scheme_Specification/2.0
+          format: uri
+        endpointURL:
+          description: >-
+            URL of the endpoint, including the correct host. Depending on the 
+            setup, this information could also already be included in the 
+            description that is provided via the description_url.
+          type: string
+          example: https://api.example.com/someservice
+          format: uri
+        tokenEndpoint:
+          description: >-
+            URL where an access token for the feature can be retrieved. The tokenEndpoint
+            is optional, because if for the access token service it is not needed to 
+            mention it twice. Also the tokenEndpoint could be omitted for public services
+            that do not require authentication/authorisation.
+          type: string
+          example: https://api.example.com/connect/token
+          format: uri
+        status:
+          description: >-
+            Provides information on the status of the service. Must be either
+            "deprecated" or "active".
+          type: string
+          example: active
+          x-enum-elements:
+            - name: deprecated
+            - name: active
+        serviceType:
+          description: >-
+            Can be either "framework-defined", "dataspace-defined" or "self-defined". 
+            A framework-defined service is required from a framework perspective 
+            (including for instance the /capabilities endpoint), a dataspace-defined 
+            service is required from a dataspace perspective and a self-defined 
+            service is define by the provider of the service (actual data services 
+            are part of this category).
+          type: string
+          example: active
+          x-enum-elements:
+            - name: framework-defined
+            - name: dataspace-defined
+            - name: self-defined
+        version:
+          title: version
+          type: object
+          required:
+            - capabilityVersion
+          properties:
+            compliesWithFrameworkVersions:
+              description: >-
+                Array of framework versions that the service complies with, at a 
+                framework level. If not included, the service is assumed to be compliant 
+                with the latest version. The versions can be retrieved using the 
+                /versions endpoint: https://dev.ishare.eu/satellite/versions.html. 
+                Required for framework-defined services.
+              type: array
+              items:
+                type: string
+              example: ["2.0.1", "2.1"]
+            compliesWithDataspaceVersions:
+              description: >-
+                Array of dataspace  versions that the service complies with, at a 
+                dataspace level.
+              type: array
+              items:
+                type: string
+              example: ["1.0", "1.1"]
+            capabilityVersion:
+              description: >-
+                Version of the provided service. The version numbering of services is 
+                not related to the version numbering of the framework or of a dataspace.
+              type: string
+              example: "1.0"
+        methods:
+          description: >-
+            Array of operations supported by the endpoint. It could be HTTP methods 
+            when the endpoint is HTTP based, for example: GET, POST, etc.
           type: array
           items:
-            $ref: '#/components/schemas/SchemeRole'
-        supported_versions:
-          nullable: true
-          description: >-
-            Contains information about supported version endpoints for each
-            version.
-          type: array
-          items:
-            $ref: '#/components/schemas/SupportedVersion'
+            type: string
+          example: ["GET", "POST"]
     VersionStatus:
       title: VersionStatus
       description: Status of the version. Available values are active and planned.
@@ -1773,7 +1823,7 @@ components:
         capabilities_token:
           type: string
           format: application/jwt
-          example: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsIng1YyI6WyJNSUlHa0RDQ0JIaWdBd0lCQWdJVUpYckNOdm56eTV5alU5V0ErTmprQzNPekdpSXdEUVlKS29aSWh2Y05BUUVMQlFBd1hURWVNQndHQTFVRUF3d1ZaVWxFUVZObFUwVkJURTlKUkY5SmMzTkRRVWMwTVJrd0Z3WURWUVJoRXhCT1ZGSk9UQzFwVTBoQlVrVlVSVk5VTVJNd0VRWURWUVFLRXdwcFUwaEJVa1ZVWlhOME1Rc3dDUVlEVlFRR0V3SllXREFlRncweU5ERXhNRFl4TkRNeU1URmFGdzB5TnpFeE1EWXhORE15TVRCYU1HNHhDekFKQmdOVkJBWVRBazVNTVNJd0lBWURWUVFLREJsVVpYTjBJRkJoY25ScFkybHdZVzUwSUZKbFoybHpkSEo1TVNJd0lBWURWUVFEREJsVVpYTjBJRkJoY25ScFkybHdZVzUwSUZKbFoybHpkSEo1TVJjd0ZRWURWUVJoREE1T1ZGSk9UQzB4TURBd01EQXdNRENDQVNJd0RRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFMVHNBRWVBVWs5NUI2bHZkZ1hPcjRoekUxTjJRL2E1UmUwcmsvZEJiRmZCTVBEMWN0ekVMeHJ4a0hLSEFKWjBNZmxjOWdPMitYMjdIVkRoUHF3SkZ1ZWg0VTlpend5dnF6czFWRys5U1Fzbnd6V1p5Q1RQNDBsWGx2cUtHMWtyVWlmRjJsRjNMSmVRRml3UmRSd2txZzRPM2dSU2RvTmdFU0hjOVJReVZTMHNPQUhLVlh4em1rS0NON2FTcGE3bVBVQ290SWVSRmIydFV2R1hiNWxOUUJoejdPd01jQW1NVjU4N3V6VWxuZFZLc0EwbU40UGtySWZQWjNWVmVZOHF1clByTHNPWFBYbVJyRjArWFZmcHoyeGJDMDc2M1M1bHI2VWlrNmJhWE9kQ2NWczd0MWIvNzhaTWV0NEMzVzFuS0dFYmVtcGxidjBoYXpMdUdlbExYV2tDQXdFQUFhT0NBalV3Z2dJeE1BNEdBMVVkRHdFQi93UUVBd0lHUURBTUJnTlZIUk1CQWY4RUFqQUFNQjhHQTFVZEl3UVlNQmFBRkxNYVQwSkE2ZGg0bld2Ly9DU3dFTEUwUFBDSk1GY0dDQ3NHQVFVRkJ3RUJCRXN3U1RCSEJnZ3JCZ0VGQlFjd0FZWTdhSFIwY0hNNkx5OWpZVGN1YVhOb1lYSmxkR1Z6ZEM1dVpYUTZPRFEwTWk5bGFtSmpZUzl3ZFdKc2FXTjNaV0l2YzNSaGRIVnpMMjlqYzNBd0VBWURWUjBnQkFrd0J6QUZCZ05WSFNBd0h3WURWUjBsQkJnd0ZnWUlLd1lCQlFVSEF3UUdDaXNHQVFRQmdqY0tBd3d3V3dZSUt3WUJCUVVIQVFNRVR6Qk5NQk1HQmdRQWprWUJCakFKQmdjRUFJNUdBUVlDTURZR0NDc0dBUVVGQndFRERDcFVhR2x6SUdseklIUmxjM1FnWlhObFlXd2dZMlZ5ZEdsbWFXTmhkR1VnWm05eUlIUmxjM1JwYm1jd0hnWUZaNEVNQXdFRUZUQVRFd05PVkZJVEFrNU1EQWd4TURBd01EQXdNRENCeHdZRFZSMGZCSUcvTUlHOE1JRzVvSUcyb0lHemhvR3dhSFIwY0hNNkx5OWpZVGN1YVhOb1lYSmxkR1Z6ZEM1dVpYUTZPRFEwTWk5bGFtSmpZUzl3ZFdKc2FXTjNaV0l2ZDJWaVpHbHpkQzlqWlhKMFpHbHpkRDlqYldROVkzSnNKbWx6YzNWbGNqMURUaVV6UkdWSlJFRlRaVk5GUVV4UFNVUmZTWE56UTBGSE5DVXlRMjl5WjJGdWFYcGhkR2x2Ymtsa1pXNTBhV1pwWlhJbE0wUk9WRkpPVEMxcFUwaEJVa1ZVUlZOVUpUSkRUeVV6UkdsVFNFRlNSVlJsYzNRbE1rTkRKVE5FV0Znd0hRWURWUjBPQkJZRUZGUDZERGMvK2Qya2ZJcm1uSkF1VDc0ODEzY2JNQTBHQ1NxR1NJYjNEUUVCQ3dVQUE0SUNBUUJIcDVXWGk4Vk5vRDBNYzhicnNmS213dXVRbjVhUEdQWWgrejVQY1FXelI0MEh2TzFGZTl2b3laTlp1Vk5xcENFSmNJMDRPZUJlWm9uL2x6WW9URkdTTENTUHBaeTkyaHFmaGE0SnJMa0p2RjAwaTdvSU81SFNjay9KUXhqdWFHdW1xMHVRMDJhQTZtRjNXYjlaV2tyaElvWFJVcFNpZ0c0a01Kc0MyclZkZlhpejZVUGRqdktLNWszYThCSXpmZkc3MGdKRFBqMCtzSXpjcHhacmUrTVBFSW56QkRtUWdrYmtsL1JYNFJEaG5TMWovNEI2VHNoYjJSZW1BM3E2YkFZb045SWhLbGhGdU1kOXovTUlwbkRwU3dIaElyaG5tUlpVLzRDQkVwdGF0NE1VRXRScWkyUUU1SDhQRU1MbFQvNTZwYW5uaW15RnlRTlNJeGJUcHVjSlEzeUkzUElUb0xLZ3pOY2dUVGlpaGFla3R2dHoydWorVWtkbjAwM2ZhekYzTlF2VUU3Y3g5RjdUV0JEbWs0aEdkQS9Qb2ZWQUFUeXAwVHU3a1dMZ3ZoblNNVEc4eWxpZG1ZY3FSVE1GaVNpWGhid0l1QnU4NXl5QWVXSkpvcGpPOUlBVUNxZ3FtTlNCS05WbWhFekViazhtMW9yYkRVZ2grWkFHU2FqZyt3U0FjMWduT2RqMWlKay81TDFDTHlWNmlVYlMvejY1Z2kzN3dTeW1hc2wvcE9nOUpCeGJGU3dpUER1VTY1NGh2WDFpYWpDL0gyS3JER1RXaTVMaGJ6RFRjd0JUbWhjcTZHOVpOeG8rOVlvTmxkdWVsWHAwd1ZJRzJaOU9FZ1kvcUZ2bE5xL1R6RzBSVnVvZ3Ezd2dSbU5sZ3hQU3YyQjlUYTNFREdUbGs0TlZtQT09IiwiTUlJRjJqQ0NBOEtnQXdJQkFnSVVQRzMrVEFueFZPQmNlOU5hUHQ5cFRBZ201UjR3RFFZSktvWklodmNOQVFFTEJRQXdRakVlTUJ3R0ExVUVBd3dWWlVsRVFWTmxVMFZCVEU5SlJGOVRkV0pEUVVjek1STXdFUVlEVlFRS0V3cHBVMGhCVWtWVVpYTjBNUXN3Q1FZRFZRUUdFd0pZV0RBZUZ3MHlNekE0TWpVd09UQXhNekphRncwME9EQTRNalV3T1RBd01EVmFNRjB4SGpBY0JnTlZCQU1NRldWSlJFRlRaVk5GUVV4UFNVUmZTWE56UTBGSE5ERVpNQmNHQTFVRVlSTVFUbFJTVGt3dGFWTklRVkpGVkVWVFZERVRNQkVHQTFVRUNoTUthVk5JUVZKRlZHVnpkREVMTUFrR0ExVUVCaE1DV0Znd2dnSWlNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUNEd0F3Z2dJS0FvSUNBUURhblVnTTEvUFF5WE5UWCtVT0xHclpqUzhIYVRXUi9QNHhEOFNNQ1J4T1hIS3pITFFxRVFPdUhEL3crcng5L2JFd3pINHdWZkowbTYvcjU2S09nMHdMVWxWd095aWtPWEdvSVREMnUrVWk5dDI0dFlJa3g4empMRzdWSFZjdzRkWE90OTJzdktZMUx5YnZscHJvV3pUSGxSd29JTzFZUTRoTytyeWJzdy9LRURFWFVia293amxIQVBjd25zT1c2NDM2N0VOK2V6VDFzUzhkekZJeG1HOHFDMkxyTTJzWEpXcXE1dkplRS84NlRmWjJOTU8rQ1V4a2pqN3VQZ2JXMlYvTU9VaFl5QXRHQWp6ZC9Ld09yTE1STVlhWE9JajYxbThSNzFuaC9MVjluOGRuajB3VFFPTlRIaHVNN21kWlF4aHFPZGtMMmNrU3JCV2kzYXRFVlQxT2hCUlg0Rm1taElobVNXdUN0Z3lLaURDSW90eUdBc1gybzY4MTdmZWU0UmR0d2Z3OVE0b04zTkFodG9kNjBpT0FXQXBWdCtCVDV0dmRnR09ZV1BjYk1SNXBHemJwMzhkR1V5dXdZWlY0TEFuSUdTbTV5YXVjTkUyRTJ4clFDYkVlWm00UlBzeDVKbGVXemlways0MmQ3dnF2V0Q4OElRY1ErYlpNMlg0ckpCWk5zMTY2Q2x4K202SG1LeEtBTGViVXRqc3pzZ3lIOGNxMTBkK2s0QW84b0NhT1lqdjJJYUViTWQrZlYvVWY4a1BrelR0S2x0dGRxaWl4b0lxeWNYTUVnQmFTZ2t1YjdYb1E2SzI2dFJQSjB3NVFrdXVoM01LdEdFV2ZXN0VFR21wbkNxak92Ni9yQU1KaU1XeWgxSWdMZ05CVVBQN3phVlBwREF0Qzg4T1NKUUlEQVFBQm80R3NNSUdwTUJJR0ExVWRFd0VCL3dRSU1BWUJBZjhDQVFFd0h3WURWUjBqQkJnd0ZvQVU0dWJYMHA2RFZqTjlES3RPV1dNWUFzK0h4ZFF3R0FZRFZSMGdCQkV3RHpBRkJnTlZIU0F3QmdZRVZSMGdBREFwQmdOVkhTVUVJakFnQmdnckJnRUZCUWNEQWdZSUt3WUJCUVVIQXdRR0Npc0dBUVFCZ2pjS0F3d3dIUVlEVlIwT0JCWUVGTE1hVDBKQTZkaDRuV3YvL0NTd0VMRTBQUENKTUE0R0ExVWREd0VCL3dRRUF3SUJCakFOQmdrcWhraUc5dzBCQVFzRkFBT0NBZ0VBWnY1R3VreDBQRXZWUkVJdDhNVGFQZkNINGF3eWlpWXlpMTdoNlI1TExrMXJlcndRc1NTU0hmVnFmdGR3UkYwb2NMcDJQWEpoZTA3NXFWNDA2QzA0Q2phbU5rM2V6OVppTkhDTmpQdGZpZDZvT3hxejFYazhYUGpOWUVsYkFGbVA3ZUtsLzQ0MXZaaEd1ay9SaFhHTnhRYnRvMFExNmc4SVJjR0R2V2dOaHRydEIxRzJ4U210QjFTMnVVcFNhaVpWTk9ya2R6VGhpRUpzZVVSQm9YeFVYSXFwTHlQVFJsNk1NZ1ZhTEdSWVJjM3ZZaWo0QjdNMmhCTjcvY2puR0xzTVZ0Z2JPdjZDVjIxZzJTWG93YmdPcXpCeUg1MVVUUjZPYkhpR2owa1NDQUxHMTRJUVBrelFQaVNwanUrKzlNMmpBalBNM280MjFaT1VETVAyNDZDc3FQWHJUQWJQWEpWVVIvZ2k0dTUza216QzIxMGp2VnE5aEh3ZWx4UU9UUEZobE02RTFDaDRKYjRQUVJMS0RQRmwrNU5XNEZ5MkpBRGp5dXB5VkhuY2RMRXVQeTBQZ0NMMllvMTQ3SFNwUGo0dTdqYzFSbUhVN05PMTJFVjJaQ01mRmxSd2RHdjZpZjhxTzdzLzZscFpKanBQdExFT2JBNXRENGFoYythUE5BaTlXQ2swcGVSbTFLRTVWR0RXS0ZOU05BaUxKTnpQN20yUTZ5OGZPeTM4Y05nRkJoR09GL0tnRUlzVDEwVis1SzVvK3lsVlZ0UFZlUlJFTkV2S085RUxremUwSUhnc1RCLzZjd09pajRweE05SnZhdWowNkdnbGhJaGlJQTZxMGlEVXFCMU1VUjBIemlZOUJzbldZOWtSOGh3VjNPVytuc216dFF3R1ZFdzJralU9IiwiTUlJRmpqQ0NBM2FnQXdJQkFnSVVGajkvM2pHT1JodElwWjk4T0xSdFJIczBBWXN3RFFZSktvWklodmNOQVFFTEJRQXdRVEVkTUJzR0ExVUVBd3dVWlVsRVFWTmxVMFZCVEU5SlJGOVNiMjkwUnpJeEV6QVJCZ05WQkFvVENtbFRTRUZTUlZSbGMzUXhDekFKQmdOVkJBWVRBbGhZTUI0WERUSXpNRGd5TlRBNU1EQTBORm9YRFRRNE1EZ3lOVEE1TURBd05Wb3dRakVlTUJ3R0ExVUVBd3dWWlVsRVFWTmxVMFZCVEU5SlJGOVRkV0pEUVVjek1STXdFUVlEVlFRS0V3cHBVMGhCVWtWVVpYTjBNUXN3Q1FZRFZRUUdFd0pZV0RDQ0FpSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnSVBBRENDQWdvQ2dnSUJBTDduemt5b0ZYV2cxZ2hkRzZmbnV6dXZBZE1Xc20vSSttWDNEYnozSS9LeXFMZFd0N1hHM09XVlNuaG9zQUQyVzJTWG5sR1hxeHllMGhQdEVna1FJZGVsN0ZuRm9zV1dyc0VPcmF0Z1hsbk00TldwWURLTVdFVllybzdoekhnQ1oxMjZaUFFVTGxzNTJOY3ZwUk04UzNkWmsrWEsxa2YzVmVTMEoyaFVTRkVBWkhMeVhDWGtoVG5VSTdxbzF1cjFUbURXWXNOUXd4REdPdTdDUXlaWWRLSXdLcUk5ZUdzUkxnTTZQUWxnM3ZaQ3JvcE9vZE03bG9UdWlyQ2wzVUt3NEhyR2syY09pQWY0SWQvL2VhVkNhZndraktzSlRRdUFhaHVSejRxTXNIWUEza0RReiswK2hnblI3NHIraUxyKzhscjA0NGdsbmFXSVd2ckVHY2lSUitQZWN0ZnJMT1FRSVc3aGExM2R6V296a1QwYWduVDFMay9DR3JnTlhWcWhvc0dDMHJ1QVFQSTZEY1BOeTJJTk05Smd0Q21Cc1NqTU0xODVGSUJYNEN5MTdtNzNoOXJLalhaTXhiNlR4WDdDSVp5ZXNnQVMwYkJSYjZ4SXBLc1pybHJqRWF6c2pDMlZIUlJXT01KV1lxY1hMRDVaTnpHTVpVcjZUdDJ5Q1VBdGFtZWNEQVRLTjYvR2JzeGUwdEFCTjBwazByeDVpYys0VFhkQnJvTjlPQVpjaEg0dEpDc09DS29uQ3pBcFB4VlRoRE5NeHNvb3lGcTlEbWdYaHlFVU9Pb2VTK0ZyNEZnSCtqU0FObS9sMTc4Smg5ZXBmWFE5Z0UvNmFxUHhZak5TQmdTNjBTMUVWcUNweHcyclQxbVVZZUdmd2liVm01M2l4R3B0UjhrdGU3MG5BZ01CQUFHamZUQjdNQThHQTFVZEV3RUIvd1FGTUFNQkFmOHdId1lEVlIwakJCZ3dGb0FVMkx1Yk5TMWJQKy9oYTh2TURNK2lMcnBwZW93d0dBWURWUjBnQkJFd0R6QUZCZ05WSFNBd0JnWUVWUjBnQURBZEJnTlZIUTRFRmdRVTR1YlgwcDZEVmpOOURLdE9XV01ZQXMrSHhkUXdEZ1lEVlIwUEFRSC9CQVFEQWdFR01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQ0FRQjhqcVlVdzdUditXNFpIMDZQcmFGNnpmZEN4VDAzRGhSQ2h3NFovUW0wWFZTMmdSeVJ3Y01wdFFGRVJoUE5PQTIyMXU5THFveloxYUszQjM1d2tjR0QvZEZKZ0pDSkI5NlNNdHRRbDJIcC9FaVF6OVBGRjAyZEJTcnVYaElhcmFQYk0rTklHZG15TjJaeXdHR1hJMWFVN0pEM1hHMjlTaDJBQWRPa3Y4ZEk2Z0VnenQvREhTSUliYWtiYUxkRUljN1dCOTVHVUhjSG5OajU4VHpUU3lWZkJtdGIzdkJLOUpHMElvNk5BUFdRWXgyVlA4K2ZJeWxqYTJkMTI4aGdoMGRzRHJYRkFNKzlBWDhoYWU1dnZ4Vmk4VFdzL3oyaW5nK2sraW1tdFNOZnp6S01pTzdyNXdKQWt5and0VUJsQlN0S0lBNlplcjIycG1TVFpaZXVjSGRFVGhhYmNXUWlkVlptTVAzSWY2aXg1VWV5WDhWNk9BdzBnc0kzSVViOTFRNzZkNHNMV2J6b0dOT05BWUZDMUl5ejB4V2o0N1pkNlA3WjJHZmgxVmlJYk14VmlGRGxObWJFWmZscEVTODdLL3loQlVRL3RuQ05HUW9TZHRzdXl1V2czTmZXYnlKb05aemxVOTZKV3hjcVNhWGt6c2U5ajh3YWhheUtOTTZTV0tTWTFaMDVoOEpTY09DbUZCNUY4VjNiZDVuUC91S2phN0g4TzRHT0FBUE0zT3RHK2VxMzd4Vy94TjBvQXNqYnZ0NG9qblViSnMya2lBeEVkd1h4MEs3bWNQZVM3eldtVnQ4aDRSZGNEbS9QR1REYTltOE9xaFF1Y2s4MFFudXhJVVdWcjdHV2FkaDFMeS90bDArYnZta2NuTzJ5YlJKK2dicVJFSERUZTBzeHN3PT0iLCJNSUlGY3pDQ0ExdWdBd0lCQWdJVUN2ZlN2UWVyakZEbU0yTHZtam9URE9JbkxBd3dEUVlKS29aSWh2Y05BUUVMQlFBd1FURWRNQnNHQTFVRUF3d1VaVWxFUVZObFUwVkJURTlKUkY5U2IyOTBSekl4RXpBUkJnTlZCQW9UQ21sVFNFRlNSVlJsYzNReEN6QUpCZ05WQkFZVEFsaFlNQjRYRFRJek1EZ3lOVEE1TURBd05sb1hEVFE0TURneU5UQTVNREF3TlZvd1FURWRNQnNHQTFVRUF3d1VaVWxFUVZObFUwVkJURTlKUkY5U2IyOTBSekl4RXpBUkJnTlZCQW9UQ21sVFNFRlNSVlJsYzNReEN6QUpCZ05WQkFZVEFsaFlNSUlDSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DQWc4QU1JSUNDZ0tDQWdFQXhWTUtJOVJNaG5PU0EyTG9yZ0VDM1lETmQyaXRuNzJMT2RmUlJVdTQ1Zkc3MEllditFNGtScnpKMWsyM1dYSDVzSFRiY3NscEVUZUFabmowL3hLQllkRUx1d2U2SFg4a0l3ZDFzNldHbFpjMGw3a2kxZm1qNEhxU3N0R0ovQktHajFhNzIzNld3UEpFV0VIcWZ4OVFNRWV1SktsVVNWRkZ5RTRqTXNmWXA4N2lmSXB1d0U4b0xPdzR5a0RET1A1MlRkMDZ2SENJWXJxREJydnhGZEF1RW5GeE54bFBYUkU0Z0xzeWdnNjJIT3hPdUdtaFdmc3k2VGNjSXA1WElPZGoyQ3plb1hKODJtNS9pbUJQSnZrZWZucmpFUVh6aVNFMm1pMklCRHRHUC9Bd0ZXSTdXcHNFeURYV0ltTVNSMFQzQ3VEbWtlUTE0cE5tY3FNcC9icVgzaTFhZXRhZEZUV3N1aGwwbkgyaVJxS1pESnhabFNjdTk5dG9xNUdyZGNGVWN4R1JReWwrc0ZoVWgzWGNCV0pWN1kyd25GTDJ0WTd0aHRROFpQbXpUTzhrUEtDYkVsNVU2Z0NTSWtwUlBOWkJQRzRkVDBxdSs4QmQ3MVB1N25BeTFpQjRVNnlzMzRjRmxPbEpwR00wRkdyMzVMZWZiUFI4Ymd6Nk05WE5qUmJnTURRY1hETW5maURKN0U4MW9WQnBDWE45eWRIaTFibGhha3VFQmFvYTlNL2themlwR1BtQXV4cldCTW1wMnEwd3pRcDlHUzJlOGtlSklEd0p1eXpFTGFSWkM0eWpWc1ZaUU1LLy9EKzRKM2JvVTVkckNtbW02QzFyd05SZlNadUZHTmNJWURaZUh0ZUdvQ0Y0RUE1amNnZEZhSVlyRGVqNlZBYWI0MnZONUxVQ0F3RUFBYU5qTUdFd0R3WURWUjBUQVFIL0JBVXdBd0VCL3pBZkJnTlZIU01FR0RBV2dCVFl1NXMxTFZzLzcrRnJ5OHdNejZJdXVtbDZqREFkQmdOVkhRNEVGZ1FVMkx1Yk5TMWJQKy9oYTh2TURNK2lMcnBwZW93d0RnWURWUjBQQVFIL0JBUURBZ0VHTUEwR0NTcUdTSWIzRFFFQkN3VUFBNElDQVFCYmNIeVYyYjVtR3dIV3hDU2JEd3I1VjdQZ1NaSUphMXNjckNuSUhEM1oveXhHN1hwNWNJbEJqNE15NGxSSGpadEpWdlVmVGpGcHNFREV2L1BBcTc0T0lvbE4va1BkTWZUY3pGQkdwdnNacjB4MnlVUEVKelFzVFNMeDBnd1ord3ZvS0hXRTBDN0dxZ2tBQk5yRlc4RkxxUnpOcVhzbU01b0k0YzNWNXN5eHdCWUZEVVk1TVBXZHFKRURmUnZqakpQQ1htS09QMWxPK2krRTA3dnNGcER6SFMyRktCNWM2c1RJWmt2dCtIL0NHNGhWdTZadmNGWFh6djJKSy9Fb1ZaNndVZENsdDRwTGdUUVovVzBxUUNKM0dqRmUvUFo3NG1ja1cxeC96azl6MFZRalVwVHF6M0FqUExJamo2MG5NTFRMcDUwb0ZjTUxqdVhzczB2djR0VWpDVHBzMlFnOW4wR3dMbERSNDJOeXcyVEtjTU1CNnljRW9OaVVFdTBsZ2ExSk0wU1ZTc0ZQN0dTVS9XOVZxYXRLN3hwL1hXOS9HRHZncDNaL3BQTTBFM2kxdHFwL25PVTQzWW9mOFdpNEpKNnpPZ1hCenFReE82TUlMWko0cUVmZW5BdEk3bzk1VHk1eWs5dlJib1VzdHl3c2ZDNkNWc3UwOE5ML3R0dzRPU1hPdmJrUSs3ek14Q1lUOVl5UUQ1bC9sdEMzYmdkai9sQlp6bnNCdUdZTk9CMTZ3RE5jR3B1dWFla3NmUWZCRFBIVCt2UjZnUFZGWnB5Vnd5L3R6SDZOVHBVR0Rqb0hWc0N4VWpZODcwT000RDJKY2o5T0lxcWRsa0NvV082aTRWZWM3c1R6eGlYMzlvTlNyMUc3Q29iYzNzWWRobnhnL3ZsZzFCZUNKODdwMEE9PSJdfQ.eyJpc3MiOiJkaWQ6aXNoYXJlOkVVLk5MLk5UUkxOTC0xMDAwMDAwMCIsInN1YiI6ImRpZDppc2hhcmU6RVUuTkwuTlRSTE5MLTEwMDAwMDAwIiwianRpIjoiNzA3MWVjYzUxNTQ0NDEyNzk5MDM2MjJhZjFiZWRiYzAiLCJpYXQiOjE1OTE5NjUyNzcsImV4cCI6MTU5MTk2NTMwNywiY2FwYWJpbGl0aWVzX2luZm8iOnsicGFydHlfaWQiOiJkaWQ6aXNoYXJlOkVVLk5MLk5UUkxOTC0xMDAwMDAwMSIsImlzaGFyZV9yb2xlcyI6W3sicm9sZSI6IlNlcnZpY2VQcm92aWRlciJ9XSwic3VwcG9ydGVkX3ZlcnNpb25zIjpbeyJ2ZXJzaW9uIjoiMS43Iiwic3VwcG9ydGVkX2ZlYXR1cmVzIjpbeyJwdWJsaWMiOlt7ImlkIjoiQTUxRDQxM0YtQjNDQy00NzdELTk2QzQtRTM3QTkwMDNCRkUzIiwiZmVhdHVyZSI6ImNhcGFiaWxpdGllcyIsImRlc2NyaXB0aW9uIjoiUmV0cmlldmVzIGlTSEFSRSBjYXBhYmlsaXRpZXMiLCJ1cmwiOiJodHRwczovL3cxMy5pc2hhcmV0ZXN0Lm5ldC9jYXBhYmlsaXRpZXMiLCJ0b2tlbl9lbmRwb2ludCI6Imh0dHBzOi8vdzEzLmlzaGFyZXRlc3QubmV0L2Nvbm5lY3QvdG9rZW4ifSx7ImlkIjoiNDlGNkU2NjItRjA1NS00QUFDLTk2QjItRTgzM0ZBNUY1NDE0IiwiZmVhdHVyZSI6ImFjY2VzcyB0b2tlbiIsImRlc2NyaXB0aW9uIjoiT2J0YWlucyBhY2Nlc3MgdG9rZW4iLCJ1cmwiOiJodHRwczovL3cxMy5pc2hhcmV0ZXN0Lm5ldC9jb25uZWN0L3Rva2VuIn0seyJpZCI6IjA1MzU3QjFDLUE5MzQtNEJCMi1BN0NELTQyOTQ4REE1MjM3OSIsImZlYXR1cmUiOiJib29tIGFjY2VzcyIsImRlc2NyaXB0aW9uIjoiUmVxdWVzdCBib29tIGFjY2VzcyBiYXNlZCBvbiB1c2VyIGluZm9ybWF0aW9uIiwidXJsIjoiaHR0cHM6Ly93MTMuaXNoYXJldGVzdC5uZXQvYm9vbV9hY2Nlc3MiLCJ0b2tlbl9lbmRwb2ludCI6Imh0dHBzOi8vdzEzLmlzaGFyZXRlc3QubmV0L2Nvbm5lY3QvdG9rZW4ifSx7ImlkIjoiMTA1RDE5QzctMDJCMS00ODFGLThCOTgtMEMwRjJGNUVCQjRCIiwiZmVhdHVyZSI6InJldHVybiBjbGllbnQgaW5mb3JtYXRpb24iLCJkZXNjcmlwdGlvbiI6IkRpc3BsYXlzIGlkZW50aXR5IG9mIGNsaWVudCB0byB3aGljaCBhY2Nlc3MgdG9rZW4gd2FzIGlzc3VlZCIsInVybCI6Imh0dHBzOi8vdzEzLmlzaGFyZXRlc3QubmV0L21lIiwidG9rZW5fZW5kcG9pbnQiOiJodHRwczovL3cxMy5pc2hhcmV0ZXN0Lm5ldC9jb25uZWN0L3Rva2VuIn1dfV19XX19.EFKxS_aOfLuAt8lemj3wi_p5v7MEyIbkLHYowQJF4IG7i4PUXDXteHKrsIl0Jlb6WM7MzMWMfFq2804EmFZFFGciJfqcJTHC8qOlrFMDoHEBkszZUPfxET3j3dzM9Fmwo2QB3RlRnwrDUn9wZKu0O2IO365fJugI_z9ABj4HJs6OccyxiigX00Nk2Ak3ASnwkj2gQvPd6YXZLx_9_LGTl4P8ysW9V2paLrcDDVh9zL6sgIzTTvJOe7iKGXfWx2jWavKJPx88cHURCylstNIoaE20IzFEIcv_X7j9Ae7MgCunr5S3HLoaZyzBhU7IOcnclHhvZk1BBek3DgJByC0uDg"
+          example: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsIng1YyI6WyJNSUlHa0RDQ0JIaWdBd0lCQWdJVUpYckNOdm56eTV5alU5V0ErTmprQzNPekdpSXdEUVlKS29aSWh2Y05BUUVMQlFBd1hURWVNQndHQTFVRUF3d1ZaVWxFUVZObFUwVkJURTlKUkY5SmMzTkRRVWMwTVJrd0Z3WURWUVJoRXhCT1ZGSk9UQzFwVTBoQlVrVlVSVk5VTVJNd0VRWURWUVFLRXdwcFUwaEJVa1ZVWlhOME1Rc3dDUVlEVlFRR0V3SllXREFlRncweU5ERXhNRFl4TkRNeU1URmFGdzB5TnpFeE1EWXhORE15TVRCYU1HNHhDekFKQmdOVkJBWVRBazVNTVNJd0lBWURWUVFLREJsVVpYTjBJRkJoY25ScFkybHdZVzUwSUZKbFoybHpkSEo1TVNJd0lBWURWUVFEREJsVVpYTjBJRkJoY25ScFkybHdZVzUwSUZKbFoybHpkSEo1TVJjd0ZRWURWUVJoREE1T1ZGSk9UQzB4TURBd01EQXdNRENDQVNJd0RRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFMVHNBRWVBVWs5NUI2bHZkZ1hPcjRoekUxTjJRL2E1UmUwcmsvZEJiRmZCTVBEMWN0ekVMeHJ4a0hLSEFKWjBNZmxjOWdPMitYMjdIVkRoUHF3SkZ1ZWg0VTlpend5dnF6czFWRys5U1Fzbnd6V1p5Q1RQNDBsWGx2cUtHMWtyVWlmRjJsRjNMSmVRRml3UmRSd2txZzRPM2dSU2RvTmdFU0hjOVJReVZTMHNPQUhLVlh4em1rS0NON2FTcGE3bVBVQ290SWVSRmIydFV2R1hiNWxOUUJoejdPd01jQW1NVjU4N3V6VWxuZFZLc0EwbU40UGtySWZQWjNWVmVZOHF1clByTHNPWFBYbVJyRjArWFZmcHoyeGJDMDc2M1M1bHI2VWlrNmJhWE9kQ2NWczd0MWIvNzhaTWV0NEMzVzFuS0dFYmVtcGxidjBoYXpMdUdlbExYV2tDQXdFQUFhT0NBalV3Z2dJeE1BNEdBMVVkRHdFQi93UUVBd0lHUURBTUJnTlZIUk1CQWY4RUFqQUFNQjhHQTFVZEl3UVlNQmFBRkxNYVQwSkE2ZGg0bld2Ly9DU3dFTEUwUFBDSk1GY0dDQ3NHQVFVRkJ3RUJCRXN3U1RCSEJnZ3JCZ0VGQlFjd0FZWTdhSFIwY0hNNkx5OWpZVGN1YVhOb1lYSmxkR1Z6ZEM1dVpYUTZPRFEwTWk5bGFtSmpZUzl3ZFdKc2FXTjNaV0l2YzNSaGRIVnpMMjlqYzNBd0VBWURWUjBnQkFrd0J6QUZCZ05WSFNBd0h3WURWUjBsQkJnd0ZnWUlLd1lCQlFVSEF3UUdDaXNHQVFRQmdqY0tBd3d3V3dZSUt3WUJCUVVIQVFNRVR6Qk5NQk1HQmdRQWprWUJCakFKQmdjRUFJNUdBUVlDTURZR0NDc0dBUVVGQndFRERDcFVhR2x6SUdseklIUmxjM1FnWlhObFlXd2dZMlZ5ZEdsbWFXTmhkR1VnWm05eUlIUmxjM1JwYm1jd0hnWUZaNEVNQXdFRUZUQVRFd05PVkZJVEFrNU1EQWd4TURBd01EQXdNRENCeHdZRFZSMGZCSUcvTUlHOE1JRzVvSUcyb0lHemhvR3dhSFIwY0hNNkx5OWpZVGN1YVhOb1lYSmxkR1Z6ZEM1dVpYUTZPRFEwTWk5bGFtSmpZUzl3ZFdKc2FXTjNaV0l2ZDJWaVpHbHpkQzlqWlhKMFpHbHpkRDlqYldROVkzSnNKbWx6YzNWbGNqMURUaVV6UkdWSlJFRlRaVk5GUVV4UFNVUmZTWE56UTBGSE5DVXlRMjl5WjJGdWFYcGhkR2x2Ymtsa1pXNTBhV1pwWlhJbE0wUk9WRkpPVEMxcFUwaEJVa1ZVUlZOVUpUSkRUeVV6UkdsVFNFRlNSVlJsYzNRbE1rTkRKVE5FV0Znd0hRWURWUjBPQkJZRUZGUDZERGMvK2Qya2ZJcm1uSkF1VDc0ODEzY2JNQTBHQ1NxR1NJYjNEUUVCQ3dVQUE0SUNBUUJIcDVXWGk4Vk5vRDBNYzhicnNmS213dXVRbjVhUEdQWWgrejVQY1FXelI0MEh2TzFGZTl2b3laTlp1Vk5xcENFSmNJMDRPZUJlWm9uL2x6WW9URkdTTENTUHBaeTkyaHFmaGE0SnJMa0p2RjAwaTdvSU81SFNjay9KUXhqdWFHdW1xMHVRMDJhQTZtRjNXYjlaV2tyaElvWFJVcFNpZ0c0a01Kc0MyclZkZlhpejZVUGRqdktLNWszYThCSXpmZkc3MGdKRFBqMCtzSXpjcHhacmUrTVBFSW56QkRtUWdrYmtsL1JYNFJEaG5TMWovNEI2VHNoYjJSZW1BM3E2YkFZb045SWhLbGhGdU1kOXovTUlwbkRwU3dIaElyaG5tUlpVLzRDQkVwdGF0NE1VRXRScWkyUUU1SDhQRU1MbFQvNTZwYW5uaW15RnlRTlNJeGJUcHVjSlEzeUkzUElUb0xLZ3pOY2dUVGlpaGFla3R2dHoydWorVWtkbjAwM2ZhekYzTlF2VUU3Y3g5RjdUV0JEbWs0aEdkQS9Qb2ZWQUFUeXAwVHU3a1dMZ3ZoblNNVEc4eWxpZG1ZY3FSVE1GaVNpWGhid0l1QnU4NXl5QWVXSkpvcGpPOUlBVUNxZ3FtTlNCS05WbWhFekViazhtMW9yYkRVZ2grWkFHU2FqZyt3U0FjMWduT2RqMWlKay81TDFDTHlWNmlVYlMvejY1Z2kzN3dTeW1hc2wvcE9nOUpCeGJGU3dpUER1VTY1NGh2WDFpYWpDL0gyS3JER1RXaTVMaGJ6RFRjd0JUbWhjcTZHOVpOeG8rOVlvTmxkdWVsWHAwd1ZJRzJaOU9FZ1kvcUZ2bE5xL1R6RzBSVnVvZ3Ezd2dSbU5sZ3hQU3YyQjlUYTNFREdUbGs0TlZtQT09IiwiTUlJRjJqQ0NBOEtnQXdJQkFnSVVQRzMrVEFueFZPQmNlOU5hUHQ5cFRBZ201UjR3RFFZSktvWklodmNOQVFFTEJRQXdRakVlTUJ3R0ExVUVBd3dWWlVsRVFWTmxVMFZCVEU5SlJGOVRkV0pEUVVjek1STXdFUVlEVlFRS0V3cHBVMGhCVWtWVVpYTjBNUXN3Q1FZRFZRUUdFd0pZV0RBZUZ3MHlNekE0TWpVd09UQXhNekphRncwME9EQTRNalV3T1RBd01EVmFNRjB4SGpBY0JnTlZCQU1NRldWSlJFRlRaVk5GUVV4UFNVUmZTWE56UTBGSE5ERVpNQmNHQTFVRVlSTVFUbFJTVGt3dGFWTklRVkpGVkVWVFZERVRNQkVHQTFVRUNoTUthVk5JUVZKRlZHVnpkREVMTUFrR0ExVUVCaE1DV0Znd2dnSWlNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUNEd0F3Z2dJS0FvSUNBUURhblVnTTEvUFF5WE5UWCtVT0xHclpqUzhIYVRXUi9QNHhEOFNNQ1J4T1hIS3pITFFxRVFPdUhEL3crcng5L2JFd3pINHdWZkowbTYvcjU2S09nMHdMVWxWd095aWtPWEdvSVREMnUrVWk5dDI0dFlJa3g4empMRzdWSFZjdzRkWE90OTJzdktZMUx5YnZscHJvV3pUSGxSd29JTzFZUTRoTytyeWJzdy9LRURFWFVia293amxIQVBjd25zT1c2NDM2N0VOK2V6VDFzUzhkekZJeG1HOHFDMkxyTTJzWEpXcXE1dkplRS84NlRmWjJOTU8rQ1V4a2pqN3VQZ2JXMlYvTU9VaFl5QXRHQWp6ZC9Ld09yTE1STVlhWE9JajYxbThSNzFuaC9MVjluOGRuajB3VFFPTlRIaHVNN21kWlF4aHFPZGtMMmNrU3JCV2kzYXRFVlQxT2hCUlg0Rm1taElobVNXdUN0Z3lLaURDSW90eUdBc1gybzY4MTdmZWU0UmR0d2Z3OVE0b04zTkFodG9kNjBpT0FXQXBWdCtCVDV0dmRnR09ZV1BjYk1SNXBHemJwMzhkR1V5dXdZWlY0TEFuSUdTbTV5YXVjTkUyRTJ4clFDYkVlWm00UlBzeDVKbGVXemlways0MmQ3dnF2V0Q4OElRY1ErYlpNMlg0ckpCWk5zMTY2Q2x4K202SG1LeEtBTGViVXRqc3pzZ3lIOGNxMTBkK2s0QW84b0NhT1lqdjJJYUViTWQrZlYvVWY4a1BrelR0S2x0dGRxaWl4b0lxeWNYTUVnQmFTZ2t1YjdYb1E2SzI2dFJQSjB3NVFrdXVoM01LdEdFV2ZXN0VFR21wbkNxak92Ni9yQU1KaU1XeWgxSWdMZ05CVVBQN3phVlBwREF0Qzg4T1NKUUlEQVFBQm80R3NNSUdwTUJJR0ExVWRFd0VCL3dRSU1BWUJBZjhDQVFFd0h3WURWUjBqQkJnd0ZvQVU0dWJYMHA2RFZqTjlES3RPV1dNWUFzK0h4ZFF3R0FZRFZSMGdCQkV3RHpBRkJnTlZIU0F3QmdZRVZSMGdBREFwQmdOVkhTVUVJakFnQmdnckJnRUZCUWNEQWdZSUt3WUJCUVVIQXdRR0Npc0dBUVFCZ2pjS0F3d3dIUVlEVlIwT0JCWUVGTE1hVDBKQTZkaDRuV3YvL0NTd0VMRTBQUENKTUE0R0ExVWREd0VCL3dRRUF3SUJCakFOQmdrcWhraUc5dzBCQVFzRkFBT0NBZ0VBWnY1R3VreDBQRXZWUkVJdDhNVGFQZkNINGF3eWlpWXlpMTdoNlI1TExrMXJlcndRc1NTU0hmVnFmdGR3UkYwb2NMcDJQWEpoZTA3NXFWNDA2QzA0Q2phbU5rM2V6OVppTkhDTmpQdGZpZDZvT3hxejFYazhYUGpOWUVsYkFGbVA3ZUtsLzQ0MXZaaEd1ay9SaFhHTnhRYnRvMFExNmc4SVJjR0R2V2dOaHRydEIxRzJ4U210QjFTMnVVcFNhaVpWTk9ya2R6VGhpRUpzZVVSQm9YeFVYSXFwTHlQVFJsNk1NZ1ZhTEdSWVJjM3ZZaWo0QjdNMmhCTjcvY2puR0xzTVZ0Z2JPdjZDVjIxZzJTWG93YmdPcXpCeUg1MVVUUjZPYkhpR2owa1NDQUxHMTRJUVBrelFQaVNwanUrKzlNMmpBalBNM280MjFaT1VETVAyNDZDc3FQWHJUQWJQWEpWVVIvZ2k0dTUza216QzIxMGp2VnE5aEh3ZWx4UU9UUEZobE02RTFDaDRKYjRQUVJMS0RQRmwrNU5XNEZ5MkpBRGp5dXB5VkhuY2RMRXVQeTBQZ0NMMllvMTQ3SFNwUGo0dTdqYzFSbUhVN05PMTJFVjJaQ01mRmxSd2RHdjZpZjhxTzdzLzZscFpKanBQdExFT2JBNXRENGFoYythUE5BaTlXQ2swcGVSbTFLRTVWR0RXS0ZOU05BaUxKTnpQN20yUTZ5OGZPeTM4Y05nRkJoR09GL0tnRUlzVDEwVis1SzVvK3lsVlZ0UFZlUlJFTkV2S085RUxremUwSUhnc1RCLzZjd09pajRweE05SnZhdWowNkdnbGhJaGlJQTZxMGlEVXFCMU1VUjBIemlZOUJzbldZOWtSOGh3VjNPVytuc216dFF3R1ZFdzJralU9IiwiTUlJRmpqQ0NBM2FnQXdJQkFnSVVGajkvM2pHT1JodElwWjk4T0xSdFJIczBBWXN3RFFZSktvWklodmNOQVFFTEJRQXdRVEVkTUJzR0ExVUVBd3dVWlVsRVFWTmxVMFZCVEU5SlJGOVNiMjkwUnpJeEV6QVJCZ05WQkFvVENtbFRTRUZTUlZSbGMzUXhDekFKQmdOVkJBWVRBbGhZTUI0WERUSXpNRGd5TlRBNU1EQTBORm9YRFRRNE1EZ3lOVEE1TURBd05Wb3dRakVlTUJ3R0ExVUVBd3dWWlVsRVFWTmxVMFZCVEU5SlJGOVRkV0pEUVVjek1STXdFUVlEVlFRS0V3cHBVMGhCVWtWVVpYTjBNUXN3Q1FZRFZRUUdFd0pZV0RDQ0FpSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnSVBBRENDQWdvQ2dnSUJBTDduemt5b0ZYV2cxZ2hkRzZmbnV6dXZBZE1Xc20vSSttWDNEYnozSS9LeXFMZFd0N1hHM09XVlNuaG9zQUQyVzJTWG5sR1hxeHllMGhQdEVna1FJZGVsN0ZuRm9zV1dyc0VPcmF0Z1hsbk00TldwWURLTVdFVllybzdoekhnQ1oxMjZaUFFVTGxzNTJOY3ZwUk04UzNkWmsrWEsxa2YzVmVTMEoyaFVTRkVBWkhMeVhDWGtoVG5VSTdxbzF1cjFUbURXWXNOUXd4REdPdTdDUXlaWWRLSXdLcUk5ZUdzUkxnTTZQUWxnM3ZaQ3JvcE9vZE03bG9UdWlyQ2wzVUt3NEhyR2syY09pQWY0SWQvL2VhVkNhZndraktzSlRRdUFhaHVSejRxTXNIWUEza0RReiswK2hnblI3NHIraUxyKzhscjA0NGdsbmFXSVd2ckVHY2lSUitQZWN0ZnJMT1FRSVc3aGExM2R6V296a1QwYWduVDFMay9DR3JnTlhWcWhvc0dDMHJ1QVFQSTZEY1BOeTJJTk05Smd0Q21Cc1NqTU0xODVGSUJYNEN5MTdtNzNoOXJLalhaTXhiNlR4WDdDSVp5ZXNnQVMwYkJSYjZ4SXBLc1pybHJqRWF6c2pDMlZIUlJXT01KV1lxY1hMRDVaTnpHTVpVcjZUdDJ5Q1VBdGFtZWNEQVRLTjYvR2JzeGUwdEFCTjBwazByeDVpYys0VFhkQnJvTjlPQVpjaEg0dEpDc09DS29uQ3pBcFB4VlRoRE5NeHNvb3lGcTlEbWdYaHlFVU9Pb2VTK0ZyNEZnSCtqU0FObS9sMTc4Smg5ZXBmWFE5Z0UvNmFxUHhZak5TQmdTNjBTMUVWcUNweHcyclQxbVVZZUdmd2liVm01M2l4R3B0UjhrdGU3MG5BZ01CQUFHamZUQjdNQThHQTFVZEV3RUIvd1FGTUFNQkFmOHdId1lEVlIwakJCZ3dGb0FVMkx1Yk5TMWJQKy9oYTh2TURNK2lMcnBwZW93d0dBWURWUjBnQkJFd0R6QUZCZ05WSFNBd0JnWUVWUjBnQURBZEJnTlZIUTRFRmdRVTR1YlgwcDZEVmpOOURLdE9XV01ZQXMrSHhkUXdEZ1lEVlIwUEFRSC9CQVFEQWdFR01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQ0FRQjhqcVlVdzdUditXNFpIMDZQcmFGNnpmZEN4VDAzRGhSQ2h3NFovUW0wWFZTMmdSeVJ3Y01wdFFGRVJoUE5PQTIyMXU5THFveloxYUszQjM1d2tjR0QvZEZKZ0pDSkI5NlNNdHRRbDJIcC9FaVF6OVBGRjAyZEJTcnVYaElhcmFQYk0rTklHZG15TjJaeXdHR1hJMWFVN0pEM1hHMjlTaDJBQWRPa3Y4ZEk2Z0VnenQvREhTSUliYWtiYUxkRUljN1dCOTVHVUhjSG5OajU4VHpUU3lWZkJtdGIzdkJLOUpHMElvNk5BUFdRWXgyVlA4K2ZJeWxqYTJkMTI4aGdoMGRzRHJYRkFNKzlBWDhoYWU1dnZ4Vmk4VFdzL3oyaW5nK2sraW1tdFNOZnp6S01pTzdyNXdKQWt5and0VUJsQlN0S0lBNlplcjIycG1TVFpaZXVjSGRFVGhhYmNXUWlkVlptTVAzSWY2aXg1VWV5WDhWNk9BdzBnc0kzSVViOTFRNzZkNHNMV2J6b0dOT05BWUZDMUl5ejB4V2o0N1pkNlA3WjJHZmgxVmlJYk14VmlGRGxObWJFWmZscEVTODdLL3loQlVRL3RuQ05HUW9TZHRzdXl1V2czTmZXYnlKb05aemxVOTZKV3hjcVNhWGt6c2U5ajh3YWhheUtOTTZTV0tTWTFaMDVoOEpTY09DbUZCNUY4VjNiZDVuUC91S2phN0g4TzRHT0FBUE0zT3RHK2VxMzd4Vy94TjBvQXNqYnZ0NG9qblViSnMya2lBeEVkd1h4MEs3bWNQZVM3eldtVnQ4aDRSZGNEbS9QR1REYTltOE9xaFF1Y2s4MFFudXhJVVdWcjdHV2FkaDFMeS90bDArYnZta2NuTzJ5YlJKK2dicVJFSERUZTBzeHN3PT0iLCJNSUlGY3pDQ0ExdWdBd0lCQWdJVUN2ZlN2UWVyakZEbU0yTHZtam9URE9JbkxBd3dEUVlKS29aSWh2Y05BUUVMQlFBd1FURWRNQnNHQTFVRUF3d1VaVWxFUVZObFUwVkJURTlKUkY5U2IyOTBSekl4RXpBUkJnTlZCQW9UQ21sVFNFRlNSVlJsYzNReEN6QUpCZ05WQkFZVEFsaFlNQjRYRFRJek1EZ3lOVEE1TURBd05sb1hEVFE0TURneU5UQTVNREF3TlZvd1FURWRNQnNHQTFVRUF3d1VaVWxFUVZObFUwVkJURTlKUkY5U2IyOTBSekl4RXpBUkJnTlZCQW9UQ21sVFNFRlNSVlJsYzNReEN6QUpCZ05WQkFZVEFsaFlNSUlDSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DQWc4QU1JSUNDZ0tDQWdFQXhWTUtJOVJNaG5PU0EyTG9yZ0VDM1lETmQyaXRuNzJMT2RmUlJVdTQ1Zkc3MEllditFNGtScnpKMWsyM1dYSDVzSFRiY3NscEVUZUFabmowL3hLQllkRUx1d2U2SFg4a0l3ZDFzNldHbFpjMGw3a2kxZm1qNEhxU3N0R0ovQktHajFhNzIzNld3UEpFV0VIcWZ4OVFNRWV1SktsVVNWRkZ5RTRqTXNmWXA4N2lmSXB1d0U4b0xPdzR5a0RET1A1MlRkMDZ2SENJWXJxREJydnhGZEF1RW5GeE54bFBYUkU0Z0xzeWdnNjJIT3hPdUdtaFdmc3k2VGNjSXA1WElPZGoyQ3plb1hKODJtNS9pbUJQSnZrZWZucmpFUVh6aVNFMm1pMklCRHRHUC9Bd0ZXSTdXcHNFeURYV0ltTVNSMFQzQ3VEbWtlUTE0cE5tY3FNcC9icVgzaTFhZXRhZEZUV3N1aGwwbkgyaVJxS1pESnhabFNjdTk5dG9xNUdyZGNGVWN4R1JReWwrc0ZoVWgzWGNCV0pWN1kyd25GTDJ0WTd0aHRROFpQbXpUTzhrUEtDYkVsNVU2Z0NTSWtwUlBOWkJQRzRkVDBxdSs4QmQ3MVB1N25BeTFpQjRVNnlzMzRjRmxPbEpwR00wRkdyMzVMZWZiUFI4Ymd6Nk05WE5qUmJnTURRY1hETW5maURKN0U4MW9WQnBDWE45eWRIaTFibGhha3VFQmFvYTlNL2themlwR1BtQXV4cldCTW1wMnEwd3pRcDlHUzJlOGtlSklEd0p1eXpFTGFSWkM0eWpWc1ZaUU1LLy9EKzRKM2JvVTVkckNtbW02QzFyd05SZlNadUZHTmNJWURaZUh0ZUdvQ0Y0RUE1amNnZEZhSVlyRGVqNlZBYWI0MnZONUxVQ0F3RUFBYU5qTUdFd0R3WURWUjBUQVFIL0JBVXdBd0VCL3pBZkJnTlZIU01FR0RBV2dCVFl1NXMxTFZzLzcrRnJ5OHdNejZJdXVtbDZqREFkQmdOVkhRNEVGZ1FVMkx1Yk5TMWJQKy9oYTh2TURNK2lMcnBwZW93d0RnWURWUjBQQVFIL0JBUURBZ0VHTUEwR0NTcUdTSWIzRFFFQkN3VUFBNElDQVFCYmNIeVYyYjVtR3dIV3hDU2JEd3I1VjdQZ1NaSUphMXNjckNuSUhEM1oveXhHN1hwNWNJbEJqNE15NGxSSGpadEpWdlVmVGpGcHNFREV2L1BBcTc0T0lvbE4va1BkTWZUY3pGQkdwdnNacjB4MnlVUEVKelFzVFNMeDBnd1ord3ZvS0hXRTBDN0dxZ2tBQk5yRlc4RkxxUnpOcVhzbU01b0k0YzNWNXN5eHdCWUZEVVk1TVBXZHFKRURmUnZqakpQQ1htS09QMWxPK2krRTA3dnNGcER6SFMyRktCNWM2c1RJWmt2dCtIL0NHNGhWdTZadmNGWFh6djJKSy9Fb1ZaNndVZENsdDRwTGdUUVovVzBxUUNKM0dqRmUvUFo3NG1ja1cxeC96azl6MFZRalVwVHF6M0FqUExJamo2MG5NTFRMcDUwb0ZjTUxqdVhzczB2djR0VWpDVHBzMlFnOW4wR3dMbERSNDJOeXcyVEtjTU1CNnljRW9OaVVFdTBsZ2ExSk0wU1ZTc0ZQN0dTVS9XOVZxYXRLN3hwL1hXOS9HRHZncDNaL3BQTTBFM2kxdHFwL25PVTQzWW9mOFdpNEpKNnpPZ1hCenFReE82TUlMWko0cUVmZW5BdEk3bzk1VHk1eWs5dlJib1VzdHl3c2ZDNkNWc3UwOE5ML3R0dzRPU1hPdmJrUSs3ek14Q1lUOVl5UUQ1bC9sdEMzYmdkai9sQlp6bnNCdUdZTk9CMTZ3RE5jR3B1dWFla3NmUWZCRFBIVCt2UjZnUFZGWnB5Vnd5L3R6SDZOVHBVR0Rqb0hWc0N4VWpZODcwT000RDJKY2o5T0lxcWRsa0NvV082aTRWZWM3c1R6eGlYMzlvTlNyMUc3Q29iYzNzWWRobnhnL3ZsZzFCZUNKODdwMEE9PSJdfQ.eyJpc3MiOiJkaWQ6aXNoYXJlOk5UUk5MLTEwMDAwMDAwIiwic3ViIjoiZGlkOmlzaGFyZTpOVFJOTC0xMDAwMDAwMCIsImF1ZCI6ImRpZDppc2hhcmU6TlRSTkwtMTAwMDAwMDEiLCJpYXQiOjE3MzczODAwNDYsImV4cCI6MTczNzM4MDA3NiwianRpIjoiMDg2ODkwNGQ4ZWQ5NGMwMWEwYTRkNmRkNWM2NWNlOWUiLCJjYXBhYmlsaXRpZXNfaW5mbyI6eyJwdWJsaWNTZXJ2aWNlcyI6W3siaWRlbnRpZmllciI6InNlcnZpY2UtaWRlbnRpZmllci0xIiwidGl0bGUiOiJTZXJ2aWNlIFRpdGxlIiwiZGVzY3JpcHRpb24iOiJTZXJ2aWNlIERlc2NyaXB0aW9uIiwiZGVzY3JpcHRpb25VUkwiOiJodHRwczovL3VybC50by9kZXNjcmlwdGlvbiIsImVuZHBvaW50VVJMIjoiaHR0cHM6Ly91cmwudG8vZW5kcG9pbnQiLCJ0b2tlbkVuZHBvaW50IjoiaHR0cHM6Ly91cmwudG8vdG9rZW5lbmRwb2ludCIsInN0YXR1cyI6ImFjdGl2ZSIsInNlcnZpY2VUeXBlIjoiZnJhbWV3b3JrLWRlZmluZWQiLCJ2ZXJzaW9uIjp7ImNvbXBsaWVzV2l0aEZyYW1ld29ya1ZlcnNpb25zIjpbIjIuMSJdLCJjb21wbGllc1dpdGhEYXRhc3BhY2VWZXJzaW9ucyI6WyIxLjAiXSwiY2FwYWJpbGl0eVZlcnNpb24iOiIzLjAiLCJtZXRob2RzIjpbIkdFVCIsIlBPU1QiXX19XSwicmVzdHJpY3RlZFNlcnZpY2VzIjpbeyJpZGVudGlmaWVyIjoic2VydmljZS1pZGVudGlmaWVyLTIiLCJ0aXRsZSI6IlNlcnZpY2UgVGl0bGUiLCJkZXNjcmlwdGlvbiI6IlNlcnZpY2UgRGVzY3JpcHRpb24iLCJkZXNjcmlwdGlvblVSTCI6Imh0dHBzOi8vdXJsLnRvL2Rlc2NyaXB0aW9uIiwiZW5kcG9pbnRVUkwiOiJodHRwczovL3VybC50by9lbmRwb2ludCIsInRva2VuRW5kcG9pbnQiOiJodHRwczovL3VybC50by90b2tlbmVuZHBvaW50Iiwic3RhdHVzIjoiYWN0aXZlIiwic2VydmljZVR5cGUiOiJkYXRhc3BhY2UtZGVmaW5lZCIsInZlcnNpb24iOnsiY29tcGxpZXNXaXRoRnJhbWV3b3JrVmVyc2lvbnMiOlsiMi4xIl0sImNvbXBsaWVzV2l0aERhdGFzcGFjZVZlcnNpb25zIjpbIjEuMCJdLCJjYXBhYmlsaXR5VmVyc2lvbiI6IjMuMCIsIm1ldGhvZHMiOlsiR0VUIl19fV19fQ.MbjFaGqNlYHdMv8SAXhpBPDCi1lfOAMD9tJMrt2QsGRzJwhRqkvivehJKrG8JlbTIxu2HOjERaiWuY-YZhUnfHFdQfaJ050iVatEBVtxBITFh3SPTB2JcAumjsY4of2TAclHSXoPkJek7QI7wTNMb0lyx4MKNqQ-hamFouWvFXNeXhmI4FGYdmm9Uhs4p35jCXE3Mu3jBML_sEf0x32KB9U7ph85rTZsxT5ACcRI8uQ7oGvNGaLaECwc8F_BrCa-lWZnrpFn6nmsG6NOp4mBi-72A9Ew7XTqvxq-LgnS46FXUTlGmzhn-7sQkoDlUZ5Zgx25Ew0z_QWBRUB548mG8g"
     PartiesResponse:
       title: PartiesResponse
       type: object

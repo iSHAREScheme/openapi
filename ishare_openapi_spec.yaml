@@ -535,7 +535,6 @@ paths:
         - Participant Registry
         - Authorisation Registry
         - Service Provider
-        - Identity Provider
       responses:
         '200':
           content:
@@ -547,9 +546,10 @@ paths:
       operationId: /connect/token
       summary: Obtains access token
       description: >-
-        Used to obtain an OAuth access token from the Participant Registry. The access
-        token must be added under "Authorization" header attribute for secured
-        endpoints. Refer to relevant endpoints on proper usage.
+        Used to obtain an OAuth access token from a Participant Registry, Authorization
+        Registry or Service Provider. The access token must be added 
+        under "Authorization" header attribute for secured endpoints. Refer to relevant 
+        endpoints on proper usage.
   /ep_creation:
     post:
       requestBody:

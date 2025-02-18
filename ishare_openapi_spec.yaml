@@ -157,6 +157,19 @@ paths:
           in: query
         - style: form
           explode: true
+          name: eori
+          description: >-
+            Optional parameter used to search by party's EORI. Can contain
+            a single * as wildcard. It searches through the party_id array 
+            for matching eori (contained in the party_id array). This parameter
+            must be considered deprecated and will be removed in future 
+            releases.
+          schema:
+            type: string
+            example: EU.EORI.NL000000001
+          in: query
+        - style: form
+          explode: true
           name: party_id
           description: >-
             Optional parameter used to search by party's ID. Can contain
@@ -215,7 +228,7 @@ paths:
           in: query
         - style: form
           explode: true
-          name: registarParticipantRegistryID
+          name: registrarPartyId
           description: Search parties by their registrar Participant Registry's ID number
           schema:
             type: string
@@ -280,7 +293,7 @@ paths:
           explode: true
           name: subjectName
           description: >-
-            Search parties based on the subject name of their eSeal
+            Search parties based on the subject name of their PKI (x509)
             certificates. Usually to find a party who is requesting tokens
           schema:
             type: string
@@ -411,7 +424,7 @@ paths:
           explode: true
           name: certificate_subject_name
           description: >-
-            Search parties based on the subject name of their eSeal
+            Search parties based on the subject name of their PKI (x509)
             certificates. Usually to find a party who is requesting tokens
           schema:
             type: string
@@ -839,7 +852,20 @@ paths:
       responses:
         '200':
           description: >-
-            After evaluating Authorisation Rules, the requested policy has been created.
+            OK: The requested policy is created.
+        '401':
+          description: >-
+            Unauthorized: When Authorization header is either missing, invalid 
+            or token has already expired.
+        '403':
+          description: >-
+            Forbidden: This error message is return when a policy creation request 
+            could not be processed after rules evaluation. The requested policy 
+            does not comply with the rules as set by the Entitled Party.
+        '500':
+          description: >-
+            Server Error: When the Authorization Registry was unable to process 
+            the request
 components:
   schemas:
     SchemeRole:
@@ -1022,7 +1048,7 @@ components:
               complaiancy_verified: 'yes'
         certificates:
           description: >-
-            Object which contains the details of the eSeal certificates of
+            Object which contains the details of the PKI/x509 certificates of
             the party. Either certificates or SPOR must be present.
           type: array
           items:
@@ -1316,7 +1342,7 @@ components:
     Certificate:
       title: Certificate
       description: >-
-        Object which contains the details of the eSeal certificates of the
+        Object which contains the details of the PKI/x509 certificates of the
         party.
       required:
         - subject_name

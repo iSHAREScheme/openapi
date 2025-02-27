@@ -586,9 +586,8 @@ paths:
       operationId: /ep_creation
       summary: Create Entitled Party
       description: >-
-        Used to programatically create an Entitled Party, without providing a
-        certificate.
-
+        Used to programatically create an Entitled Party or Service Consumer, 
+        without providing a certificate.
 
         Both the request body and the http 200 response body contain a signed
         JSON Web Token. Please refer to the models 'jwt_header' and

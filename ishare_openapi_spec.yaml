@@ -654,8 +654,7 @@ paths:
         Used to obtain delegation evidence from an Authorization Registry. The
         response is a signed JSON Web Token. Please refer to the models
         ‘jwt_header’ and ‘jwt_payload_delegation_evidence_token’ which indicate what
-        the decoded response will look like. Please refer to the iSHARE language
-        of delegation in order to understand the decoded response data model.
+        the decoded response will look like.
   /connect/userinfo:
     get:
       tags:

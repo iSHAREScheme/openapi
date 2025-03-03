@@ -590,9 +590,10 @@ paths:
         without providing a certificate.
 
         Both the request body and the http 200 response body contain a signed
-        JSON Web Token. Please refer to the models 'jwt_header' and
-        'jwt_payload_ep_creation_token' which indicate what the decoded request
-        and response look like.
+        JSON Web Token. Please refer to the models 'jwt_header', 
+        'jwt_payload_ep_creation_request_token' and 
+        'jwt_payload_ep_creation_response_token' which indicate what the 
+        decoded request and response look like.
   /service:
     get:
       tags:
@@ -1793,8 +1794,56 @@ components:
           description: ''
         - name: planned
           description: ''
-    jwt_payload_ep_creation_token:
-      title: jwt_payload_ep_creation_token
+    jwt_payload_ep_creation_request_token:
+      title: jwt_payload_ep_creation_request_token
+      required:
+        - iss
+        - sub
+        - aud
+        - jti
+        - exp
+        - iat
+        - nbf
+        - parties_info
+      type: object
+      properties:
+        iss:
+          description: The id of the issuer of this JWT.
+          type: string
+          example: did:ishare:EU.NL.NTRNL-12345678
+        sub:
+          description: The id of the subject of this JWT.
+          type: string
+          example: did:ishare:EU.NL.NTRNL-12345678
+        aud:
+          description: The id of the audience of this JWT.
+          type: string
+          example: did:ishare:EU.NL.NTRNL-12345678
+        jti:
+          description: JTI value of JWT.
+          type: string
+          example: 378a47c4-2822-4ca5-a49a-7e5a1cc7ea59
+        exp:
+          format: int32
+          description: UNIX timestamp in seconds until when this JWT is valid.
+          type: integer
+          example: 1504684475
+        iat:
+          format: int32
+          description: UNIX timestamp in seconds when this JWT was issued.
+          type: integer
+          example: 1504683475
+        nbf:
+          format: int32
+          description: UNIX timestamp in seconds since when this JWT is valid.
+          type: integer
+          example: 1504683475
+        parties_info:
+          allOf:
+            - $ref: '#/components/schemas/Party'
+            - {}
+    jwt_payload_ep_creation_response_token:
+      title: jwt_payload_ep_creation_response_token
       required:
         - iss
         - sub

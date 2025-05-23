@@ -867,6 +867,41 @@ paths:
             the request
 components:
   schemas:
+    licenseRuleList:
+      type: array
+      description: Root list of license expressions
+      items:
+        $ref: '#/components/schemas/licenseRule'
+    licenseIdentifier:
+      type: string
+      description: License identifier
+      example: https://licenses.ishare.eu/example
+    licenseRule:
+      description: A license identifier or a logical group (allOf / anyOf)
+      oneOf:
+        - $ref: '#/components/schemas/licenseIdentifier'
+        - $ref: '#/components/schemas/licenseAllOf'
+        - $ref: '#/components/schemas/licenseAnyOf'
+    licenseAllOf:
+      type: object
+      required:
+        - allOf
+      properties:
+        allOf:
+          type: array
+          items:
+            $ref: '#/components/schemas/licenseRule'
+          minItems: 1
+    licenseAnyOf:
+      type: object
+      required:
+        - anyOf
+      properties:
+        anyOf:
+          type: array
+          items:
+            $ref: '#/components/schemas/licenseRule'
+          minItems: 1
     SchemeRole:
       title: SchemeRole
       type: object
@@ -2164,9 +2199,7 @@ components:
               type: object
               properties:
                 licenses:
-                  type: array
-                  items:
-                    type: string
+                  $ref: '#/components/schemas/licenseRuleList'
         policies:
           type: array
           items:
@@ -2183,9 +2216,7 @@ components:
               type: object
               properties:
                 licenses:
-                  type: array
-                  items:
-                    type: string
+                  $ref: '#/components/schemas/licenseRuleList'
         policies:
           type: array
           items:

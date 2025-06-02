@@ -1194,7 +1194,6 @@ components:
           description: The name of the authorisation registry provider
           type: string
           example: iSHARE Test Authorization Registry
-          readOnly: true
         id:
           description: The Id of the authorisation registry provider
           type: string
@@ -1205,7 +1204,6 @@ components:
             queried/checked from
           type: string
           example: http://ar.isharetest.net/
-          readOnly: true
         dataspace_id:
           description: >-
             The id of the data space where the party uses this authorisation

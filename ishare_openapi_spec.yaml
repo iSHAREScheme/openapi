@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: "2.1"
+  version: '2.2'
   title: generic iSHARE API specifications
   description: >-
     These are the generic API specifications of iSHARE Scheme v2.1.
@@ -98,6 +98,26 @@ paths:
         models 'jwt_header' and 'jwt_payload_trusted_list_token' which indicate
         what the decoded response will look like.
   /parties/{party_id}:
+    options:
+      tags:
+        - Participant Registry
+      security:
+        - BearerAuth: []
+      parameters:
+        - style: simple
+          name: party_id
+          description: The id of the party for which the allowed HTTP methods must be fetched
+          schema:
+            type: string
+            example: did:ishare:EU.NL.NTRNL-12345678
+          in: path
+          required: true
+      responses:
+        '204':
+          headers:
+            Allow:
+              $ref: '#/components/headers/optionsAllowHeader'
+          description: List the allowed HTTP methods for this endpoint
     get:
       tags:
         - Participant Registry
@@ -130,7 +150,52 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_party_token' which indicate what
         the decoded response will look like.
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Party'
+        required: true
+      tags:
+        - Participant Registry
+      security:
+        - BearerAuth: []
+      parameters:
+        - style: simple
+          name: party_id
+          description: The id of the party whose record must be updated
+          schema:
+            type: string
+            example: did:ishare:EU.NL.NTRNL-12345678
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PartyResponse'
+          description: ''
+      deprecated: false
+      operationId: /party-update
+      summary: Update an existing party
+      description: >-
+        Used to programmatically update a participant. The existing party 
+        will be replaced with the provided party, so all values must be 
+        provided. Can also be used to update the status of a party.
   /parties:
+    options:
+      tags:
+        - Participant Registry
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          headers:
+            Allow:
+              $ref: '#/components/headers/optionsAllowHeader'
+          description: List the allowed HTTP methods for this endpoint
     get:
       tags:
         - Participant Registry
@@ -450,6 +515,29 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_party_token' which indicate what
         the decoded response will look like.
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Party'
+        required: true
+      tags:
+        - Participant Registry
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PartyResponse'
+          description: ''
+      deprecated: false
+      operationId: /parties-new
+      summary: Create new party
+      description: >-
+        Used to programatically create a participant.
   /versions:
     get:
       tags:
@@ -1106,6 +1194,7 @@ components:
           description: The name of the authorisation registry provider
           type: string
           example: iSHARE Test Authorization Registry
+          readOnly: true
         id:
           description: The Id of the authorisation registry provider
           type: string
@@ -1116,6 +1205,7 @@ components:
             queried/checked from
           type: string
           example: http://ar.isharetest.net/
+          readOnly: true
         dataspace_id:
           description: >-
             The id of the data space where the party uses this authorisation
@@ -1126,6 +1216,7 @@ components:
           description: The name of the data space corresponding to the data space id
           type: string
           example: TESTDATASPACE
+          readOnly: true
     PartiesInfo:
       title: PartiesInfo
       type: object
@@ -1555,6 +1646,7 @@ components:
           description: The name of the selected dataspace
           type: string
           example: Dutch Test Dataspace
+          readOnly: true
         compliancy_verified:
           description: >-
             Legal compliance to this agreement has been verified in accordance
@@ -2440,6 +2532,12 @@ components:
         delegationPolicyRequest:
           allOf:
             - $ref: '#/components/schemas/delegationPolicyRequest'
+  headers:
+    optionsAllowHeader:
+      description: List of allowed HTTP methods
+      schema:
+        type: string
+      example: GET, PUT, POST, OPTIONS
   parameters:
     delegation-evidence:
       deprecated: false
@@ -2502,6 +2600,5 @@ components:
       type: http
       scheme: bearer
       description: OAuth 2.0 authorization based on bearer token. MUST contain “Bearer “ + access token value. Must be provided if restricted endpoints are needed.
-  headers: {}
   responses: {}
 security: []

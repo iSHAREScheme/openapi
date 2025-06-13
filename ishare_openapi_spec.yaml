@@ -3,7 +3,7 @@ info:
   version: "2.1"
   title: generic iSHARE API specifications
   description: >-
-    These are the generic API specifications of iSHARE Scheme v2.1.
+    These are the generic API specifications of iSHARE Scheme v2.2.
 
     These specifications describe the standardised identification,
     authentication and authorization mechanisms to be implemented by iSHARE

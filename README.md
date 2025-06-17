@@ -1,6 +1,5 @@
-# iSHARE OpenAPI specifications
-This repository contains OpenAPI specifications for iSHARE roles. The final and most recent versions are published on [Swaggerhub](https://app.swaggerhub.com/apis/iSHARE). This repository is kept for versioning purposes.
+# iSHARE OpenAPI Specifications
 
-TO-DO:
-- Reconsider all identity provider endpoints and implement in this openapi spec
-- Define userinfo_token
+This repository contains OpenAPI specifications for iSHARE roles. It publishes the yaml files as github page for reference. The yaml files are also included in the [iSHARE Developer Portal](https://dev.ishare.eu).
+
+For more information about iSHARE, got to [https://www.ishare.eu].

@@ -58,7 +58,7 @@
         <select id="version" onchange="changeVersion()">
             <option value="main">Current Version (2.2)</option>
             <option value="v2.1">v2.1</option>
-            <option value="v2.0.1">v2.0.1</option>
+            <option value="v2.0">v2.0(.1)</option>
             <!-- Add more versions as needed -->
         </select>
     </div>
@@ -70,7 +70,7 @@
         const versions = {
             'main': 'https://raw.githubusercontent.com/iSHAREScheme/openapi/main/ishare_openapi_spec.yaml',
             'v2.1': 'https://raw.githubusercontent.com/iSHAREScheme/openapi/v2.1/ishare_openapi_spec.yaml',
-            'v2.0(.1)': 'https://raw.githubusercontent.com/iSHAREScheme/openapi/v2.0/ishare_openapi_spec.yaml'
+            'v2.0': 'https://raw.githubusercontent.com/iSHAREScheme/openapi/v2.0/ishare_openapi_spec.yaml'
         };
 
         function initSwaggerUI(url) {

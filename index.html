@@ -56,9 +56,9 @@
     <div id="version-selector">
         <label for="version">API Version:</label>
         <select id="version" onchange="changeVersion()">
-            <option value="main">Current Version (2.2)</option>
-            <option value="v2.1">v2.1</option>
-            <option value="v2.0">v2.0(.1)</option>
+            <option value="2.2">Current Version (2.2)</option>
+            <option value="2.1">2.1</option>
+            <option value="2.0">2.0(.1)</option>
             <!-- Add more versions as needed -->
         </select>
     </div>
@@ -68,9 +68,9 @@
     <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-standalone-preset.js"></script>
     <script>
         const versions = {
-            'main': 'https://raw.githubusercontent.com/iSHAREScheme/openapi/main/ishare_openapi_spec.yaml',
-            'v2.1': 'https://raw.githubusercontent.com/iSHAREScheme/openapi/v2.1/ishare_openapi_spec.yaml',
-            'v2.0': 'https://raw.githubusercontent.com/iSHAREScheme/openapi/v2.0/ishare_openapi_spec.yaml'
+            '2.2': 'https://raw.githubusercontent.com/iSHAREScheme/openapi/v2.2/ishare_openapi_spec.yaml',
+            '2.1': 'https://raw.githubusercontent.com/iSHAREScheme/openapi/v2.1/ishare_openapi_spec.yaml',
+            '2.0': 'https://raw.githubusercontent.com/iSHAREScheme/openapi/v2.0/ishare_openapi_spec.yaml'
         };
 
         // Get URL parameters and tag
@@ -95,7 +95,6 @@
                     if (tag) {
                         // Handle SwaggerHub-style deep linking
                         const operationTag = tag.split('/').pop(); // Get the last part of the tag
-                        
                         // Find the element by data-name attribute
                         const element = document.querySelector(`[data-name="${operationTag}"]`);
                         if (element) {
@@ -103,6 +102,8 @@
                             const expandButton = element.querySelector('.model-box-control');
                             if (expandButton) {
                                 expandButton.click();
+                                // Scroll the element into view with smooth behavior
+                                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
                             }
                         } else if (spec && spec.paths) {
                             // If it's a path, find and expand it
@@ -132,8 +133,8 @@
             }
         }
 
-        // Initialize with version from URL or default to main
-        const initialVersion = versionParam || 'main';
+        // Initialize with version from URL or default to v2.2
+        const initialVersion = versionParam || '2.2';
         document.getElementById('version').value = initialVersion;
         initSwaggerUI(versions[initialVersion]);
     </script>

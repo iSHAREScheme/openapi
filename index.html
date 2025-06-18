@@ -73,6 +73,11 @@
             'v2.0': 'https://raw.githubusercontent.com/iSHAREScheme/openapi/v2.0/ishare_openapi_spec.yaml'
         };
 
+        // Get URL parameters and tag
+        const urlParams = new URLSearchParams(window.location.search);
+        const versionParam = urlParams.get('version');
+        const tag = window.location.hash.substring(1); // Remove the # character
+
         function initSwaggerUI(url) {
             window.ui = SwaggerUIBundle({
                 url: url,
@@ -85,7 +90,32 @@
                 plugins: [
                     SwaggerUIBundle.plugins.DownloadUrl
                 ],
-                layout: "StandaloneLayout"
+                layout: "StandaloneLayout",
+                onComplete: function() {
+                    if (tag) {
+                        // Handle SwaggerHub-style deep linking
+                        const operationTag = tag.split('/').pop(); // Get the last part of the tag
+                        
+                        // Find the element by data-name attribute
+                        const element = document.querySelector(`[data-name="${operationTag}"]`);
+                        if (element) {
+                            // Find and click the expand button
+                            const expandButton = element.querySelector('.model-box-control');
+                            if (expandButton) {
+                                expandButton.click();
+                            }
+                        } else if (spec && spec.paths) {
+                            // If it's a path, find and expand it
+                            Object.entries(spec.paths).forEach(([pathKey, pathObj]) => {
+                                Object.entries(pathObj).forEach(([method, operation]) => {
+                                    if (operation.operationId === operationTag) {
+                                        window.ui.actions.show(pathKey, method);
+                                    }
+                                });
+                            });
+                        }
+                    }
+                }
             });
         }
 
@@ -93,12 +123,19 @@
             const version = document.getElementById('version').value;
             const url = versions[version];
             if (url) {
+                // Update URL with new version
+                const newUrl = new URL(window.location.href);
+                newUrl.searchParams.set('version', version);
+                window.history.pushState({}, '', newUrl);
+                
                 initSwaggerUI(url);
             }
         }
 
-        // Initialize with main version
-        initSwaggerUI(versions['main']);
+        // Initialize with version from URL or default to main
+        const initialVersion = versionParam || 'main';
+        document.getElementById('version').value = initialVersion;
+        initSwaggerUI(versions[initialVersion]);
     </script>
 </body>
 </html> 

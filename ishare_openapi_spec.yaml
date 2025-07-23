@@ -2344,13 +2344,6 @@ components:
               type: array
               items:
                 type: string
-            environment:
-              type: object
-              properties:
-                serviceProviders:
-                  type: array
-                  items:
-                    type: string
         rules:
           type: array
           items:
@@ -2360,6 +2353,36 @@ components:
             properties:
               effect:
                 type: string
+              conditions:
+                $ref: '#/components/schemas/conditionTree'
+    conditionTree:
+      type: object
+      description: >
+        Represents a logical tree structure using nested anyOf/allOf constructs.
+        Each leaf node contains a leftOperand, operator, and rightOperand.
+      properties:
+        anyOf:
+          type: array
+          items:
+            $ref: '#/components/schemas/conditionTree'
+        allOf:
+          type: array
+          items:
+            $ref: '#/components/schemas/conditionTree'
+        leftOperand:
+          type: string
+          description: The attribute or subject of the condition.
+        operator:
+          type: string
+          description: The operator to apply (e.g., equal, greaterThan).
+          enum:
+            - equal
+            - notEqual
+            - greaterThan
+            - lessThan
+        rightOperand:
+          type: string
+          description: The value to compare against.
     Policy_request_evidence:
       required:
         - target
@@ -2393,6 +2416,10 @@ components:
               type: array
               items:
                 type: string
+            context:
+              type: object
+              description: >
+                A key-value map representing contextual information applicable to the rule.
         rules:
           type: array
           items:

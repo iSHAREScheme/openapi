@@ -1250,6 +1250,18 @@ components:
           type: string
           example: TESTDATASPACE
           readOnly: true
+        serviceProviderPartyId:
+          description: >-
+            Optional party id of the Service Provider for which this AR is selected by
+            the Entitled Party.
+          type: string
+          example: did:ishare:EU.NL.NTRNL-12345678
+        serviceIdentifier:
+          description: >-
+            Optional id of the Service (Capability) of the Service Provider for which
+            this AR is selected by the Entitled Party.
+          type: string
+          example: /service1
     PartiesInfo:
       title: PartiesInfo
       type: object
@@ -1903,6 +1915,27 @@ components:
           items:
             type: string
           example: ["GET", "POST"]
+        auth_registry:
+          title: auth_registry
+          description: >-
+            Optional object which contains details about the authorisation register 
+            that must be used for this service.
+          required:
+            - name
+            - id
+            - url
+          type: object
+          properties:
+            partyId:
+              description: Party Identifier of the authorisation registry provider
+              type: string
+              example: did:ishare:EU.NL.NTRNL-12345678
+            url:
+              description: >-
+                The URL pointer specific to the party where authorisations can be
+                queried/checked from
+              type: string
+              example: http://ar.isharetest.net/
     VersionStatus:
       title: VersionStatus
       description: Status of the version. Available values are active and planned.

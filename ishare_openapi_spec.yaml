@@ -2144,12 +2144,10 @@ components:
           description: Title of dataspace.
           type: string
           example: DLDS_Logistics_DataSpace
-        dataspacedef_url:
+        dataSpaceSelfDescriptionUrl:
           description: >-
-            URL pointing to the dataspace definition. This is expected to be
-            based on OpenDEI model of building blocks for dataspaces. The
-            machine redable format definition is currently under development.
-            The specifications will be made available once published.
+            URL pointing to the dataspace self description (structured JSON 
+            file containing a description of the dataspace).
           type: string
           example: https://www.example.com/definition
         dataspace_website:

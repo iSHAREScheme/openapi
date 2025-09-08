@@ -85,7 +85,8 @@
     <div id="version-selector">
         <label for="version">API Version:</label>
         <select id="version" onchange="changeVersion()">
-            <option value="2.2">Current Version (2.2)</option>
+            <option value="3.0">Current Version (3.0)</option>
+            <option value="2.2">2.2</option>
             <option value="2.1">2.1</option>
             <option value="2.0">2.0(.1)</option>
             <!-- Add more versions as needed -->
@@ -97,6 +98,7 @@
     <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-standalone-preset.js"></script>
     <script>
         const versions = {
+            '3.0': 'https://raw.githubusercontent.com/iSHAREScheme/openapi/v3.0/ishare_openapi_spec.yaml',
             '2.2': 'https://raw.githubusercontent.com/iSHAREScheme/openapi/v2.2/ishare_openapi_spec.yaml',
             '2.1': 'https://raw.githubusercontent.com/iSHAREScheme/openapi/v2.1/ishare_openapi_spec.yaml',
             '2.0': 'https://raw.githubusercontent.com/iSHAREScheme/openapi/v2.0/ishare_openapi_spec.yaml'
@@ -157,8 +159,8 @@
             }
         }
 
-        // Initialize with version from URL or default to v2.2
-        const initialVersion = versionParam || '2.2';
+        // Initialize with version from URL or default to v3.0
+        const initialVersion = versionParam || '3.0';
         document.getElementById('version').value = initialVersion;
         initSwaggerUI(versions[initialVersion]);
     </script>

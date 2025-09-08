@@ -1,9 +1,9 @@
 openapi: 3.0.0
 info:
-  version: '2.2'
+  version: '3.0'
   title: iSHARE API specifications
   description: >-
-    These are the API specifications of iSHARE Scheme v2.2.
+    These are the API specifications of iSHARE Scheme v3.0.
 
     These specifications describe the standardised identification,
     authentication and authorization mechanisms to be implemented by iSHARE

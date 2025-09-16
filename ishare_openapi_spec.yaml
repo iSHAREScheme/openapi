@@ -1922,8 +1922,7 @@ components:
             Optional object which contains details about the authorisation register 
             that must be used for this service.
           required:
-            - name
-            - id
+            - partyId
             - url
           type: object
           properties:

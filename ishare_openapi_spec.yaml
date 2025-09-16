@@ -1258,10 +1258,11 @@ components:
           example: did:ishare:EU.NL.NTRNL-12345678
         serviceIdentifier:
           description: >-
-            Optional id of the Service (Capability) of the Service Provider for which
-            this AR is selected by the Entitled Party.
+            Optional identifier of the Service (Capability) of the Service Provider for 
+            which this AR is selected by the Entitled Party 
+            (#/components/schemas/Service/identifier).
           type: string
-          example: /service1
+          example: /capabilities
     PartiesInfo:
       title: PartiesInfo
       type: object

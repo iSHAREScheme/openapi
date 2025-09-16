@@ -1916,8 +1916,7 @@ components:
           items:
             type: string
           example: ["GET", "POST"]
-        auth_registry:
-          title: auth_registry
+        authRegistry:
           description: >-
             Optional object which contains details about the authorisation register 
             that must be used for this service.

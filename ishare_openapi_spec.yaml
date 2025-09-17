@@ -26,22 +26,28 @@ servers:
   - description: iSHARE test network base domain
     url: https://isharetest.net
 tags:
-  - name: Participant Registry
-    description: Endpoints that form the iSHARE Participant Registry API specification.
-  - name: Service Provider
-    description: Endpoints that form the Service Provider API specification.
-  - name: Identity Provider
-    description: Endpoints that form the Identity Provider API specification.
-  - name: Authorisation Registry
-    description: Endpoints that form the Authorisation Registry API specification.
+  - name: Participant Registry Required
+    description: Required endpoints for the iSHARE Participant Registry API.
+  - name: Participant Registry Optional
+    description: Optional endpoints for the iSHARE Participant Registry API.
+  - name: Service Provider Required
+    description: Required endpoints for the iSHARE Service Provider API.
+  - name: Service Provider Example
+    description: Example endpoints for the iSHARE Service Provider API.
+  - name: Identity Provider Required
+    description: Required endpoints for the iSHARE Identity Provider API.
+  - name: Authorisation Registry Required
+    description: Required endpoints for the iSHARE Authorisation Registry API.
+  - name: Authorisation Registry Optional
+    description: Optional endpoints for the iSHARE Authorisation Registry API.
 paths:
   /capabilities:
     get:
       tags:
-        - Participant Registry
-        - Authorisation Registry
-        - Service Provider
-        - Identity Provider
+        - Participant Registry Required
+        - Authorisation Registry Required
+        - Service Provider Required
+        - Identity Provider Required
       security:
         - BearerAuth: []
         - {}
@@ -76,7 +82,7 @@ paths:
   /trusted_list:
     get:
       tags:
-        - Participant Registry
+        - Participant Registry Required
       security:
         - BearerAuth: []
       responses:
@@ -100,7 +106,7 @@ paths:
   /parties/{party_id}:
     options:
       tags:
-        - Participant Registry
+        - Participant Registry Required
       security:
         - BearerAuth: []
       parameters:
@@ -120,7 +126,7 @@ paths:
           description: List the allowed HTTP methods for this endpoint
     get:
       tags:
-        - Participant Registry
+        - Participant Registry Required
       security:
         - BearerAuth: []
       parameters:
@@ -158,7 +164,7 @@ paths:
               $ref: '#/components/schemas/Party'
         required: true
       tags:
-        - Participant Registry
+        - Participant Registry Optional
       security:
         - BearerAuth: []
       parameters:
@@ -187,7 +193,7 @@ paths:
   /parties:
     options:
       tags:
-        - Participant Registry
+        - Participant Registry Required
       security:
         - BearerAuth: []
       responses:
@@ -198,7 +204,7 @@ paths:
           description: List the allowed HTTP methods for this endpoint
     get:
       tags:
-        - Participant Registry
+        - Participant Registry Required
       security:
         - BearerAuth: []
       parameters:
@@ -523,7 +529,7 @@ paths:
               $ref: '#/components/schemas/Party'
         required: true
       tags:
-        - Participant Registry
+        - Participant Registry Optional
       security:
         - BearerAuth: []
       responses:
@@ -541,7 +547,7 @@ paths:
   /versions:
     get:
       tags:
-        - Participant Registry
+        - Participant Registry Required
       security:
         - BearerAuth: []
         - {}
@@ -563,7 +569,7 @@ paths:
   /dataspaces:
     get:
       tags:
-        - Participant Registry
+        - Participant Registry Required
       security:
         - BearerAuth: []
       responses:
@@ -633,9 +639,9 @@ paths:
                     eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsIng1YyI6WyJNSUlHa0RDQ0JIaWdBd0lCQWdJVUpYckNOdm56eTV5alU5V0ErTmprQzNPekdpSXdEUVlKS29aSWh2Y05BUUVMQlFBd1hURWVNQndHQTFVRUF3d1ZaVWxFUVZObFUwVkJURTlKUkY5SmMzTkRRVWMwTVJrd0Z3WURWUVJoRXhCT1ZGSk9UQzFwVTBoQlVrVlVSVk5VTVJNd0VRWURWUVFLRXdwcFUwaEJVa1ZVWlhOME1Rc3dDUVlEVlFRR0V3SllXREFlRncweU5ERXhNRFl4TkRNeU1URmFGdzB5TnpFeE1EWXhORE15TVRCYU1HNHhDekFKQmdOVkJBWVRBazVNTVNJd0lBWURWUVFLREJsVVpYTjBJRkJoY25ScFkybHdZVzUwSUZKbFoybHpkSEo1TVNJd0lBWURWUVFEREJsVVpYTjBJRkJoY25ScFkybHdZVzUwSUZKbFoybHpkSEo1TVJjd0ZRWURWUVJoREE1T1ZGSk9UQzB4TURBd01EQXdNRENDQVNJd0RRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFMVHNBRWVBVWs5NUI2bHZkZ1hPcjRoekUxTjJRL2E1UmUwcmsvZEJiRmZCTVBEMWN0ekVMeHJ4a0hLSEFKWjBNZmxjOWdPMitYMjdIVkRoUHF3SkZ1ZWg0VTlpend5dnF6czFWRys5U1Fzbnd6V1p5Q1RQNDBsWGx2cUtHMWtyVWlmRjJsRjNMSmVRRml3UmRSd2txZzRPM2dSU2RvTmdFU0hjOVJReVZTMHNPQUhLVlh4em1rS0NON2FTcGE3bVBVQ290SWVSRmIydFV2R1hiNWxOUUJoejdPd01jQW1NVjU4N3V6VWxuZFZLc0EwbU40UGtySWZQWjNWVmVZOHF1clByTHNPWFBYbVJyRjArWFZmcHoyeGJDMDc2M1M1bHI2VWlrNmJhWE9kQ2NWczd0MWIvNzhaTWV0NEMzVzFuS0dFYmVtcGxidjBoYXpMdUdlbExYV2tDQXdFQUFhT0NBalV3Z2dJeE1BNEdBMVVkRHdFQi93UUVBd0lHUURBTUJnTlZIUk1CQWY4RUFqQUFNQjhHQTFVZEl3UVlNQmFBRkxNYVQwSkE2ZGg0bld2Ly9DU3dFTEUwUFBDSk1GY0dDQ3NHQVFVRkJ3RUJCRXN3U1RCSEJnZ3JCZ0VGQlFjd0FZWTdhSFIwY0hNNkx5OWpZVGN1YVhOb1lYSmxkR1Z6ZEM1dVpYUTZPRFEwTWk5bGFtSmpZUzl3ZFdKc2FXTjNaV0l2YzNSaGRIVnpMMjlqYzNBd0VBWURWUjBnQkFrd0J6QUZCZ05WSFNBd0h3WURWUjBsQkJnd0ZnWUlLd1lCQlFVSEF3UUdDaXNHQVFRQmdqY0tBd3d3V3dZSUt3WUJCUVVIQVFNRVR6Qk5NQk1HQmdRQWprWUJCakFKQmdjRUFJNUdBUVlDTURZR0NDc0dBUVVGQndFRERDcFVhR2x6SUdseklIUmxjM1FnWlhObFlXd2dZMlZ5ZEdsbWFXTmhkR1VnWm05eUlIUmxjM1JwYm1jd0hnWUZaNEVNQXdFRUZUQVRFd05PVkZJVEFrNU1EQWd4TURBd01EQXdNRENCeHdZRFZSMGZCSUcvTUlHOE1JRzVvSUcyb0lHemhvR3dhSFIwY0hNNkx5OWpZVGN1YVhOb1lYSmxkR1Z6ZEM1dVpYUTZPRFEwTWk5bGFtSmpZUzl3ZFdKc2FXTjNaV0l2ZDJWaVpHbHpkQzlqWlhKMFpHbHpkRDlqYldROVkzSnNKbWx6YzNWbGNqMURUaVV6UkdWSlJFRlRaVk5GUVV4UFNVUmZTWE56UTBGSE5DVXlRMjl5WjJGdWFYcGhkR2x2Ymtsa1pXNTBhV1pwWlhJbE0wUk9WRkpPVEMxcFUwaEJVa1ZVUlZOVUpUSkRUeVV6UkdsVFNFRlNSVlJsYzNRbE1rTkRKVE5FV0Znd0hRWURWUjBPQkJZRUZGUDZERGMvK2Qya2ZJcm1uSkF1VDc0ODEzY2JNQTBHQ1NxR1NJYjNEUUVCQ3dVQUE0SUNBUUJIcDVXWGk4Vk5vRDBNYzhicnNmS213dXVRbjVhUEdQWWgrejVQY1FXelI0MEh2TzFGZTl2b3laTlp1Vk5xcENFSmNJMDRPZUJlWm9uL2x6WW9URkdTTENTUHBaeTkyaHFmaGE0SnJMa0p2RjAwaTdvSU81SFNjay9KUXhqdWFHdW1xMHVRMDJhQTZtRjNXYjlaV2tyaElvWFJVcFNpZ0c0a01Kc0MyclZkZlhpejZVUGRqdktLNWszYThCSXpmZkc3MGdKRFBqMCtzSXpjcHhacmUrTVBFSW56QkRtUWdrYmtsL1JYNFJEaG5TMWovNEI2VHNoYjJSZW1BM3E2YkFZb045SWhLbGhGdU1kOXovTUlwbkRwU3dIaElyaG5tUlpVLzRDQkVwdGF0NE1VRXRScWkyUUU1SDhQRU1MbFQvNTZwYW5uaW15RnlRTlNJeGJUcHVjSlEzeUkzUElUb0xLZ3pOY2dUVGlpaGFla3R2dHoydWorVWtkbjAwM2ZhekYzTlF2VUU3Y3g5RjdUV0JEbWs0aEdkQS9Qb2ZWQUFUeXAwVHU3a1dMZ3ZoblNNVEc4eWxpZG1ZY3FSVE1GaVNpWGhid0l1QnU4NXl5QWVXSkpvcGpPOUlBVUNxZ3FtTlNCS05WbWhFekViazhtMW9yYkRVZ2grWkFHU2FqZyt3U0FjMWduT2RqMWlKay81TDFDTHlWNmlVYlMvejY1Z2kzN3dTeW1hc2wvcE9nOUpCeGJGU3dpUER1VTY1NGh2WDFpYWpDL0gyS3JER1RXaTVMaGJ6RFRjd0JUbWhjcTZHOVpOeG8rOVlvTmxkdWVsWHAwd1ZJRzJaOU9FZ1kvcUZ2bE5xL1R6RzBSVnVvZ3Ezd2dSbU5sZ3hQU3YyQjlUYTNFREdUbGs0TlZtQT09IiwiTUlJRjJqQ0NBOEtnQXdJQkFnSVVQRzMrVEFueFZPQmNlOU5hUHQ5cFRBZ201UjR3RFFZSktvWklodmNOQVFFTEJRQXdRakVlTUJ3R0ExVUVBd3dWWlVsRVFWTmxVMFZCVEU5SlJGOVRkV0pEUVVjek1STXdFUVlEVlFRS0V3cHBVMGhCVWtWVVpYTjBNUXN3Q1FZRFZRUUdFd0pZV0RBZUZ3MHlNekE0TWpVd09UQXhNekphRncwME9EQTRNalV3T1RBd01EVmFNRjB4SGpBY0JnTlZCQU1NRldWSlJFRlRaVk5GUVV4UFNVUmZTWE56UTBGSE5ERVpNQmNHQTFVRVlSTVFUbFJTVGt3dGFWTklRVkpGVkVWVFZERVRNQkVHQTFVRUNoTUthVk5JUVZKRlZHVnpkREVMTUFrR0ExVUVCaE1DV0Znd2dnSWlNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUNEd0F3Z2dJS0FvSUNBUURhblVnTTEvUFF5WE5UWCtVT0xHclpqUzhIYVRXUi9QNHhEOFNNQ1J4T1hIS3pITFFxRVFPdUhEL3crcng5L2JFd3pINHdWZkowbTYvcjU2S09nMHdMVWxWd095aWtPWEdvSVREMnUrVWk5dDI0dFlJa3g4empMRzdWSFZjdzRkWE90OTJzdktZMUx5YnZscHJvV3pUSGxSd29JTzFZUTRoTytyeWJzdy9LRURFWFVia293amxIQVBjd25zT1c2NDM2N0VOK2V6VDFzUzhkekZJeG1HOHFDMkxyTTJzWEpXcXE1dkplRS84NlRmWjJOTU8rQ1V4a2pqN3VQZ2JXMlYvTU9VaFl5QXRHQWp6ZC9Ld09yTE1STVlhWE9JajYxbThSNzFuaC9MVjluOGRuajB3VFFPTlRIaHVNN21kWlF4aHFPZGtMMmNrU3JCV2kzYXRFVlQxT2hCUlg0Rm1taElobVNXdUN0Z3lLaURDSW90eUdBc1gybzY4MTdmZWU0UmR0d2Z3OVE0b04zTkFodG9kNjBpT0FXQXBWdCtCVDV0dmRnR09ZV1BjYk1SNXBHemJwMzhkR1V5dXdZWlY0TEFuSUdTbTV5YXVjTkUyRTJ4clFDYkVlWm00UlBzeDVKbGVXemlways0MmQ3dnF2V0Q4OElRY1ErYlpNMlg0ckpCWk5zMTY2Q2x4K202SG1LeEtBTGViVXRqc3pzZ3lIOGNxMTBkK2s0QW84b0NhT1lqdjJJYUViTWQrZlYvVWY4a1BrelR0S2x0dGRxaWl4b0lxeWNYTUVnQmFTZ2t1YjdYb1E2SzI2dFJQSjB3NVFrdXVoM01LdEdFV2ZXN0VFR21wbkNxak92Ni9yQU1KaU1XeWgxSWdMZ05CVVBQN3phVlBwREF0Qzg4T1NKUUlEQVFBQm80R3NNSUdwTUJJR0ExVWRFd0VCL3dRSU1BWUJBZjhDQVFFd0h3WURWUjBqQkJnd0ZvQVU0dWJYMHA2RFZqTjlES3RPV1dNWUFzK0h4ZFF3R0FZRFZSMGdCQkV3RHpBRkJnTlZIU0F3QmdZRVZSMGdBREFwQmdOVkhTVUVJakFnQmdnckJnRUZCUWNEQWdZSUt3WUJCUVVIQXdRR0Npc0dBUVFCZ2pjS0F3d3dIUVlEVlIwT0JCWUVGTE1hVDBKQTZkaDRuV3YvL0NTd0VMRTBQUENKTUE0R0ExVWREd0VCL3dRRUF3SUJCakFOQmdrcWhraUc5dzBCQVFzRkFBT0NBZ0VBWnY1R3VreDBQRXZWUkVJdDhNVGFQZkNINGF3eWlpWXlpMTdoNlI1TExrMXJlcndRc1NTU0hmVnFmdGR3UkYwb2NMcDJQWEpoZTA3NXFWNDA2QzA0Q2phbU5rM2V6OVppTkhDTmpQdGZpZDZvT3hxejFYazhYUGpOWUVsYkFGbVA3ZUtsLzQ0MXZaaEd1ay9SaFhHTnhRYnRvMFExNmc4SVJjR0R2V2dOaHRydEIxRzJ4U210QjFTMnVVcFNhaVpWTk9ya2R6VGhpRUpzZVVSQm9YeFVYSXFwTHlQVFJsNk1NZ1ZhTEdSWVJjM3ZZaWo0QjdNMmhCTjcvY2puR0xzTVZ0Z2JPdjZDVjIxZzJTWG93YmdPcXpCeUg1MVVUUjZPYkhpR2owa1NDQUxHMTRJUVBrelFQaVNwanUrKzlNMmpBalBNM280MjFaT1VETVAyNDZDc3FQWHJUQWJQWEpWVVIvZ2k0dTUza216QzIxMGp2VnE5aEh3ZWx4UU9UUEZobE02RTFDaDRKYjRQUVJMS0RQRmwrNU5XNEZ5MkpBRGp5dXB5VkhuY2RMRXVQeTBQZ0NMMllvMTQ3SFNwUGo0dTdqYzFSbUhVN05PMTJFVjJaQ01mRmxSd2RHdjZpZjhxTzdzLzZscFpKanBQdExFT2JBNXRENGFoYythUE5BaTlXQ2swcGVSbTFLRTVWR0RXS0ZOU05BaUxKTnpQN20yUTZ5OGZPeTM4Y05nRkJoR09GL0tnRUlzVDEwVis1SzVvK3lsVlZ0UFZlUlJFTkV2S085RUxremUwSUhnc1RCLzZjd09pajRweE05SnZhdWowNkdnbGhJaGlJQTZxMGlEVXFCMU1VUjBIemlZOUJzbldZOWtSOGh3VjNPVytuc216dFF3R1ZFdzJralU9IiwiTUlJRmpqQ0NBM2FnQXdJQkFnSVVGajkvM2pHT1JodElwWjk4T0xSdFJIczBBWXN3RFFZSktvWklodmNOQVFFTEJRQXdRVEVkTUJzR0ExVUVBd3dVWlVsRVFWTmxVMFZCVEU5SlJGOVNiMjkwUnpJeEV6QVJCZ05WQkFvVENtbFRTRUZTUlZSbGMzUXhDekFKQmdOVkJBWVRBbGhZTUI0WERUSXpNRGd5TlRBNU1EQTBORm9YRFRRNE1EZ3lOVEE1TURBd05Wb3dRakVlTUJ3R0ExVUVBd3dWWlVsRVFWTmxVMFZCVEU5SlJGOVRkV0pEUVVjek1STXdFUVlEVlFRS0V3cHBVMGhCVWtWVVpYTjBNUXN3Q1FZRFZRUUdFd0pZV0RDQ0FpSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnSVBBRENDQWdvQ2dnSUJBTDduemt5b0ZYV2cxZ2hkRzZmbnV6dXZBZE1Xc20vSSttWDNEYnozSS9LeXFMZFd0N1hHM09XVlNuaG9zQUQyVzJTWG5sR1hxeHllMGhQdEVna1FJZGVsN0ZuRm9zV1dyc0VPcmF0Z1hsbk00TldwWURLTVdFVllybzdoekhnQ1oxMjZaUFFVTGxzNTJOY3ZwUk04UzNkWmsrWEsxa2YzVmVTMEoyaFVTRkVBWkhMeVhDWGtoVG5VSTdxbzF1cjFUbURXWXNOUXd4REdPdTdDUXlaWWRLSXdLcUk5ZUdzUkxnTTZQUWxnM3ZaQ3JvcE9vZE03bG9UdWlyQ2wzVUt3NEhyR2syY09pQWY0SWQvL2VhVkNhZndraktzSlRRdUFhaHVSejRxTXNIWUEza0RReiswK2hnblI3NHIraUxyKzhscjA0NGdsbmFXSVd2ckVHY2lSUitQZWN0ZnJMT1FRSVc3aGExM2R6V296a1QwYWduVDFMay9DR3JnTlhWcWhvc0dDMHJ1QVFQSTZEY1BOeTJJTk05Smd0Q21Cc1NqTU0xODVGSUJYNEN5MTdtNzNoOXJLalhaTXhiNlR4WDdDSVp5ZXNnQVMwYkJSYjZ4SXBLc1pybHJqRWF6c2pDMlZIUlJXT01KV1lxY1hMRDVaTnpHTVpVcjZUdDJ5Q1VBdGFtZWNEQVRLTjYvR2JzeGUwdEFCTjBwazByeDVpYys0VFhkQnJvTjlPQVpjaEg0dEpDc09DS29uQ3pBcFB4VlRoRE5NeHNvb3lGcTlEbWdYaHlFVU9Pb2VTK0ZyNEZnSCtqU0FObS9sMTc4Smg5ZXBmWFE5Z0UvNmFxUHhZak5TQmdTNjBTMUVWcUNweHcyclQxbVVZZUdmd2liVm01M2l4R3B0UjhrdGU3MG5BZ01CQUFHamZUQjdNQThHQTFVZEV3RUIvd1FGTUFNQkFmOHdId1lEVlIwakJCZ3dGb0FVMkx1Yk5TMWJQKy9oYTh2TURNK2lMcnBwZW93d0dBWURWUjBnQkJFd0R6QUZCZ05WSFNBd0JnWUVWUjBnQURBZEJnTlZIUTRFRmdRVTR1YlgwcDZEVmpOOURLdE9XV01ZQXMrSHhkUXdEZ1lEVlIwUEFRSC9CQVFEQWdFR01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQ0FRQjhqcVlVdzdUditXNFpIMDZQcmFGNnpmZEN4VDAzRGhSQ2h3NFovUW0wWFZTMmdSeVJ3Y01wdFFGRVJoUE5PQTIyMXU5THFveloxYUszQjM1d2tjR0QvZEZKZ0pDSkI5NlNNdHRRbDJIcC9FaVF6OVBGRjAyZEJTcnVYaElhcmFQYk0rTklHZG15TjJaeXdHR1hJMWFVN0pEM1hHMjlTaDJBQWRPa3Y4ZEk2Z0VnenQvREhTSUliYWtiYUxkRUljN1dCOTVHVUhjSG5OajU4VHpUU3lWZkJtdGIzdkJLOUpHMElvNk5BUFdRWXgyVlA4K2ZJeWxqYTJkMTI4aGdoMGRzRHJYRkFNKzlBWDhoYWU1dnZ4Vmk4VFdzL3oyaW5nK2sraW1tdFNOZnp6S01pTzdyNXdKQWt5and0VUJsQlN0S0lBNlplcjIycG1TVFpaZXVjSGRFVGhhYmNXUWlkVlptTVAzSWY2aXg1VWV5WDhWNk9BdzBnc0kzSVViOTFRNzZkNHNMV2J6b0dOT05BWUZDMUl5ejB4V2o0N1pkNlA3WjJHZmgxVmlJYk14VmlGRGxObWJFWmZscEVTODdLL3loQlVRL3RuQ05HUW9TZHRzdXl1V2czTmZXYnlKb05aemxVOTZKV3hjcVNhWGt6c2U5ajh3YWhheUtOTTZTV0tTWTFaMDVoOEpTY09DbUZCNUY4VjNiZDVuUC91S2phN0g4TzRHT0FBUE0zT3RHK2VxMzd4Vy94TjBvQXNqYnZ0NG9qblViSnMya2lBeEVkd1h4MEs3bWNQZVM3eldtVnQ4aDRSZGNEbS9QR1REYTltOE9xaFF1Y2s4MFFudXhJVVdWcjdHV2FkaDFMeS90bDArYnZta2NuTzJ5YlJKK2dicVJFSERUZTBzeHN3PT0iLCJNSUlGY3pDQ0ExdWdBd0lCQWdJVUN2ZlN2UWVyakZEbU0yTHZtam9URE9JbkxBd3dEUVlKS29aSWh2Y05BUUVMQlFBd1FURWRNQnNHQTFVRUF3d1VaVWxFUVZObFUwVkJURTlKUkY5U2IyOTBSekl4RXpBUkJnTlZCQW9UQ21sVFNFRlNSVlJsYzNReEN6QUpCZ05WQkFZVEFsaFlNQjRYRFRJek1EZ3lOVEE1TURBd05sb1hEVFE0TURneU5UQTVNREF3TlZvd1FURWRNQnNHQTFVRUF3d1VaVWxFUVZObFUwVkJURTlKUkY5U2IyOTBSekl4RXpBUkJnTlZCQW9UQ21sVFNFRlNSVlJsYzNReEN6QUpCZ05WQkFZVEFsaFlNSUlDSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DQWc4QU1JSUNDZ0tDQWdFQXhWTUtJOVJNaG5PU0EyTG9yZ0VDM1lETmQyaXRuNzJMT2RmUlJVdTQ1Zkc3MEllditFNGtScnpKMWsyM1dYSDVzSFRiY3NscEVUZUFabmowL3hLQllkRUx1d2U2SFg4a0l3ZDFzNldHbFpjMGw3a2kxZm1qNEhxU3N0R0ovQktHajFhNzIzNld3UEpFV0VIcWZ4OVFNRWV1SktsVVNWRkZ5RTRqTXNmWXA4N2lmSXB1d0U4b0xPdzR5a0RET1A1MlRkMDZ2SENJWXJxREJydnhGZEF1RW5GeE54bFBYUkU0Z0xzeWdnNjJIT3hPdUdtaFdmc3k2VGNjSXA1WElPZGoyQ3plb1hKODJtNS9pbUJQSnZrZWZucmpFUVh6aVNFMm1pMklCRHRHUC9Bd0ZXSTdXcHNFeURYV0ltTVNSMFQzQ3VEbWtlUTE0cE5tY3FNcC9icVgzaTFhZXRhZEZUV3N1aGwwbkgyaVJxS1pESnhabFNjdTk5dG9xNUdyZGNGVWN4R1JReWwrc0ZoVWgzWGNCV0pWN1kyd25GTDJ0WTd0aHRROFpQbXpUTzhrUEtDYkVsNVU2Z0NTSWtwUlBOWkJQRzRkVDBxdSs4QmQ3MVB1N25BeTFpQjRVNnlzMzRjRmxPbEpwR00wRkdyMzVMZWZiUFI4Ymd6Nk05WE5qUmJnTURRY1hETW5maURKN0U4MW9WQnBDWE45eWRIaTFibGhha3VFQmFvYTlNL2themlwR1BtQXV4cldCTW1wMnEwd3pRcDlHUzJlOGtlSklEd0p1eXpFTGFSWkM0eWpWc1ZaUU1LLy9EKzRKM2JvVTVkckNtbW02QzFyd05SZlNadUZHTmNJWURaZUh0ZUdvQ0Y0RUE1amNnZEZhSVlyRGVqNlZBYWI0MnZONUxVQ0F3RUFBYU5qTUdFd0R3WURWUjBUQVFIL0JBVXdBd0VCL3pBZkJnTlZIU01FR0RBV2dCVFl1NXMxTFZzLzcrRnJ5OHdNejZJdXVtbDZqREFkQmdOVkhRNEVGZ1FVMkx1Yk5TMWJQKy9oYTh2TURNK2lMcnBwZW93d0RnWURWUjBQQVFIL0JBUURBZ0VHTUEwR0NTcUdTSWIzRFFFQkN3VUFBNElDQVFCYmNIeVYyYjVtR3dIV3hDU2JEd3I1VjdQZ1NaSUphMXNjckNuSUhEM1oveXhHN1hwNWNJbEJqNE15NGxSSGpadEpWdlVmVGpGcHNFREV2L1BBcTc0T0lvbE4va1BkTWZUY3pGQkdwdnNacjB4MnlVUEVKelFzVFNMeDBnd1ord3ZvS0hXRTBDN0dxZ2tBQk5yRlc4RkxxUnpOcVhzbU01b0k0YzNWNXN5eHdCWUZEVVk1TVBXZHFKRURmUnZqakpQQ1htS09QMWxPK2krRTA3dnNGcER6SFMyRktCNWM2c1RJWmt2dCtIL0NHNGhWdTZadmNGWFh6djJKSy9Fb1ZaNndVZENsdDRwTGdUUVovVzBxUUNKM0dqRmUvUFo3NG1ja1cxeC96azl6MFZRalVwVHF6M0FqUExJamo2MG5NTFRMcDUwb0ZjTUxqdVhzczB2djR0VWpDVHBzMlFnOW4wR3dMbERSNDJOeXcyVEtjTU1CNnljRW9OaVVFdTBsZ2ExSk0wU1ZTc0ZQN0dTVS9XOVZxYXRLN3hwL1hXOS9HRHZncDNaL3BQTTBFM2kxdHFwL25PVTQzWW9mOFdpNEpKNnpPZ1hCenFReE82TUlMWko0cUVmZW5BdEk3bzk1VHk1eWs5dlJib1VzdHl3c2ZDNkNWc3UwOE5ML3R0dzRPU1hPdmJrUSs3ek14Q1lUOVl5UUQ1bC9sdEMzYmdkai9sQlp6bnNCdUdZTk9CMTZ3RE5jR3B1dWFla3NmUWZCRFBIVCt2UjZnUFZGWnB5Vnd5L3R6SDZOVHBVR0Rqb0hWc0N4VWpZODcwT000RDJKY2o5T0lxcWRsa0NvV082aTRWZWM3c1R6eGlYMzlvTlNyMUc3Q29iYzNzWWRobnhnL3ZsZzFCZUNKODdwMEE9PSJdfQ.eyJpc3MiOiJkaWQ6aXNoYXJlOkVVLk5MLk5UUk5MLTEwMDAwMDAxIiwic3ViIjoiZGlkOmlzaGFyZTpFVS5OTC5OVFJOTC0xMDAwMDAwMSIsImF1ZCI6ImRpZDppc2hhcmU6RVUuTkwuTlRSTkwtMTAwMDAwMDAiLCJpYXQiOjE3NDA2NzUyODYsImV4cCI6MTc0MDY3NTMxNiwianRpIjoiMDg2ODkwNGQ4ZWQ5NGMwMWEwYTRkNmRkNWM2NWNlOWUifQ.gXHi4d3qC_klHuViMj4Mv8jLzpe7Ht-8xyzCKI-X06KYmNNMozAZwO-VIJWdvFknMDXYm23QEyT1BDsF4c0BuNrOUgIxyommma9IP_2q_v9mgDAfjznMmIuBwZSuQte23-t8r68v-QDySAYg95ICMbEJohQVrOJmKeSgZluVfazhVFJ0CG-9TGzjRDJtOTZtdxbxBekYfylXttjL-VJtmMC8R0O1MJ-Pxb1HIZLsw7W7UCiZ1hXVXn1vAFsDYjkszLJcuSCAHVYfDjFTa5ix7ui3P_xCZNXZs369oIwk965Jmna-AXKY39oRN45Zv03M2093b_mFW6AK_y5HuDd46g
         required: true
       tags:
-        - Participant Registry
-        - Authorisation Registry
-        - Service Provider
+        - Participant Registry Required
+        - Authorisation Registry Required
+        - Service Provider Required
       responses:
         '200':
           content:
@@ -660,7 +666,7 @@ paths:
               $ref: '#/components/schemas/EpCreationRequest'
         required: true
       tags:
-        - Participant Registry
+        - Participant Registry Optional
       security:
         - BearerAuth: []
       responses:
@@ -685,7 +691,7 @@ paths:
   /service:
     get:
       tags:
-        - Service Provider
+        - Service Provider Example
       security:
         - BearerAuth: []
       parameters:
@@ -727,7 +733,7 @@ paths:
               $ref: '#/components/schemas/DelegationRequestBody'
         required: true
       tags:
-        - Authorisation Registry
+        - Authorisation Registry Required
       security:
         - BearerAuth: []
       responses:
@@ -747,7 +753,7 @@ paths:
   /connect/userinfo:
     get:
       tags:
-        - Identity Provider
+        - Identity Provider Required
       security:
         - BearerAuth: []
       responses:
@@ -819,7 +825,7 @@ paths:
                   example: request
         required: true
       tags:
-        - Identity Provider
+        - Identity Provider Required
       parameters:
         - $ref: '#/components/parameters/content-type_form'
       responses:
@@ -858,7 +864,7 @@ paths:
                   example: password
         required: true
       tags:
-        - Identity Provider
+        - Identity Provider Required
       parameters:
         - $ref: '#/components/parameters/content-type_form'
       responses:
@@ -881,7 +887,7 @@ paths:
   /return:
     get:
       tags:
-        - Service Provider
+        - Service Provider Required
       operationId: /return
       summary: Receiving the redirect from the Identity Provider
       description: >-
@@ -921,7 +927,7 @@ paths:
   /delegationPolicy:
     post:
       tags:
-        - Authorisation Registry
+        - Authorisation Registry Optional
       security:
         - BearerAuth: []
       description: >-

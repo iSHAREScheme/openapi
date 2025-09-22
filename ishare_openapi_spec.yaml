@@ -1084,12 +1084,12 @@ components:
           example: 378a47c4-2822-4ca5-a49a-7e5a1cc7ea59
         exp:
           format: int32
-          description: UNIX timestamp in seconds until when this JWT is valid.
+          description: UNIX timestamp until when this JWT is valid.
           type: integer
           example: 1504684475
         iat:
           format: int32
-          description: UNIX timestamp in seconds when this JWT was issued.
+          description: UNIX timestamp when this JWT was issued.
           type: integer
           example: 1504683475
         party_info:
@@ -1297,16 +1297,14 @@ components:
         valid_from:
           format: date-time
           description: >-
-            Timestamp (ISO 8601)/RFC3339. UTC timestamp which states since when
-            version is valid.
+            UTC timestamp which states since when version is valid.
           type: string
           example: '2030-07-04T08:00:00Z'
         valid_to:
           nullable: true
           format: date-time
           description: >-
-            Timestamp (ISO 8601)/RFC3339. UTC timestamp which states till when
-            version is valid.
+            UTC timestamp which states till when version is valid.
           type: string
           example: '2050-01-04T08:00:00Z'
         version_status:
@@ -1343,12 +1341,12 @@ components:
           example: 378a47c4-2822-4ca5-a49a-7e5a1cc7ea59
         exp:
           format: int32
-          description: UNIX timestamp in seconds specifying until when this JWT is valid.
+          description: UNIX timestamp specifying until when this JWT is valid.
           type: integer
           example: 1504684475
         iat:
           format: int32
-          description: UNIX timestamp in seconds specifying when this JWT was issued.
+          description: UNIX timestamp specifying when this JWT was issued.
           type: integer
           example: 1504683475
         trusted_list:
@@ -1386,12 +1384,12 @@ components:
           example: 378a47c4-2822-4ca5-a49a-7e5a1cc7ea59
         exp:
           format: int32
-          description: UNIX timestamp in seconds until when this JWT is valid.
+          description: UNIX timestamp until when this JWT is valid.
           type: integer
           example: 1504684475
         iat:
           format: int32
-          description: UNIX timestamp in seconds when this JWT was issued.
+          description: UNIX timestamp when this JWT was issued.
           type: integer
           example: 1504683475
         parties_info:
@@ -1563,12 +1561,12 @@ components:
           example: 378a47c4-2822-4ca5-a49a-7e5a1cc7ea59
         exp:
           format: int32
-          description: UNIX timestamp in seconds until when this JWT is valid.
+          description: UNIX timestamp until when this JWT is valid.
           type: integer
           example: 1504684475
         iat:
           format: int32
-          description: UNIX timestamp in seconds when this JWT was issued.
+          description: UNIX timestamp when this JWT was issued.
           type: integer
           example: 1504683475
         versions_info:
@@ -1950,17 +1948,17 @@ components:
           example: 378a47c4-2822-4ca5-a49a-7e5a1cc7ea59
         exp:
           format: int32
-          description: UNIX timestamp in seconds until when this JWT is valid.
+          description: UNIX timestamp until when this JWT is valid.
           type: integer
           example: 1504684475
         iat:
           format: int32
-          description: UNIX timestamp in seconds when this JWT was issued.
+          description: UNIX timestamp when this JWT was issued.
           type: integer
           example: 1504683475
         nbf:
           format: int32
-          description: UNIX timestamp in seconds since when this JWT is valid.
+          description: UNIX timestamp since when this JWT is valid.
           type: integer
           example: 1504683475
         parties_info:
@@ -1999,17 +1997,17 @@ components:
           example: 378a47c4-2822-4ca5-a49a-7e5a1cc7ea59
         exp:
           format: int32
-          description: UNIX timestamp in seconds until when this JWT is valid.
+          description: UNIX timestamp until when this JWT is valid.
           type: integer
           example: 1504684475
         iat:
           format: int32
-          description: UNIX timestamp in seconds when this JWT was issued.
+          description: UNIX timestamp when this JWT was issued.
           type: integer
           example: 1504683475
         nbf:
           format: int32
-          description: UNIX timestamp in seconds since when this JWT is valid.
+          description: UNIX timestamp since when this JWT is valid.
           type: integer
           example: 1504683475
         parties_info:
@@ -2111,12 +2109,12 @@ components:
           example: 378a47c4-2822-4ca5-a49a-7e5a1cc7ea59
         exp:
           format: int32
-          description: UNIX timestamp in seconds until when this JWT is valid.
+          description: UNIX timestamp until when this JWT is valid.
           type: integer
           example: 1504684475
         iat:
           format: int32
-          description: UNIX timestamp in seconds when this JWT was issued.
+          description: UNIX timestamp when this JWT was issued.
           type: integer
           example: 1504683475
         dataspace_info:
@@ -2431,12 +2429,12 @@ components:
           example: 378a47c4-2822-4ca5-a49a-7e5a1cc7ea59
         exp:
           format: int32
-          description: UNIX timestamp in seconds until when this JWT is valid.
+          description: UNIX timestamp until when this JWT is valid.
           type: integer
           example: 1504684475
         iat:
           format: int32
-          description: UNIX timestamp in seconds when this JWT was issued.
+          description: UNIX timestamp when this JWT was issued.
           type: integer
           example: 1504683475
         delegationEvidence:
@@ -2550,12 +2548,12 @@ components:
           example: 378a47c4-2822-4ca5-a49a-7e5a1cc7ea59
         exp:
           format: int32
-          description: UNIX timestamp in seconds until when this JWT is valid.
+          description: UNIX timestamp until when this JWT is valid.
           type: integer
           example: 1504684475
         iat:
           format: int32
-          description: UNIX timestamp in seconds when this JWT was issued.
+          description: UNIX timestamp when this JWT was issued.
           type: integer
           example: 1504683475
         delegationPolicyRequest:

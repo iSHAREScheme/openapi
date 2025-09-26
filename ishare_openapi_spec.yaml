@@ -2126,7 +2126,7 @@ components:
       title: Dataspace
       type: object
       properties:
-        dataspace_id:
+        id:
           description: >-
             Unique ID of the dataspace. This is in format of <Continent>.<DS>.<3
             letter code for dataspaces>.<Country>.<dataspace name> for example
@@ -2140,11 +2140,11 @@ components:
             special characters. Maximum length of name can be 15 characters.
           type: string
           example: EU.DS.NL.DLDS_Logistics
-        dataspace_title:
+        title:
           description: Title of dataspace.
           type: string
           example: DLDS_Logistics_DataSpace
-        dataspacedef_url:
+        defUrl:
           description: >-
             URL pointing to the dataspace definition. This is expected to be
             based on OpenDEI model of building blocks for dataspaces. The
@@ -2152,13 +2152,37 @@ components:
             The specifications will be made available once published.
           type: string
           example: https://www.example.com/definition
-        dataspace_website:
+        website:
           description: >-
             Website address of the dataspace, typically dataspace authority. The
             website details out more information about the datasapce and guides
             (potential) participants (to become member of) the dataspace.
           type: string
           example: https://www.example.com
+        govBody:
+          description: >-
+            Name of the governing body of the dataspace. This is typically legal entity
+            (company, association, foundation) that governs the dataspace and
+            its operations.
+          type: string
+          example: Logistics Data Space
+        govBodyId:
+          description: >-
+            Unique ID of the governing body of the dataspace. This is expected to
+            be a Decentralized Identifier (DID) that uniquely identifies the
+            governing body.
+          type: string
+          example: did:ishare:EU.NL.NTRNL-12345678
+        registrarIds:
+          description: >-
+            Array of ids of data space registrars (Participant Registries) that are 
+            authorized to register (potential) participants in the dataspace.
+          type: array
+          items:
+            type: string
+          example:
+            - did:ishare:EU.NL.NTRNL-12345678
+            - did:ishare:EU.NL.NTRNL-12345679
         tags:
           description: >-
             Free text field for addting relevant tags that are relevant in the
@@ -2172,11 +2196,11 @@ components:
             active and not active.
           type: string
           example: active
-        country_reg:
+        countryRegistration:
           description: Country in which the dataspace is registered in.
           type: string
           example: The Netherlands
-        countries_operation:
+        countriesOperation:
           description: Array of country names in which the dataspace operates.
           type: array
           items:
@@ -2192,6 +2216,70 @@ components:
           example:
             - Information Technology
             - Logistics
+        agreements:
+          description: >-
+            Array of agreements that are relevant in the context of the dataspace.
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - title
+              - required
+            properties:
+              id:
+                description: ID of the agreement.
+                type: string
+                example: tou
+              title:
+                description: Title of the agreement.
+                type: string
+                example: Terms of Use
+              required:
+                description: Whether accepting the agreement is required to join the dataspace.
+                type: boolean
+                example: true
+        roles:
+          description: >-
+            Array of roles that are declared in the dataspace.
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - title
+            properties:
+              id:
+                description: ID of the role.
+                type: string
+                example: serviceBroker
+              title:
+                description: Title of the role.
+                type: string
+                example: Service Broker
+              x509CertificateRequired:
+                description: Whether a participant in this role is required to have an x.509 certificate.
+                type: boolean
+                example: true
+              agreements:
+                description: >-
+                  Array of agreement IDs that a participant in this role is
+                  required to accept to join the dataspace.
+                type: array
+                items:
+                  type: string
+                example:
+                  - tou
+              loaRequired:
+                description: >-
+                  Wether a participant in this role must provide a Level of Assurance (LoA) statement.
+                type: boolean
+                example: true
+              technicalComplianceRequired:
+                description: >-
+                  Wether a participant in this role must provide a technical compliance statement.
+                type: boolean
+                example: true
     ConnectTokenResponse:
       title: ConnectTokenResponse
       type: object

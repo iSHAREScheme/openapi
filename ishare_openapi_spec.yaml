@@ -406,7 +406,7 @@ paths:
           in: query
         - style: form
           explode: true
-          name: dataSpaceID
+          name: dataspaceID
           description: >-
             Search parties based on data-spaces they participate in. The ID of
             the data-space must be provided
@@ -416,7 +416,7 @@ paths:
           in: query
         - style: form
           explode: true
-          name: dataSpaceTitle
+          name: dataspaceTitle
           description: >-
             Search parties based on data-spaces they participate in. The name of
             the data-space must be provided
@@ -1101,12 +1101,22 @@ components:
       discriminator:
         propertyName: type
         mapping:
-          dataSpaceMembership: '#/components/schemas/claim_dataSpaceMembership'
-          dataSpaceAuthRegistry: '#/components/schemas/claim_dataSpaceAuthRegistry'
+          frameworkMembership: '#/components/schemas/claim_frameworkMembership'
+          authRegistry: '#/components/schemas/claim_authRegistry'
+          frameworkAgreement: '#/components/schemas/claim_frameworkAgreement'
+          dataspaceMembership: '#/components/schemas/claim_dataspaceMembership'
+          dataspaceAuthRegistry: '#/components/schemas/claim_dataspaceAuthRegistry'
+          dataspaceAgreement: '#/components/schemas/claim_dataspaceAgreement'
+          dataspaceRole: '#/components/schemas/claim_dataspaceRole'
           x509Certificate: '#/components/schemas/claim_x509Certificate'
       oneOf:
-        - $ref: '#/components/schemas/claim_dataSpaceMembership'
-        - $ref: '#/components/schemas/claim_dataSpaceAuthRegistry'
+        - $ref: '#/components/schemas/claim_frameworkMembership'
+        - $ref: '#/components/schemas/claim_authRegistry'
+        - $ref: '#/components/schemas/claim_frameworkAgreement'
+        - $ref: '#/components/schemas/claim_dataspaceMembership'
+        - $ref: '#/components/schemas/claim_dataspaceAuthRegistry'
+        - $ref: '#/components/schemas/claim_dataspaceAgreement'
+        - $ref: '#/components/schemas/claim_dataspaceRole'
         - $ref: '#/components/schemas/claim_x509Certificate'
     claimSkeleton:
       type: object
@@ -1123,14 +1133,14 @@ components:
           type: string
           description: Identifier of the party who registered the participant 
           example: did:ishare:EU.NL.NTRNL-12345678
-    claim_dataSpaceMembership:
+    claim_frameworkMembership:
       allOf:
         - $ref: '#/components/schemas/claimSkeleton'
         - type: object
-          title: dataspaceMembershipClaim
-          description: Participant claim that holds data space membership
+          title: frameworkMembershipClaim
+          description: Participant claim that holds framework membership
           required:
-            - dataSpaceId
+            - dataspaceId
             - status
             - startDate
             - endDate
@@ -1138,8 +1148,92 @@ components:
           properties:
             type:
               type: string
-              enum: [dataSpaceMembership]
-            dataSpaceId:
+              enum: [frameworkMembership]
+            frameworkId:
+              type: string
+              description: ID of the framework the membership is claimed for
+              example: iSHARE
+            capabilityUrl:
+              type: string
+              description: Capabilities endpoint of the party in the dataspace
+              format: uri
+              example: https://www.example.com/capabilities
+            status:
+              type: string
+              description: Status of the dataspace membership (active, revoked, notactive or pending)
+              enum: [active, revoked, notactive, pending]
+            startDate:
+              type: string
+              description: Start date of the dataspace membership
+              format: date-time
+              example: '2025-01-01T00:00:00.000Z'
+            endDate:
+              type: string
+              description: End date of the dataspace membership
+              format: date-time
+              example: '2026-12-31T00:00:00.000Z'
+            legalAdherence:
+              type: string
+              description: >-
+                Whether legal adherence is required, not required or not
+                applicable
+              enum: [yes, no, not_applicable]
+              example: yes
+            additionalInfo:
+              allOf:
+                - $ref: '#/components/schemas/additionalInfo'
+    claim_authRegistry:
+      allOf:
+        - $ref: '#/components/schemas/claimSkeleton'
+        - $ref: '#/components/schemas/authRegistry'
+        - type: object
+          title: authRegistryClaim
+          description: >-
+            Presents the selected Authorisation Registry to be used for the 
+            party.
+          required:
+            - dataspaceId
+            - authRegistryId
+            - authUrl
+            - status
+          properties:
+            type:
+              type: string
+              enum: [authRegistry]
+    claim_frameworkAgreement:
+      allOf:
+        - $ref: '#/components/schemas/claimSkeleton'
+        - $ref: '#/components/schemas/agreement'
+        - type: object
+          title: frameworkAgreementClaim
+          description: >-
+            Required. Claims for Accession Agreement and Terms of Use 
+            are required at minimum, may have additional agreements.
+          properties:
+            type:
+              type: string
+              enum: [dataspaceAgreement]
+            frameworkId:
+              description: ID of the framework
+              type: string
+              example: iSHARE
+    claim_dataspaceMembership:
+      allOf:
+        - $ref: '#/components/schemas/claimSkeleton'
+        - type: object
+          title: dataspaceMembershipClaim
+          description: Participant claim that holds dataspace membership
+          required:
+            - dataspaceId
+            - status
+            - startDate
+            - endDate
+            - legalAdherence
+          properties:
+            type:
+              type: string
+              enum: [dataspaceMembership]
+            dataspaceId:
               type: string
               description: Identifier of the dataspace of which the participant is a member of
               example: DSP.EU.NL.DutchMobility
@@ -1172,11 +1266,12 @@ components:
             additionalInfo:
               allOf:
                 - $ref: '#/components/schemas/additionalInfo'
-    claim_dataSpaceAuthRegistry:
+    claim_dataspaceAuthRegistry:
       allOf:
         - $ref: '#/components/schemas/claimSkeleton'
+        - $ref: '#/components/schemas/authRegistry'
         - type: object
-          title: dataSpaceAuthRegistryClaim
+          title: dataspaceAuthRegistryClaim
           description: >-
             Presents the selected Authorisation Registry to be used for the 
             party in this a dataspace.
@@ -1188,25 +1283,45 @@ components:
           properties:
             type:
               type: string
-              enum: [dataSpaceAuthRegistry]
+              enum: [dataspaceAuthRegistry]
             dataspaceId:
               description: ID of the dataspace
               type: string
               example: DSP.EU.NL.DutchMobility
-            authRegistryId:
-              description: ID of the Authorisation Registry
+    claim_dataspaceAgreement:
+      allOf:
+        - $ref: '#/components/schemas/claimSkeleton'
+        - $ref: '#/components/schemas/agreement'
+        - type: object
+          title: dataspaceAgreementClaim
+          description: >-
+            Required if defined by dataspace. When a dataspace defines its own 
+            agreement for participants, it can be added through this claim.
+          properties:
+            type:
               type: string
-              example: EU.EORI.NL000000004
-            authUrl: 
-              description: URL of the Authorization Registry
+              enum: [dataspaceAgreement]
+            dataspaceId:
+              description: ID of the dataspace
               type: string
-              format: uri
-              example: https://some.server.com/abc
-            status:
+              example: DSP.EU.NL.DutchMobility
+    claim_dataspaceRole:
+      allOf:
+        - $ref: '#/components/schemas/claimSkeleton'
+        - $ref: '#/components/schemas/role'
+        - type: object
+          title: dataspaceRoleClaim
+          description: >-
+            RRequired if defined by dataspace. When dataspace adefines its own 
+            roles for participants, it can be added through this claim.
+          properties:
+            type:
               type: string
-              description: Status of the AR selection (active, revoked, notactive or pending)
-              enum: [active, revoked, notactive, pending]
-              example: active
+              enum: [dataspaceAgreement]
+            dataspaceId:
+              description: ID of the dataspace
+              type: string
+              example: DSP.EU.NL.DutchMobility
     claim_x509Certificate:
       allOf:
         - $ref: '#/components/schemas/claimSkeleton'
@@ -1247,12 +1362,12 @@ components:
           example: http://ar.isharetest.net/
         dataspace_id:
           description: >-
-            The id of the data space where the party uses this authorisation
+            The id of the dataspace where the party uses this authorisation
             registry provider
           type: string
           example: EU.DSP.NL.TESTDATASPACE
         dataspace_name:
-          description: The name of the data space corresponding to the data space id
+          description: The name of the dataspace corresponding to the dataspace id
           type: string
           example: TESTDATASPACE
           readOnly: true
@@ -1556,115 +1671,92 @@ components:
           allOf:
             - $ref: '#/components/schemas/CapabilitiesInfo'
             - {}
-    Agreement:
+    agreement:
       title: Agreement
       description: >-
-        Object which contains details about contracts including data space
+        Object which contains details about contracts including dataspace
         contracts that party has agreed and signed to.
       required:
-        - type
+        - agreementType
+        - agreementId
         - title
         - status
-        - sign_date
-        - expiry_date
-        - framework
-        - compliancy_verified
       type: object
       properties:
-        type:
-          description: >-
-            Type of agreement. Refers to the official type of agreement. For
-            iSHARE following types are available Terms of Use, Accession
-            Agreement, Certified Party Agreement, Participant Registry Agreement 
-            (former name Satellite Agreement will be deprecated). 
-            Additionally, each data space can define their own type and it can
-            be listed here when appropriate dataspace is chosen
+        agreementType:
+          description: Type of agreement
           type: string
-          example: TermsOfUse
+          example: Terms of Use
+        agreementId:
+          description: ID that refers to the agreement.
+          type: string
+          example: dmtou
         title:
           description: The name of the agreement or agreement file
           type: string
-          example: iSHARE-TOU-party1
+          example: terms-of-use
         status:
           description: >-
-            Status of the agreement. Available values are Draft, Signed,
-            Accepted, Obsolete.
+            Status of the agreement. Available values are draft, signed,
+            accepted, obsolete.
           type: string
-          example: Accepted
-        sign_date:
+          enum: [draft, signed, accepted, obsolete]
+          example: accepted
+        signDate:
           format: date-time
           description: Date of signature of the agreement.
           type: string
-          example: '2023-01-31T00:00:00.000Z'
-        expiry_date:
+          example: '2025-01-31T00:00:00.000Z'
+        expiryDate:
           format: date-time
           description: >-
             Expiry date of the agreement. For non expiring agreements the end
             date is far in future
           type: string
-          example: '2024-01-31T00:00:00.000Z'
-        hash_file:
+          example: '2026-01-31T00:00:00.000Z'
+        verificationHash:
           description: >-
             The calculated hash of the agreement file that has been uploaded.
             Note agreements are not stored in ledger, but only their hash.
           type: string
           example: 614331b0003219f2d2d123b0cd6105fb
-        framework:
-          description: >-
-            The trust framework to which this agreement complies to. Currently,
-            only iSHARE is available.
-          type: string
-          example: iSHARE
-        dataspace_id:
-          description: >-
-            The ID of the data space. If specified, party is onboarded in
-            accordance to this data space's terms and conditions
-          type: string
-          example: EU.DSP.NL.TESTDATASPACE
-        dataspace_title:
-          description: The name of the selected dataspace
-          type: string
-          example: Dutch Test Dataspace
-          readOnly: true
-        compliancy_verified:
-          description: >-
-            Legal compliance to this agreement has been verified in accordance
-            with the process set in trust framework as we as data space
-            governance. Possible values are Yes, No, Not Applicable
-          type: string
-          example: 'Yes'
-    Role_definition:
-      title: Role_definition
+    role:
+      title: Role
       description: >-
-        Object which contains details about the iSHARE roles of the party. The
-        details include the level of assurance as well as compliance status for
-        each role.
+        Object which contains details about the role of the party. The
+        details include the level of assurance as well as compliance status.
       required:
-        - role
-        - start_date
-        - end_date
+        - roleId
+        - status
+        - startDate
+        - endDate
         - loa
-        - compliancy_verified
-        - legal_adherence
+        - compliancyVerified
+        - legalAdherence
       type: object
       properties:
-        role:
-          description: >-
-            Name of the role as defined in iSHARE role framework. Possible roles 
-            are ServiceConsumer, ServiceProvider, EntitledParty, 
-            AuthorisationRegistry, IdentityProvider, IdentityBroker and 
-            IdentityBroker and ParticipantRegistry, iShareSatellite (deprecated, 
-            will be removed in future releases, use ParticipantRegistry instead).
+        roleId:
+          description: Name of the role as defined by the framework or dataspace.
           type: string
           example: ServiceConsumer
-        start_date:
+        title:
+          description: Title of the role.
+          type: string
+          example: Service Consumer
+        status:
+          description: >-
+            Status of the role. Available values are active, inactive.
+          type: string
+          enum: [active, inactive]
+          example: active
+        startDate:
           format: date-time
           description: >-
             UTC timestamp which states since when this role for the party is
             valid.
           type: string
           example: '2023-01-31T00:00:00.000Z'
-        end_date:
+        endDate:
           format: date-time
           description: >-
             UTC timestamp which states till when this role for the party is
@@ -1676,17 +1768,41 @@ components:
             Party's level of assurance. Available values are low, substantial
             and high.
           type: string
-          example: High
-        compliancy_verified:
-          description: Compliance requirements of this role has been met by party
-          type: boolean
-          example: true
-        legal_adherence:
+          enum: [low, substantial, high]
+          example: high
+        compliancyVerified:
+          description: >-
+            Compliance requirements of this role has been met by party. 
+            Possible values are yes, no and not_applicable
+          type: string
+          enum: [yes, no and not_applicable]
+          example: yes
+        legalAdherence:
           description: >-
             Legal requirements of this role has been met by party including
             signing of appropriate agreements
-          type: boolean
-          example: true
+          type: string
+          enum: [yes, no and not_applicable]
+          example: yes
+    authRegistry:
+      title: Authorisation Registry
+      description: Object defining an Authorisation Registry
+      type: object
+      properties:
+        authRegistryId:
+          description: ID of the Authorisation Registry
+          type: string
+          example: EU.EORI.NL000000004
+        authUrl: 
+          description: URL of the Authorization Registry
+          type: string
+          format: uri
+          example: https://some.server.com/abc
+        status:
+          type: string
+          description: Status of the AR selection (active, revoked, notactive or pending)
+          enum: [active, revoked, notactive, pending]
+          example: active
     Spor:
       title: Spor
       description: >-
@@ -1748,7 +1864,7 @@ components:
             OpenAPI specification). For other services, it might for instance refer to an 
             operationId in OpenAPI specifications, or other forms of identifiers in 
             other specification formats. If an iSHARE defined service is being extended, 
-            for example for specific purposes in a data space, then the identifier of the
+            for example for specific purposes in a dataspace, then the identifier of the
             extended service must be used.
           type: string
           example: /capabilities
@@ -1829,7 +1945,7 @@ components:
             compliesWithDataspaceVersions:
               description: >-
                 Optional array of dataspace versions that the service complies with, at a 
-                dataspace level. The data space version may be published in the dataspace
+                dataspace level. The dataspace version may be published in the dataspace
                 self description (not part of the /dataspaces response).
               type: array
               items:

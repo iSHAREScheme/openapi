@@ -126,7 +126,11 @@ paths:
       parameters:
         - style: simple
           name: party_id
-          description: The id of the party whose record must be fetched
+          description: >-
+            The id of the party whose record must be fetched. Can be anyone of 
+            the party id from id or alsoKnownAs attributes of that participant.
+            Since all participants are automatically allocated the derived 
+            ishare did, that id is always an option to search for a participant.
           schema:
             type: string
             example: did:ishare:EU.NL.NTRNL-12345678
@@ -145,7 +149,6 @@ paths:
       description: >-
         Used to obtain information on an iSHARE participant from the Participant 
         Registry. It returns exact participant matched using its ID.
-
 
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_party_token' which indicate what
@@ -479,7 +482,7 @@ paths:
         to 10 participants.
 
         Server response is an iSHARE signed JSON Web Token. Please refer to the
-        models 'jwt_header' and 'jwt_payload_party_token' which indicate what
+        models 'jwt_header' and 'jwt_payload_parties_token' which indicate what
         the decoded response will look like.
     post:
       requestBody:
@@ -1064,16 +1067,23 @@ components:
     Party:
       title: Party
       required:
-        - party_id
-        - party_name
-        - registrar_id
-        - adherence
-        - agreements
-        - roles
+        - id
+        - name
       type: object
       properties:
-        party_id:
-          description: Array of registered party ids of the party.
+        id:
+          description: Primary identifier (iSHARE-ID) of the party.
+          type: string
+          example: did:ishare:EU.NL.NTRNL-12345678
+        name:
+          description: Name of the party.
+          type: string
+          example: Example Corporation
+        alsoKnownAs:
+          description: >-
+            Array of registered party ids of the party with which the party is
+            also identified. Optional, because a party could be identified with
+            only its iSHARE-ID (in the 'id' property).
           type: array
           items:
             type: string
@@ -1082,103 +1092,134 @@ components:
             - "did:elsi:LEIXG-724500AZSGBRY55MNS59"
             - "did:web:example.com"
             - "CoC:123456789"
-        party_name:
-          description: Name of the party.
+        claims:
+          type: array
+          description: Array of registered claims for the party
+          items:
+            $ref: '#/components/schemas/claim'
+    claim:
+      discriminator:
+        propertyName: type
+        mapping:
+          dataSpaceMembership: '#/components/schemas/claim_dataSpaceMembership'
+          dataSpaceAuthRegistry: '#/components/schemas/claim_dataSpaceAuthRegistry'
+          x509Certificate: '#/components/schemas/claim_x509Certificate'
+      oneOf:
+        - $ref: '#/components/schemas/claim_dataSpaceMembership'
+        - $ref: '#/components/schemas/claim_dataSpaceAuthRegistry'
+        - $ref: '#/components/schemas/claim_x509Certificate'
+    claimSkeleton:
+      type: object
+      required:
+        - id
+        - registrarId
+        - type
+      properties:
+        id:
           type: string
-          example: Example Corporation
-        capability_url:
-          description: Capabilities endpoint of the party.
-          pattern: ''
+          description: Unique identifier of the claim
+          example: 5ffb4bb9-2020-4045-a922-3bd84e78f709
+        registrarId:
           type: string
-          example: https://www.example.com/capabilities
-        registrar_id:
-          description: >-
-            Identifier of the party who registered the participant identified by
-            the party_id attribute above
-          type: string
+          description: Identifier of the party who registered the participant 
           example: did:ishare:EU.NL.NTRNL-12345678
-        adherence:
-          allOf:
-            - $ref: '#/components/schemas/Adherence'
-            - {}
-        additional_info:
-          allOf:
-            - $ref: '#/components/schemas/AdditionalInfo'
-            - {}
-        agreements:
+    claim_dataSpaceMembership:
+      allOf:
+        - $ref: '#/components/schemas/claimSkeleton'
+        - type: object
+          title: dataspaceMembershipClaim
+          description: Participant claim that holds data space membership
+          required:
+            - dataSpaceId
+            - status
+            - startDate
+            - endDate
+            - legalAdherence
+          properties:
+            type:
+              type: string
+              enum: [dataSpaceMembership]
+            dataSpaceId:
+              type: string
+              description: Identifier of the dataspace of which the participant is a member of
+              example: DSP.EU.NL.DutchMobility
+            capabilityUrl:
+              type: string
+              description: Capabilities endpoint of the party in the dataspace
+              format: uri
+              example: https://www.example.com/capabilities
+            status:
+              type: string
+              description: Status of the dataspace membership (active, revoked, notactive or pending)
+              enum: [active, revoked, notactive, pending]
+            startDate:
+              type: string
+              description: Start date of the dataspace membership
+              format: date-time
+              example: '2025-01-01T00:00:00.000Z'
+            endDate:
+              type: string
+              description: End date of the dataspace membership
+              format: date-time
+              example: '2026-12-31T00:00:00.000Z'
+            legalAdherence:
+              type: string
+              description: >-
+                Whether legal adherence is required, not required or not
+                applicable
+              enum: [yes, no, not_applicable]
+              example: yes
+            additionalInfo:
+              allOf:
+                - $ref: '#/components/schemas/additionalInfo'
+    claim_dataSpaceAuthRegistry:
+      allOf:
+        - $ref: '#/components/schemas/claimSkeleton'
+        - type: object
+          title: dataSpaceAuthRegistryClaim
           description: >-
-            Object which contains details about contracts including data space
-            contracts that party has agreed and signed to.
-          type: array
-          items:
-            $ref: '#/components/schemas/Agreement'
-          example:
-            - type: TermsOfUse
-              title: TOU
-              status: Accepted
-              sign_date: '2023-01-31T00:00:00.000Z'
-              expiry_date: '2024-01-31T00:00:00.000Z'
-              hash_file: 614331b0003219f2d2d123b0cd6105fb
-              framework: iSHARE
-              dataspace_id: ''
-              dataspace_title: ''
-              compliancy_verified: 'yes'
-            - type: AccessionAgreement
-              title: AA
-              status: Accepted
-              sign_date: '2023-01-31T00:00:00.000Z'
-              expiry_date: '2024-01-31T00:00:00.000Z'
-              hash_file: f50a036402b3b243910ce572930be9f5
-              framework: iSHARE
-              dataspace_id: ''
-              dataspace_title: ''
-              compliancy_verified: 'yes'
-        certificates:
+            Presents the selected Authorisation Registry to be used for the 
+            party in this a dataspace.
+          required:
+            - dataspaceId
+            - authRegistryId
+            - authUrl
+            - status
+          properties:
+            type:
+              type: string
+              enum: [dataSpaceAuthRegistry]
+            dataspaceId:
+              description: ID of the dataspace
+              type: string
+              example: DSP.EU.NL.DutchMobility
+            authRegistryId:
+              description: ID of the Authorisation Registry
+              type: string
+              example: EU.EORI.NL000000004
+            authUrl: 
+              description: URL of the Authorization Registry
+              type: string
+              format: uri
+              example: https://some.server.com/abc
+            status:
+              type: string
+              description: Status of the AR selection (active, revoked, notactive or pending)
+              enum: [active, revoked, notactive, pending]
+              example: active
+    claim_x509Certificate:
+      allOf:
+        - $ref: '#/components/schemas/claimSkeleton'
+        - $ref: '#/components/schemas/certificate'
+        - type: object
+          title: x509CertificateClaim
           description: >-
-            Object which contains the details of the PKI/x509 certificates of
-            the party. Either certificates or SPOR must be present.
-          type: array
-          items:
-            $ref: '#/components/schemas/Certificate'
-          example:
-            - subject_name: >-
-                CN=Test Service Consumer,organizationIdentifier=NTRNL-10000001,O=Test Service Consumer,C=NL
-              certificate_type: eSEAL
-              enabled_from: '2023-01-31T00:00:00.000Z'
-              x5c: ''
-              x5t#s256: ''
-        spor:
-          allOf:
-            - $ref: '#/components/schemas/Spor'
-            - {}
-        roles:
-          description: >-
-            Object which contains details about the iSHARE roles of the party.
-            The details include the level of assurance as well as compliance
-            status for each role.
-          type: array
-          items:
-            $ref: '#/components/schemas/Role_definition'
-          example:
-            - role: ServiceConsumer
-              start_date: '2023-01-31T00:00:00.000Z'
-              end_date: '2024-01-31T00:00:00.000Z'
-              loa: High
-              compliancy_verified: true
-              legal_adherence: true
-        auth_registries:
-          description: >-
-            Object which contains details about the authorisation registers that
-            the party uses.
-          type: array
-          items:
-            $ref: '#/components/schemas/auth_registry'
-          example:
-            - name: iSHARE Test Authorization Registry
-              id: did:ishare:EU.NL.NTRNL-12345678
-              url: http://ar.isharetest.net/
-              dataspace_id: ContaktDS1
-              dataspace_name: ContaktDS1
+            Required if no idpAssertion claim is present. x509Certificate claim 
+            must be a valid certificate issued by a Root from the trusted list.
+          properties:
+            type:
+              type: string
+              enum: [x509Certificate]
     auth_registry:
       title: auth_registry
       description: >-
@@ -1357,13 +1398,13 @@ components:
           type: string
         service_content_n:
           type: string
-    AdditionalInfo:
+    additionalInfo:
       title: AdditionalInfo
       description: >-
         Object which contains additional general contact information of the
         party.
       required:
-        - publicly_publishable
+        - publiclyPublishable
       type: object
       properties:
         description:
@@ -1380,24 +1421,24 @@ components:
           description: Website address of the party
           type: string
           example: https://www.example.com/
-        company_phone:
+        companyPhone:
           description: General company phone number of the party
           type: string
-        company_email:
+        companyEmail:
           description: General company email id of the party
           type: string
           example: John.doe@example.com
-        publicly_publishable:
+        publiclyPublishable:
           description: Consent to publicly publish the information contained in this object
           type: boolean
           example: false
-        countries_operation:
+        countriesOfOperation:
           description: An array of ISO names of the countries where the party operates
           type: array
           items:
             type: string
           example: []
-        sector_industry:
+        sectorIndustry:
           description: An array of GICS based sectors/industry that party serves in
           type: array
           items:
@@ -1407,17 +1448,17 @@ components:
           description: An free text field containing keywords relevant for party
           type: string
           example: mobility transport_operator
-    Certificate:
+    certificate:
       title: Certificate
       description: >-
-        Object which contains the details of the PKI/x509 certificates of the
-        party.
+        Object which contains the details of a PKI/x509 certificate.
       required:
         - subject_name
         - certificate_type
         - enabled_from
         - x5c
         - x5t#s256
+        - status
       type: object
       properties:
         subject_name:
@@ -1476,6 +1517,10 @@ components:
           description: The SHA256 fingerprint of the certificate
           type: string
           example: 4E4FD2B1D7D5DF3858CDAA80DE02AD4E0C530939BB65C57E18CEADA431C6872C
+        status:
+          description: Status of the certificate (active or revoked)
+          type: string
+          enum: [active, revoked]
     jwt_payload_capabilities_token:
       title: jwt_payload_capabilities_token
       required:
@@ -1783,8 +1828,9 @@ components:
               example: ["2.0.1", "2.1"]
             compliesWithDataspaceVersions:
               description: >-
-                Array of dataspace  versions that the service complies with, at a 
-                dataspace level.
+                Optional array of dataspace versions that the service complies with, at a 
+                dataspace level. The data space version may be published in the dataspace
+                self description (not part of the /dataspaces response).
               type: array
               items:
                 type: string
@@ -2163,7 +2209,9 @@ components:
                 type: string
                 example: Service Broker
               x509CertificateRequired:
-                description: Whether a participant in this role is required to have an x.509 certificate.
+                description: >-
+                  Whether a participant in this role is required to have an 
+                  x.509 certificate.
                 type: boolean
                 example: true
               agreements:
@@ -2177,14 +2225,17 @@ components:
                   - TermsofUse
               loaRequired:
                 description: >-
-                  Wether a participant in this role must provide a Level of Assurance (LoA) statement.
+                  Wether a participant in this role must provide a Level of 
+                  Assurance (LoA) statement.
                 type: boolean
                 example: true
-              technicalComplianceRequired:
+              technicalCompliance:
                 description: >-
-                  Wether a participant in this role must provide a technical compliance statement.
-                type: boolean
-                example: true
+                  Wether a participant in this role must provide a technical 
+                  compliance statement.
+                type: string
+                enum: [yes, no, not_applicable]
+                example: yes
     jwt_payload_frameworks_token:
       title: jwt_payload_frameworks_token
       required:
@@ -2334,7 +2385,9 @@ components:
                 type: string
                 example: Service Broker
               x509CertificateRequired:
-                description: Whether a participant in this role is required to have an x.509 certificate.
+                description: >-
+                  Whether a participant in this role is required to have an 
+                  x.509 certificate.
                 type: boolean
                 example: true
               agreements:
@@ -2348,14 +2401,17 @@ components:
                   - TermsofUse
               loaRequired:
                 description: >-
-                  Wether a participant in this role must provide a Level of Assurance (LoA) statement.
+                  Wether a participant in this role must provide a Level of 
+                  Assurance (LoA) statement.
                 type: boolean
                 example: true
-              technicalComplianceRequired:
+              technicalCompliance:
                 description: >-
-                  Wether a participant in this role must provide a technical compliance statement.
-                type: boolean
-                example: true
+                  Wether a participant in this role must provide a technical 
+                  compliance statement.
+                type: string
+                enum: [yes, no, not_applicable]
+                example: yes
     ConnectTokenResponse:
       title: ConnectTokenResponse
       type: object

@@ -1104,6 +1104,7 @@ components:
           frameworkMembership: '#/components/schemas/claim_frameworkMembership'
           authRegistry: '#/components/schemas/claim_authRegistry'
           frameworkAgreement: '#/components/schemas/claim_frameworkAgreement'
+          frameworkRole: '#/components/schemas/claim_frameworkRole'
           dataspaceMembership: '#/components/schemas/claim_dataspaceMembership'
           dataspaceAuthRegistry: '#/components/schemas/claim_dataspaceAuthRegistry'
           dataspaceAgreement: '#/components/schemas/claim_dataspaceAgreement'
@@ -1113,6 +1114,7 @@ components:
         - $ref: '#/components/schemas/claim_frameworkMembership'
         - $ref: '#/components/schemas/claim_authRegistry'
         - $ref: '#/components/schemas/claim_frameworkAgreement'
+        - $ref: '#/components/schemas/claim_frameworkRole'
         - $ref: '#/components/schemas/claim_dataspaceMembership'
         - $ref: '#/components/schemas/claim_dataspaceAuthRegistry'
         - $ref: '#/components/schemas/claim_dataspaceAgreement'
@@ -1217,6 +1219,23 @@ components:
               description: ID of the framework
               type: string
               example: iSHARE
+    claim_frameworkRole:
+      allOf:
+        - $ref: '#/components/schemas/claimSkeleton'
+        - $ref: '#/components/schemas/role'
+        - type: object
+          title: frameworkRoleClaim
+          description: >-
+            Required if defined by dataspace. When dataspace adefines its own 
+            roles for participants, it can be added through this claim.
+          properties:
+            type:
+              type: string
+              enum: [frameworkROle]
+            frameworkId:
+              description: ID of the framework
+              type: string
+              example: iSHARE
     claim_dataspaceMembership:
       allOf:
         - $ref: '#/components/schemas/claimSkeleton'
@@ -1312,12 +1331,12 @@ components:
         - type: object
           title: dataspaceRoleClaim
           description: >-
-            RRequired if defined by dataspace. When dataspace adefines its own 
+            Required if defined by dataspace. When dataspace adefines its own 
             roles for participants, it can be added through this claim.
           properties:
             type:
               type: string
-              enum: [dataspaceAgreement]
+              enum: [dataspaceRole]
             dataspaceId:
               description: ID of the dataspace
               type: string
@@ -1775,14 +1794,14 @@ components:
             Compliance requirements of this role has been met by party. 
             Possible values are yes, no and not_applicable
           type: string
-          enum: [yes, no and not_applicable]
+          enum: [yes, no, not_applicable]
           example: yes
         legalAdherence:
           description: >-
             Legal requirements of this role has been met by party including
             signing of appropriate agreements
           type: string
-          enum: [yes, no and not_applicable]
+          enum: [yes, no, not_applicable]
           example: yes
     authRegistry:
       title: Authorisation Registry

@@ -2366,7 +2366,7 @@ components:
       type: object
       description: >-
         Schema for partial updates to a party. All fields are optional.
-        Only provided fields will be updated.
+        Only provided fields will be updated. The ID cannot be updated.
       properties:
         name:
           description: Name of the party.
@@ -2597,7 +2597,7 @@ components:
             governing body.
           type: string
           example: did:ishare:EU.NL.NTRNL-12345678
-        participantRegistrarIds:
+        registrarIds:
           description: >-
             Array of ids of Participant Registries that are 
             authorized to register (potential) participants in the dataspace.

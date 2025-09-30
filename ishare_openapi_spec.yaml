@@ -172,7 +172,37 @@ paths:
         - BearerAuth: []
       parameters:
         - in: query
-          name: filter
+          style: form
+          explode: true
+          name: id
+          description: >-
+            Optional parameter used to search by a party's ID. Endpoint 
+            /parties/{party_id} may be used instead.
+          schema:
+            type: string
+            example: 'did:ishare:EU.NL.NLNTR-12345678'
+        - in: query
+          style: form
+          explode: true
+          name: alsoKnownAs
+          description: >-
+            Optional parameter used to search by a party's alsoKnownAs 
+            identifier.
+          schema:
+            type: string
+            example: 'did:elsi:LEIXG-724500AZSGBRY55MNS59'
+        - in: query
+          style: form
+          explode: true
+          name: name
+          description: >-
+            Optional parameter used to search by party's name. Can contain a
+            single * as wildcard.
+          schema:
+            type: string
+            example: '*Corporation'
+        - in: query
+          name: claimFilter
           style: deepObject
           explode: true
           schema:
@@ -183,8 +213,8 @@ paths:
             A (set of) key/value pair(s) used to filter parties based on claim attributes.
             The key represents the property name, the value the search criterion.
             To filter on a property inside a claim, construct the key as
-            \<claimType>/\<propertyName>.
-          example: /parties?filter[frameworkRole/roleId]=ServiceConsumer&filter[frameworkAgreement/agreementId]=tou
+            \<claimType>\.<propertyName>.
+          example: /parties?claimFilter[frameworkRole.roleId]=ServiceConsumer&claimFilter[frameworkAgreement.agreementId]=tou
       responses:
         '200':
           content:

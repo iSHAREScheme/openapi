@@ -263,6 +263,31 @@ paths:
             To filter on a property inside a claim, construct the key as
             \<claimType>\.<propertyName>.
           example: /parties?claimFilter[frameworkRole.roleId]=ServiceConsumer&claimFilter[frameworkAgreement.agreementId]=tou
+        - in: query
+          name: page
+          style: form
+          explode: true
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+          description: >-
+            Page number to retrieve (starts at 1). Used for pagination when results 
+            exceed the page size.
+          example: 1
+        - in: query
+          name: size
+          style: form
+          explode: true
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+          description: >-
+            Number of items per page (maximum 100). Used for pagination to control 
+            the number of results returned.
+          example: 10
       responses:
         '200':
           content:
@@ -275,9 +300,14 @@ paths:
       summary: Lists and searches parties
       description: >-
         Search for participant information from your Participant Registry. Various search
-        parameters are supported as shown below. When results are more then 10
-        participants, pagination is used in response and each page contains up
-        to 10 participants.
+        parameters are supported as shown below. Results are paginated to improve 
+        performance and usability.
+
+        **Pagination:**
+        - Use `page` parameter to specify which page to retrieve (starts at 1)
+        - Use `size` parameter to control number of items per page (max 100, default 10)
+        - Response includes pagination metadata (current_page, page_size, total_pages, etc.)
+        - Example: `/parties?page=2&size=20&name=*Corporation`
 
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_parties_token' which indicate what
@@ -554,6 +584,32 @@ paths:
         - Participant Registry
       security:
         - BearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          style: form
+          explode: true
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+          description: >-
+            Page number to retrieve (starts at 1). Used for pagination when results 
+            exceed the page size.
+          example: 1
+        - in: query
+          name: size
+          style: form
+          explode: true
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+          description: >-
+            Number of items per page (maximum 100). Used for pagination to control 
+            the number of results returned.
+          example: 10
       responses:
         '200':
           content:
@@ -565,7 +621,14 @@ paths:
       operationId: /dataspaces
       summary: Retrieves list of dataspaces
       description: >-
-        Used to obtain a list of dataspaces. 
+        Used to obtain a list of dataspaces. Results are paginated to improve 
+        performance and usability.
+
+        **Pagination:**
+        - Use `page` parameter to specify which page to retrieve (starts at 1)
+        - Use `size` parameter to control number of items per page (max 100, default 10)
+        - Response includes pagination metadata (current_page, page_size, total_pages, etc.)
+        - Example: `/dataspaces?page=1&size=20`
 
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_dataspaces_token' which indicate
@@ -576,6 +639,32 @@ paths:
         - Participant Registry
       security:
         - BearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          style: form
+          explode: true
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+          description: >-
+            Page number to retrieve (starts at 1). Used for pagination when results 
+            exceed the page size.
+          example: 1
+        - in: query
+          name: size
+          style: form
+          explode: true
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+          description: >-
+            Number of items per page (maximum 100). Used for pagination to control 
+            the number of results returned.
+          example: 10
       responses:
         '200':
           content:
@@ -587,7 +676,14 @@ paths:
       operationId: /frameworks
       summary: Retrieves list of frameworks
       description: >-
-        Used to obtain a list of frameworks. 
+        Used to obtain a list of frameworks. Results are paginated to improve 
+        performance and usability.
+
+        **Pagination:**
+        - Use `page` parameter to specify which page to retrieve (starts at 1)
+        - Use `size` parameter to control number of items per page (max 100, default 10)
+        - Response includes pagination metadata (current_page, page_size, total_pages, etc.)
+        - Example: `/frameworks?page=1&size=20`
 
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_frameworks_token' which indicate
@@ -1428,18 +1524,31 @@ components:
       title: PartiesInfo
       type: object
       properties:
+        current_page:
+          format: int32
+          description: Current page number
+          type: integer
+          example: 1
+        page_size:
+          format: int32
+          description: Number of items per page
+          type: integer
+          example: 10
+        total_pages:
+          format: int32
+          description: Total number of pages available
+          type: integer
+          example: 5
         total_count:
           format: int32
           description: Total count of found parties
           type: integer
-        page_count:
-          format: int32
-          description: Number of pages (10 per page)
-          type: integer
+          example: 47
         count:
           format: int32
-          description: Number of parties returned
+          description: Number of parties returned in current page
           type: integer
+          example: 10
         data:
           description: Object containing parties information
           type: array
@@ -2316,18 +2425,31 @@ components:
       title: DataspaceInfo
       type: object
       properties:
+        current_page:
+          format: int32
+          description: Current page number
+          type: integer
+          example: 1
+        page_size:
+          format: int32
+          description: Number of items per page
+          type: integer
+          example: 10
+        total_pages:
+          format: int32
+          description: Total number of pages available
+          type: integer
+          example: 3
         total_count:
           format: int32
           description: Total count of found dataspaces
           type: integer
-        page_count:
-          format: int32
-          description: Number of pages (10 per page)
-          type: integer
+          example: 25
         count:
           format: int32
-          description: Number of dataspaces returned
+          description: Number of dataspaces returned in current page
           type: integer
+          example: 10
         data:
           description: Object containing dataspace information
           type: array
@@ -2345,18 +2467,31 @@ components:
       title: FrameworkInfo
       type: object
       properties:
+        current_page:
+          format: int32
+          description: Current page number
+          type: integer
+          example: 1
+        page_size:
+          format: int32
+          description: Number of items per page
+          type: integer
+          example: 10
+        total_pages:
+          format: int32
+          description: Total number of pages available
+          type: integer
+          example: 2
         total_count:
           format: int32
           description: Total count of found frameworks
           type: integer
-        page_count:
-          format: int32
-          description: Number of pages (10 per page)
-          type: integer
+          example: 15
         count:
           format: int32
-          description: Number of frameworks returned
+          description: Number of frameworks returned in current page
           type: integer
+          example: 10
         data:
           description: Object containing framework information
           type: array

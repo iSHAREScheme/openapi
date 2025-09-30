@@ -184,7 +184,7 @@ paths:
             The key represents the property name, the value the search criterion.
             To filter on a property inside a claim, construct the key as
             \<claimType>/\<propertyName>.
-          example: /parties?filter[claim_frameworkRole/roleId]=ServiceConsumer&filter[frameworkAgreement/agreementId]=tou
+          example: /parties?filter[frameworkRole/roleId]=ServiceConsumer&filter[frameworkAgreement/agreementId]=tou
       responses:
         '200':
           content:
@@ -954,7 +954,7 @@ components:
           properties:
             type:
               type: string
-              enum: [frameworkROle]
+              enum: [frameworkRole]
             frameworkId:
               description: ID of the framework
               type: string

@@ -141,7 +141,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PartyResponse'
+                $ref: '#/components/schemas/partyResponse'
           description: OK
       deprecated: false
       operationId: /parties/{party_id}
@@ -171,300 +171,20 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - style: form
+        - in: query
+          name: filter
+          style: deepObject
           explode: true
-          name: active_only
-          description: Optional parameter used to search by party's  "Active" status.
           schema:
-            type: boolean
-            example: true
-          in: query
-        - style: form
-          explode: true
-          name: name
+            type: object
+            additionalProperties:
+              type: string
           description: >-
-            Optional parameter used to search by party's name. Can contain a
-            single * as wildcard.
-          schema:
-            type: string
-            example: '*Corporation'
-          in: query
-        - style: form
-          explode: true
-          name: eori
-          description: >-
-            Optional parameter used to search by party's EORI. Can contain
-            a single * as wildcard. It searches through the party_id array 
-            for matching eori (contained in the party_id array). This parameter
-            must be considered deprecated and will be removed in future 
-            releases.
-          schema:
-            type: string
-            example: EU.EORI.NL000000001
-          in: query
-        - style: form
-          explode: true
-          name: party_id
-          description: >-
-            Optional parameter used to search by party's ID. Can contain
-            a single * as wildcard. It searches through the party_id array 
-            for matching party_id.
-          schema:
-            type: string
-            example: did:ishare:EU.NL.NTRNL-12345678
-          in: query
-        - style: form
-          explode: true
-          name: certified_only
-          description: >-
-            Search for parties that play one of the certified roles as defined
-            in iSHARE role framework.
-          schema:
-            type: boolean
-            example: true
-          in: query
-        - style: form
-          explode: true
-          name: date_time
-          description: Search parties with specific adherence date
-          schema:
-            format: date-time
-            type: string
-            example: '2023-01-31T00:00:00.000Z'
-          in: query
-        - style: form
-          explode: true
-          name: adherenceStatus
-          description: >-
-            Search for parties with adherence status like "Active",
-            "Revoked","Not Active", "Pending"
-          schema:
-            type: string
-            example: Active
-          in: query
-        - style: form
-          explode: true
-          name: adherenceStartdate
-          description: Search parties with specific adherence start date
-          schema:
-            format: date-time
-            type: string
-            example: '2023-01-31T00:00:00.000Z'
-          in: query
-        - style: form
-          explode: true
-          name: adherenceEnddate
-          description: Search parties with specific adherence end date
-          schema:
-            format: date-time
-            type: string
-            example: '2023-01-31T00:00:00.000Z'
-          in: query
-        - style: form
-          explode: true
-          name: registrarPartyId
-          description: Search parties by their registrar Participant Registry's ID number
-          schema:
-            type: string
-            example: did:ishare:EU.NL.NTRNL-12345678
-          in: query
-        - style: form
-          explode: true
-          name: webSiteUrl
-          description: Search a party by their website URL
-          schema:
-            type: string
-            example: https://www.example.com
-          in: query
-        - style: form
-          explode: true
-          name: companyEmail
-          description: Search a party by their email ID
-          schema:
-            type: string
-            example: John.doe@example.com
-          in: query
-        - style: form
-          explode: true
-          name: companyPhone
-          description: Search a party by their company phone number
-          schema:
-            format: int32
-            type: integer
-          in: query
-        - style: form
-          explode: true
-          name: publiclyPublishable
-          description: >-
-            Search parties whose general company contact information is allowed
-            to be published
-          schema:
-            type: boolean
-            example: true
-          in: query
-        - style: form
-          explode: true
-          name: tags
-          description: >-
-            Search parties who match any of the keywords that they have added in
-            their participant information under tags. It is a free text field
-            and can contain any value
-          schema:
-            type: string
-            example: mobility
-          in: query
-        - style: form
-          explode: true
-          name: framework
-          description: >-
-            Search parties based on which framework they were onboarded with.
-            Currently parties can only be registered with "iSHARE" framework
-          schema:
-            type: string
-            example: iSHARE
-          in: query
-        - style: form
-          explode: true
-          name: subjectName
-          description: >-
-            Search parties based on the subject name of their PKI (x509)
-            certificates. Usually to find a party who is requesting tokens
-          schema:
-            type: string
-            example: >-
-              CN=Test Service Consumer,organizationIdentifier=NTRNL-10000001,O=Test Service Consumer,C=NL
-          in: query
-        - style: form
-          explode: true
-          name: role
-          description: >-
-            Search parties based on their roles as defined in iSHARE role
-            framework. Possible roles are ServiceConsumer, ServiceProvider, 
-            EntitledParty, AuthorisationRegistry, IdentityProvider, 
-            IdentityBroker and IdentityBroker and ParticipantRegistry, 
-            iShareSatellite (deprecated, will be removed in future releases, 
-            use ParticipantRegistry instead).
-          schema:
-            type: string
-            example: ServiceConsumer
-          in: query
-        - style: form
-          explode: true
-          name: loA
-          description: >-
-            Search parties based on their level of assurance which is registered
-            in the participant list. Possible values are Low/Substantial/High
-          schema:
-            type: string
-            example: Substantial
-          in: query
-        - style: form
-          explode: true
-          name: compliancyVerified
-          description: >-
-            Search parties that have their compliance to framework verified or
-            not.
-          schema:
-            type: boolean
-            example: true
-          in: query
-        - style: form
-          explode: true
-          name: legalAdherence
-          description: >-
-            Search parties that have signed the appropriate legal agreements and
-            that have been verified during or after onboarding. Parties adhering
-            to legal agreements are legally obliged to adhere to terms of use of
-            data.
-          schema:
-            type: boolean
-            example: true
-          in: query
-        - style: form
-          explode: true
-          name: authorizationRegistryID
-          description: >-
-            Search parties based on their authorisation registry provider. The
-            ID of the authorisation registry must be provided in search
-            parameter and this must be listed as authorisation registry in the
-            participant record
-          schema:
-            type: string
-            example: did:ishare:EU.NL.NTRNL-12345678
-          in: query
-        - style: form
-          explode: true
-          name: authorizationRegistryName
-          description: >-
-            Search parties based on their authorisation registry provider. The
-            name of the authorisation registry must be provided in search
-            parameter and this must be listed as authorisation registry in the
-            participant record
-          schema:
-            type: string
-            example: Askme anything
-          in: query
-        - style: form
-          explode: true
-          name: dataspaceID
-          description: >-
-            Search parties based on data-spaces they participate in. The ID of
-            the data-space must be provided
-          schema:
-            type: string
-            example: EU.DSP.NLLOGISTICS_DLDS
-          in: query
-        - style: form
-          explode: true
-          name: dataspaceTitle
-          description: >-
-            Search parties based on data-spaces they participate in. The name of
-            the data-space must be provided
-          schema:
-            type: string
-            example: Dutch Mobility Dataspace
-          in: query
-        - style: form
-          explode: true
-          name: countriesOfOperation
-          description: >-
-            Search parties by name of country they list as their country of
-            operation
-          schema:
-            type: string
-            example: Belgium
-          in: query
-        - style: form
-          explode: true
-          name: sectorIndustry
-          description: Search parties by name of sector they list as their sector/industry
-          schema:
-            type: string
-            example: Energy
-          in: query
-        - style: form
-          explode: true
-          name: page
-          description: >-
-            The parties API by default uses pagination. Each page size is fixed
-            at 10 parties per page. When search results into more then 10
-            parties, the page parameter must be added for next pages
-          schema:
-            format: int32
-            type: integer
-            example: 2
-          in: query
-        - style: form
-          explode: true
-          name: certificate_subject_name
-          description: >-
-            Search parties based on the subject name of their PKI (x509)
-            certificates. Usually to find a party who is requesting tokens
-          schema:
-            type: string
-            example: >-
-              CN=Test Service Consumer,organizationIdentifier=NTRNL-10000001,O=Test Service Consumer,C=NL
-          in: query
+            A (set of) key/value pair(s) used to filter parties based on claim attributes.
+            The key represents the property name, the value the search criterion.
+            To filter on a property inside a claim, construct the key as
+            \<claimType>/\<propertyName>.
+          example: /parties?filter[claim_frameworkRole/roleId]=ServiceConsumer&filter[frameworkAgreement/agreementId]=tou
       responses:
         '200':
           content:
@@ -489,7 +209,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Party'
+              $ref: '#/components/schemas/party'
         required: true
       tags:
         - Participant Registry
@@ -500,13 +220,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PartyResponse'
+                $ref: '#/components/schemas/partyResponse'
           description: ''
       deprecated: false
       operationId: /parties-new
       summary: Create new party
       description: >-
-        Used to programatically create a participant.
+        Used to programatically create a participant. To create a party as part
+        of the iSHARE Framework, at minimum the folowwing claims must be provided:
+        frameworkMembership, frameworkAgreement, frameworkRole, (x509Certificate 
+        or idpAssertion).
   /dataspaces:
     get:
       tags:
@@ -1062,9 +785,9 @@ components:
           example: 1504683475
         party_info:
           allOf:
-            - $ref: '#/components/schemas/Party'
+            - $ref: '#/components/schemas/party'
             - {}
-    Party:
+    party:
       title: Party
       required:
         - id
@@ -1214,7 +937,7 @@ components:
           properties:
             type:
               type: string
-              enum: [dataspaceAgreement]
+              enum: [frameworkAgreement]
             frameworkId:
               description: ID of the framework
               type: string
@@ -1410,7 +1133,7 @@ components:
           description: Object containing parties information
           type: array
           items:
-            $ref: '#/components/schemas/Party'
+            $ref: '#/components/schemas/party'
     CertificateAuthority:
       title: CertificateAuthority
       type: object
@@ -1518,7 +1241,7 @@ components:
           allOf:
             - $ref: '#/components/schemas/PartiesInfo'
             - {}
-    PartyResponse:
+    partyResponse:
       title: PartyResponse
       type: object
       properties:
@@ -1703,7 +1426,9 @@ components:
       type: object
       properties:
         agreementType:
-          description: Type of agreement
+          description: >-
+            Descriptive type of the agreement. Framework or dataspace may 
+            define agreement types.
           type: string
           example: Terms of Use
         agreementId:
@@ -2030,7 +1755,7 @@ components:
           example: 1504683475
         parties_info:
           allOf:
-            - $ref: '#/components/schemas/Party'
+            - $ref: '#/components/schemas/party'
             - {}
     jwt_payload_ep_creation_response_token:
       title: jwt_payload_ep_creation_response_token
@@ -2079,7 +1804,7 @@ components:
           example: 1504683475
         parties_info:
           allOf:
-            - $ref: '#/components/schemas/Party'
+            - $ref: '#/components/schemas/party'
             - {}
         status:
           description: Status of the request for creation of entitled party

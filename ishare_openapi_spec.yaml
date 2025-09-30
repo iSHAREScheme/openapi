@@ -153,6 +153,54 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_party_token' which indicate what
         the decoded response will look like.
+    patch:
+      tags:
+        - Participant Registry
+      security:
+        - BearerAuth: []
+      parameters:
+        - style: simple
+          name: party_id
+          description: >-
+            The id of the party whose record must be updated. Can be anyone of 
+            the party id from id or alsoKnownAs attributes of that participant.
+            Since all participants are automatically allocated the derived 
+            ishare did, that id is always an option to search for a participant.
+          schema:
+            type: string
+            example: did:ishare:EU.NL.NTRNL-12345678
+          in: path
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/partyUpdate'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/partyResponse'
+          description: OK
+        '400':
+          description: Bad Request - Invalid input data
+        '404':
+          description: Not Found - Party not found
+        '500':
+          description: Internal Server Error
+      deprecated: false
+      operationId: /parties/{party_id}-patch
+      summary: Update party information
+      description: >-
+        Used to partially update information of an iSHARE participant in the Participant 
+        Registry. Only the provided fields will be updated, other fields remain unchanged.
+        The party ID cannot be changed through this operation.
+
+        Server response is an iSHARE signed JSON Web Token. Please refer to the
+        models 'jwt_header' and 'jwt_payload_party_token' which indicate what
+        the decoded response will look like.
   /parties:
     options:
       tags:
@@ -421,6 +469,81 @@ paths:
       description: >-
         Used to obtain the claims about an iSHARE participant from the Participant 
         Registry. It returns claims for the exact participant matched using its ID.
+
+        Server response is an iSHARE signed JSON Web Token. Please refer to the
+        models 'jwt_header' and 'jwtPayloadClaimToken' which indicate what
+        the decoded response will look like.
+    patch:
+      tags:
+        - Participant Registry
+      security:
+        - BearerAuth: []
+      parameters:
+        - style: simple
+          name: party_id
+          description: >-
+            The id of the party whose claim must be updated. Can be anyone of 
+            the party id from id or alsoKnownAs attributes of that participant.
+            Since all participants are automatically allocated the derived 
+            ishare did, that id is always an option to search for a participant.
+          schema:
+            type: string
+            example: did:ishare:EU.NL.NTRNL-12345678
+          in: path
+          required: true
+        - style: simple
+          name: claim_id
+          description: >-
+            The id of the claim that must be updated.
+          schema:
+            type: string
+            example: 5ffb4bb9-2020-4045-a922-3bd84e78f709
+          in: path
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/claimUpdate'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/claimResponse'
+          description: OK
+        '400':
+          description: Bad Request - Invalid input data
+        '404':
+          description: Not Found - Party or claim not found
+        '500':
+          description: Internal Server Error
+      deprecated: false
+      operationId: /parties/{party_id}/claims/{claim_id}-patch
+      summary: Update claim information
+      description: >-
+        Used to partially update a specific claim of an iSHARE participant in the Participant 
+        Registry. This flexible update mechanism allows updating any claim property using
+        a key-value structure in the request body.
+        
+        The key represents the property path within the claim (using dot notation for 
+        nested properties), and the value is the new value to set. Only the provided 
+        fields will be updated, other fields remain unchanged.
+        
+        Examples of property paths:
+        - "status" - Update claim status
+        - "validFrom" - Update validity start time (ISO 8601 date-time)
+        - "validUntil" - Update validity end time (ISO 8601 date-time)
+        - "role.roleId" - Update role ID in role claim
+        - "role.status" - Update role status
+        - "role.loa" - Update level of assurance
+        - "agreement.agreementId" - Update agreement ID
+        - "agreement.status" - Update agreement status
+        - "agreement.title" - Update agreement title
+        - "additionalInfo.contact.email" - Update contact email in additional info
+        
+        The claim ID and type cannot be changed through this operation.
 
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwtPayloadClaimToken' which indicate what
@@ -2129,6 +2252,66 @@ components:
         claimToken:
           type: string
           format: application/jwt
+    partyUpdate:
+      title: PartyUpdate
+      type: object
+      description: >-
+        Schema for partial updates to a party. All fields are optional.
+        Only provided fields will be updated.
+      properties:
+        name:
+          description: Name of the party.
+          type: string
+          example: Example Corporation
+        alsoKnownAs:
+          description: >-
+            Array of registered party ids of the party with which the party is
+            also identified. Optional, because a party could be identified with
+            only its iSHARE-ID (in the 'id' property).
+          type: array
+          items:
+            type: string
+          example: 
+            - "did:ishare:EU.NL.NTRNL-12345678"
+            - "did:elsi:LEIXG-724500AZSGBRY55MNS59"
+            - "did:web:example.com"
+            - "CoC:123456789"
+    claimUpdate:
+      title: ClaimUpdate
+      type: object
+      description: >-
+        Schema for partial updates to a claim. This flexible schema allows updating
+        any claim property by using a key-value structure. The key represents the
+        property path within the claim, and the value is the new value to set.
+        
+        For nested properties, use dot notation (e.g., "frameworkRole.roleId").
+        The claim type, registrarId and ID cannot be changed through this operation.
+        
+        Common claim properties that can be updated:
+        - status: Claim status (active, inactive, suspended, revoked)
+        - validFrom: ISO 8601 date-time when claim becomes valid
+        - validUntil: ISO 8601 date-time when claim expires
+        
+        Type-specific properties can also be updated using the appropriate property paths.
+
+        Note that claims cannot be deleted, but instead the status can be set to revoked or inactive.
+      additionalProperties:
+        oneOf:
+          - type: string
+          - type: integer
+          - type: boolean
+          - type: object
+          - type: array
+      example:
+        status: "active"
+        validFrom: "2024-01-01T00:00:00.000Z"
+        validUntil: "2024-12-31T23:59:59.999Z"
+        "role.roleId": "ServiceProvider"
+        "role.status": "active"
+        "role.loa": 2
+        "agreement.agreementId": "agreement-123"
+        "agreement.status": "signed"
+        "agreement.title": "Updated Agreement Title"
     DataspaceInfo:
       title: DataspaceInfo
       type: object
@@ -2941,7 +3124,7 @@ components:
       description: List of allowed HTTP methods
       schema:
         type: string
-      example: GET, PUT, POST, OPTIONS
+      example: GET, PUT, POST, PATCH, OPTIONS
   parameters:
     delegation-evidence:
       deprecated: false

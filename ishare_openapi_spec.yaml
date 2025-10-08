@@ -1229,11 +1229,14 @@ components:
       properties:
         id:
           type: string
-          description: Unique identifier of the claim
+          format: uuid
+          description: Unique identifier of the claim, must be a UUID
           example: 5ffb4bb9-2020-4045-a922-3bd84e78f709
         registrarId:
           type: string
-          description: Identifier of the party who registered the participant 
+          description: >-
+            Identifier of the party who registered the participant. This can 
+            be any of the Party ID from id or alsoKnownAs attributes of that participant.
           example: did:ishare:EU.NL.NTRNL-12345678
     claimFrameworkMembership:
       allOf:
@@ -1242,11 +1245,10 @@ components:
           title: frameworkMembershipClaim
           description: Participant claim that holds framework membership
           required:
-            - dataspaceId
+            - frameworkId
             - status
             - startDate
             - endDate
-            - legalAdherence
           properties:
             type:
               type: string
@@ -1266,12 +1268,12 @@ components:
               enum: [active, revoked, notactive, pending]
             startDate:
               type: string
-              description: Start date of the dataspace membership
+              description: UTC timestamp of the start date of the dataspace membership
               format: date-time
               example: '2025-01-01T00:00:00.000Z'
             endDate:
               type: string
-              description: End date of the dataspace membership
+              description: UTC timestamp of the end date of the dataspace membership
               format: date-time
               example: '2026-12-31T00:00:00.000Z'
             additionalInfo:
@@ -1360,12 +1362,12 @@ components:
               enum: [active, revoked, notactive, pending]
             startDate:
               type: string
-              description: Start date of the dataspace membership
+              description: UTC timestamp of the start date of the dataspace membership
               format: date-time
               example: '2025-01-01T00:00:00.000Z'
             endDate:
               type: string
-              description: End date of the dataspace membership
+              description: UTC timestamp of the end date of the dataspace membership
               format: date-time
               example: '2026-12-31T00:00:00.000Z'
             legalAdherence:
@@ -1760,14 +1762,14 @@ components:
           example: accepted
         signDate:
           format: date-time
-          description: Date of signature of the agreement.
+          description: UTC timestamp of the date of signature of the agreement.
           type: string
           example: '2025-01-31T00:00:00.000Z'
         expiryDate:
           format: date-time
           description: >-
-            Expiry date of the agreement. For non expiring agreements the end
-            date is far in future
+            UTC timestamp of the expiry date of the agreement. For non expiring 
+            agreements the end date is far in future
           type: string
           example: '2026-01-31T00:00:00.000Z'
         verificationHash:

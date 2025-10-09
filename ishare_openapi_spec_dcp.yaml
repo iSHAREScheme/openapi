@@ -1,0 +1,198 @@
+openapi: 3.1.0
+info:
+  version: '0.1'
+  title: iSHARE Decentralized Claims Protocol (DCP) API specifications
+  description: >-
+    These are the API specifications for the iSHARE implementation of the Eclipse 
+    Decentralized Claims Protocol v1.0.
+    
+    These specifications describe the standardised endpoints that different iSHARE
+    roles must provide to support the Decentralized Claims Protocol. The DCP enables
+    the issuance, verification, and management of decentralized claims/credentials
+    within the iSHARE ecosystem, focusing on dataspace membership and delegation evidence,
+    for machine-to-machine communication.
+    
+    The endpoints described are role-specific and must be implemented by participants
+    according to their role within the iSHARE Scheme. Each role has specific
+    responsibilities in the claims lifecycle.
+    
+    This specification follows the Eclipse DCP v1.0 standard and uses JSON-LD format
+    for credential responses to ensure semantic interoperability.
+  contact:
+    url: http://dev.ishare.eu
+    email: support@iSHARE.eu
+tags:
+  - name: Participant Registry (optional)
+    description: Endpoints that form the Participant Registry DCP API specification for managing participant credentials and dataspace membership.
+  - name: Authorization Registry (optional)
+    description: Endpoints that form the Authorization Registry DCP API specification for managing participant credentials and dataspace membership.
+paths:
+  /credentials:
+    post:
+      tags:
+        - Participant Registry (optional)
+        - Authorization Registry (optional)
+        - Service Consumer (optional)
+        - Entitled Party (optional)
+      security:
+        - BearerAuth: []
+      summary: Request issuance of a Verifiable Credential
+      description: >-
+        If invoked with a credential-request message, requests the issuance of a Verifiable Credential according to the Eclipse
+        Decentralized Claims Protocol v1.0 specification. This is applicable to the Participant Registry and Authorization Registry
+        only, since these roles issue credentials.
+
+        If invoked with a credential-message, requests the storage of a credential, applicable to the roles Entitled Party and Service.Consumer.
+        
+        More information in the 
+        [DCP specification of the credential request API](https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol/v1.0/#credential-request-api) and the [DCP specification of the storage API](https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol/v1.0/#storage-api).
+      operationId: issue-credential
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: 'https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol/v1.0/resources/issuance/credential-request-message-schema.json'
+                - $ref: 'https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol/v1.0/resources/issuance/credential-message-schema.json'
+      responses:
+        '201':
+          description: Credential request created successfully
+          headers:
+            Location:
+              description: URL to the credential request status endpoint
+              schema:
+                type: string
+                format: uri
+                examples: 
+                  - "/requests/urn:uuid:550e8400-e29b-41d4-a716-446655440000"
+        '400':
+          description: Bad Request - Invalid credential request
+        '401':
+          description: Unauthorized - Invalid or missing authentication
+        '403':
+          description: Forbidden - Insufficient permissions to issue credential
+        '500':
+          description: Internal Server Error
+
+  /requests/{requestId}:
+    get:
+      tags:
+        - Participant Registry (optional)
+        - Authorization Registry (optional)
+      security:
+        - BearerAuth: []
+      summary: Get credential request status
+      description: >-
+        Retrieves the status of a credential request. This endpoint is used to
+        check the processing status of a previously submitted credential request.
+        The request ID is provided in the Location header of the 201 response
+        from the /credentials endpoint. More information in the 
+        [DCP specification](https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol/v1.0/#credential-request-status-api).
+      operationId: get-credential-request-status
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          description: Unique identifier of the credential request
+          schema:
+            type: string
+            format: uri
+            examples: 
+              - "urn:uuid:550e8400-e29b-41d4-a716-446655440000"
+      responses:
+        '200':
+          description: Credential request status retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: 'https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol/v1.0/resources/issuance/credential-status-schema.json'
+        '404':
+          description: Credential request not found
+        '401':
+          description: Unauthorized - Invalid or missing authentication
+        '500':
+          description: Internal Server Error
+
+  /metadata:
+    get:
+      tags:
+        - Participant Registry (optional)
+        - Authorization Registry (optional)
+      security:
+        - BearerAuth: []
+      summary: Gets credential types supported by the issuer
+      description: >-
+        Retrieves a list of supported credential types that the issuer can
+        provide. More information in the [DCP specification](https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol/v1.0/#issuermetadata).
+
+        An iSHARE Participant Registry must at minimum issue a Party claim. An iSHARE Authorization Registry must at minimum issue a Data Rights claim.
+      operationId: get-metadata
+      responses:
+        '200':
+          description: Metadata retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: 'https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol/v1.0/resources/issuance/issuer-metadata-schema.json'
+                examples:
+                  - '{
+                      "@context": [
+                        "https://w3id.org/dspace-dcp/v1.0/dcp.jsonld"
+                      ],
+                      "type": "IssuerMetadata",
+                      "issuer": "did:web:issuer-url",
+                      "credentialsSupported": [
+                        {
+                          "id": "https://schemas.ishare.eu/v3/party/schema.json",
+                          "type": "CredentialObject",
+                          "credentialType": "PartyCredential",
+                          "credentialSchema": "https://schemas.ishare.eu/v3/party/schema.json",
+                          "bindingMethods": [
+                            "did:ishare",
+                            "did:web"
+                          ],
+                          "profile": "vc10-sl2021/jwt"
+                        }
+                      ]
+                    }'
+        '404':
+          description: Metadata not found
+        '401':
+          description: Unauthorized - Invalid or missing authentication
+        '500':
+          description: Internal Server Error
+
+  /offers:
+    post:
+      tags:
+        - Service Consumer (optional)
+        - Entitled Party (optional)
+      summary: Issuer initiates reissuance of credential at holder
+      description: >-
+         A Credential Issuer can proactively prompt a Holder to request a new Verifiable Credential.
+         More information in the [DCP specification](https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol/v1.0/#credential-offer-api).
+      operationId: post-offer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol/v1.0/resources/issuance/credential-offer-message-schema.json'
+      responses:
+        '200':
+          description: Credential offer received successfully
+        '400':
+          description: Bad Request - Invalid credential offer request
+        '500':
+          description: Internal Server Error
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: iSHARE JWT Bearer token authentication
+
+  schemas:

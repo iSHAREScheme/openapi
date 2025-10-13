@@ -1259,21 +1259,21 @@ components:
               example: iSHARE
             capabilityUrl:
               type: string
-              description: Capabilities endpoint of the party in the dataspace
+              description: Capabilities endpoint of the party in the framework
               format: uri
               example: https://www.example.com/capabilities
             status:
               type: string
-              description: Status of the dataspace membership (active, revoked, notactive or pending)
+              description: Status of the framework membership (active, revoked, notactive or pending)
               enum: [active, revoked, notactive, pending]
             startDate:
               type: string
-              description: UTC timestamp of the start date of the dataspace membership
+              description: UTC timestamp of the start date of the framework membership
               format: date-time
               example: '2025-01-01T00:00:00.000Z'
             endDate:
               type: string
-              description: UTC timestamp of the end date of the dataspace membership
+              description: UTC timestamp of the end date of the framework membership
               format: date-time
               example: '2026-12-31T00:00:00.000Z'
             additionalInfo:

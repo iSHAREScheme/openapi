@@ -1,3 +1,3 @@
-This repository forms part of the iSHARE Trust Framework and is therefore subject to the [legal notices](https://framework.ishare.eu/glossary-and-legal-notices/legal-notices) applicable to the Framework.
+This repository forms part of the iSHARE Framework and is therefore subject to the [legal notices](https://framework.ishare.eu/glossary-and-legal-notices/legal-notices) applicable to the Framework.
 
-Notwithstanding the foregoing, the contents of this repository may be redistributed by any by party. Additions and extensions to these specifications are allowed, as long as any changes are not undermining the specifications.
+Notwithstanding the foregoing, the [OpenAPI specifications](./ishare_openapi_spec.yaml) in this repository may be redistributed by any party. Additions and extensions to these specifications are allowed, as long as any changes are in broadest sense not undermining these specifications and the purpose of the iSHARE Framework.

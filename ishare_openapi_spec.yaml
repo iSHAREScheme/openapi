@@ -1474,17 +1474,6 @@ components:
             queried/checked from
           type: string
           example: http://ar.isharetest.net/
-        dataspaceId:
-          description: >-
-            The id of the dataspace where the party uses this authorisation
-            registry provider
-          type: string
-          example: EU.DSP.NL.TESTDATASPACE
-        dataspaceName:
-          description: The name of the dataspace corresponding to the dataspace id
-          type: string
-          example: TESTDATASPACE
-          readOnly: true
     partiesInfo:
       title: partiesInfo
       allOf:

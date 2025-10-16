@@ -1517,13 +1517,14 @@ components:
         - id
         - authUrl
         - status
+        - authRegistryId
       type: object
       properties:
         name:
           description: The name of the authorisation registry provider
           type: string
           example: iSHARE Test Authorization Registry
-        id:
+        authRegistryId:
           description: The Id of the authorisation registry provider
           type: string
           example: did:ishare:EU.NL.NTRNL-12345678

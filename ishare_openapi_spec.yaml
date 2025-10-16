@@ -1288,11 +1288,6 @@ components:
           description: >-
             Presents the selected Authorisation Registry to be used for the 
             party.
-          required:
-            - dataspaceId
-            - authRegistryId
-            - authUrl
-            - status
           properties:
             type:
               type: string
@@ -1391,9 +1386,6 @@ components:
             party in this a dataspace.
           required:
             - dataspaceId
-            - authRegistryId
-            - authUrl
-            - status
           properties:
             type:
               type: string
@@ -1523,7 +1515,8 @@ components:
       required:
         - name
         - id
-        - url
+        - authUrl
+        - status
       type: object
       properties:
         name:
@@ -1534,12 +1527,18 @@ components:
           description: The Id of the authorisation registry provider
           type: string
           example: did:ishare:EU.NL.NTRNL-12345678
-        url:
+        authUrl:
           description: >-
             The URL pointer specific to the party where authorisations can be
             queried/checked from
           type: string
           example: http://ar.isharetest.net/
+        status:
+          description: >-
+            Status of the Autorization Registry. Available values are active, inactive.
+          type: string
+          enum: [active, inactive]
+          example: active
     partiesInfo:
       title: partiesInfo
       allOf:

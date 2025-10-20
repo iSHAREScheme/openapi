@@ -14,13 +14,14 @@ info:
     for machine-to-machine communication.
     
     The endpoints described are role-specific and must be implemented by participants
-    according to their role within the iSHARE Scheme. Each role has specific
-    responsibilities in the claims lifecycle.
+    according to their role within the iSHARE Scheme if thos parties want to support 
+    the DCP. Each role has specific responsibilities in the claims lifecycle.
     
-    This specification follows the Eclipse DCP v1.0 standard and uses JSON-LD format
-    for credential responses to ensure semantic interoperability.
+    This specification follows the Eclipse 
+    [DCP v1.0](https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol/v1.0/) 
+    standard.
   contact:
-    url: http://dev.ishare.eu
+    url: http://support.ishare.eu
     email: support@iSHARE.eu
 tags:
   - name: Participant Registry Optional
@@ -33,8 +34,7 @@ paths:
       tags:
         - Participant Registry Optional
         - Authorization Registry Optional
-        - Service Consumer Optional
-        - Entitled Party Optional
+        - All Roles Optional
       security:
         - BearerAuth: []
       summary: Request issuance of a Verifiable Credential
@@ -43,7 +43,7 @@ paths:
         Decentralized Claims Protocol v1.0 specification. This is applicable to the Participant Registry and Authorization Registry
         only, since these roles issue credentials.
 
-        If invoked with a credential-message, requests the storage of a credential, applicable to the roles Entitled Party and Service.Consumer.
+        If invoked with a credential-message, requests the storage of a credential, applicable to all roles (participants), since all roles must be able to store credentials.
         
         More information in the 
         [DCP specification of the credential request API](https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol/v1.0/#credential-request-api) and the [DCP specification of the storage API](https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol/v1.0/#storage-api).

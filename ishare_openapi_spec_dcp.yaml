@@ -20,28 +20,36 @@ info:
     This specification follows the Eclipse 
     [DCP v1.0](https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol/v1.0/) 
     standard.
+
+    iSHARE roles and their corresponding Verifiable Credentials (VC) roles:
+    - Participant Registry: typically fulfills the VC role of Issuer (issues participant credentials).
+    - Authorization Registry: typically fulfills the VC role of Issuer (issues data rights credentials).
+    - Service Consumer: typically fulfills the VC role of Holder (stores and presents credentials), and may also act as Verifier when validating counterpart credentials.
+    - Entitled Party: typically fulfills the VC role of Holder (stores and presents credentials), and may also act as Verifier when validating counterpart credentials.
+
+    A single party may take on multiple iSHARE roles and multiple VC roles. To operate in the iSHARE 3.0 VC context at minimum, a party should fulfill the Holder role so it can receive, store, and present Verifiable Credentials.
   contact:
     url: http://support.ishare.eu
     email: support@iSHARE.eu
 tags:
-  - name: Participant Registry Optional
-    description: Endpoints that form the Participant Registry DCP API specification for managing participant credentials and dataspace membership.
-  - name: Authorization Registry Optional
-    description: Endpoints that form the Authorization Registry DCP API specification for managing participant credentials and dataspace membership.
+  - name: Issuer
+    description: Endpoints relevant for the VC Issuer role (e.g., issuing credentials, issuer metadata).
+  - name: Holder
+    description: Endpoints relevant for the VC Holder role (e.g., storing credentials, receiving offers).
+  - name: Verifier
+    description: Endpoints relevant for the VC Verifier role (e.g., verifying credentials or presentations).
 paths:
   /credentials:
     post:
       tags:
-        - Participant Registry Optional
-        - Authorization Registry Optional
-        - All Roles Optional
+        - Issuer
+        - Holder
       security:
         - BearerAuth: []
       summary: Request issuance of a Verifiable Credential
       description: >-
         If invoked with a credential-request message, requests the issuance of a Verifiable Credential according to the Eclipse
-        Decentralized Claims Protocol v1.0 specification. This is applicable to the Participant Registry and Authorization Registry
-        only, since these roles issue credentials.
+        Decentralized Claims Protocol v1.0 specification. This is applicable to issuers only.
 
         If invoked with a credential-message, requests the storage of a credential, applicable to all roles (participants), since all roles must be able to store credentials.
         
@@ -79,8 +87,7 @@ paths:
   /requests/{requestId}:
     get:
       tags:
-        - Participant Registry Optional
-        - Authorization Registry Optional
+        - Issuer
       security:
         - BearerAuth: []
       summary: Get credential request status
@@ -118,8 +125,7 @@ paths:
   /metadata:
     get:
       tags:
-        - Participant Registry Optional
-        - Authorization Registry Optional
+        - Issuer
       security:
         - BearerAuth: []
       summary: Gets credential types supported by the issuer
@@ -155,7 +161,7 @@ paths:
                             "did:ishare",
                             "did:web"
                           ],
-                          "profile": "vc10-sl2021/jwt"
+                          "profile": "vc20-bssl/jwt"
                         }
                       ]
                     }'
@@ -169,8 +175,7 @@ paths:
   /offers:
     post:
       tags:
-        - Service Consumer Optional
-        - Entitled Party Optional
+        - Holder
       summary: Issuer initiates reissuance of credential at holder
       description: >-
          A Credential Issuer can proactively prompt a Holder to request a new Verifiable Credential.

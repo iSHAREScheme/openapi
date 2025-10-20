@@ -127,7 +127,9 @@ paths:
         Retrieves a list of supported credential types that the issuer can
         provide. More information in the [DCP specification](https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol/v1.0/#issuermetadata).
 
-        An iSHARE Participant Registry must at minimum issue a Party claim. An iSHARE Authorization Registry must at minimum issue a Data Rights claim.
+        The credential types that are defined by the iSHARE Framework are defined on the [iSHARE Schemas Site](https://schemas.ishare.eu/v3/).
+
+        An iSHARE Participant Registry must at minimum issue a [Participant Credential](https://schemas.ishare.eu/v3/party/schema.json). An iSHARE Authorization Registry must at minimum issue a [Data Rights Credential](https://schemas.ishare.eu/v3/data-rights/schema.json).
       operationId: get-metadata
       responses:
         '200':

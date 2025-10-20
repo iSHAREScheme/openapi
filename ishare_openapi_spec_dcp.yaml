@@ -23,18 +23,18 @@ info:
     url: http://dev.ishare.eu
     email: support@iSHARE.eu
 tags:
-  - name: Participant Registry (optional)
+  - name: Participant Registry Optional
     description: Endpoints that form the Participant Registry DCP API specification for managing participant credentials and dataspace membership.
-  - name: Authorization Registry (optional)
+  - name: Authorization Registry Optional
     description: Endpoints that form the Authorization Registry DCP API specification for managing participant credentials and dataspace membership.
 paths:
   /credentials:
     post:
       tags:
-        - Participant Registry (optional)
-        - Authorization Registry (optional)
-        - Service Consumer (optional)
-        - Entitled Party (optional)
+        - Participant Registry Optional
+        - Authorization Registry Optional
+        - Service Consumer Optional
+        - Entitled Party Optional
       security:
         - BearerAuth: []
       summary: Request issuance of a Verifiable Credential
@@ -79,8 +79,8 @@ paths:
   /requests/{requestId}:
     get:
       tags:
-        - Participant Registry (optional)
-        - Authorization Registry (optional)
+        - Participant Registry Optional
+        - Authorization Registry Optional
       security:
         - BearerAuth: []
       summary: Get credential request status
@@ -118,8 +118,8 @@ paths:
   /metadata:
     get:
       tags:
-        - Participant Registry (optional)
-        - Authorization Registry (optional)
+        - Participant Registry Optional
+        - Authorization Registry Optional
       security:
         - BearerAuth: []
       summary: Gets credential types supported by the issuer
@@ -167,8 +167,8 @@ paths:
   /offers:
     post:
       tags:
-        - Service Consumer (optional)
-        - Entitled Party (optional)
+        - Service Consumer Optional
+        - Entitled Party Optional
       summary: Issuer initiates reissuance of credential at holder
       description: >-
          A Credential Issuer can proactively prompt a Holder to request a new Verifiable Credential.

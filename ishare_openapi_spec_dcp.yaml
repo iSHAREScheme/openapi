@@ -46,7 +46,7 @@ paths:
         - Holder
       security:
         - BearerAuth: []
-      summary: Request issuance of a Verifiable Credential
+      summary: Request issuance or storage of a Verifiable Credential
       description: >-
         If invoked with a credential-request message, requests the issuance of a Verifiable Credential according to the Eclipse
         Decentralized Claims Protocol v1.0 specification. This is applicable to issuers only.

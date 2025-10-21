@@ -195,6 +195,35 @@ paths:
         '500':
           description: Internal Server Error
 
+  /presentations/query:
+    post:
+      tags:
+        - Holder
+      security:
+        - BearerAuth: []
+      summary: Verifier requests Verifiable Presentation from holder
+      description: >-
+        The Resolution API defines the Credential Service endpoint for querying credentials and returning a set of Verifiable Presentations.
+        More information in the [DCP specification](https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol/v1.0/#resolution-api.
+      operationId: post-vp-request
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              $ref: 'https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol/v1.0/resources/presentation/presentation-query-message-schema.json'
+      responses:
+        '200':
+          description: VP request received successfully
+          content:
+            application/json: 
+              schema:
+                $ref: 'https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol/v1.0/resources/presentation/presentation-response-message-schema.json'
+        '400':
+          description: Bad Request - possibly because both PresentationQueryMessage and presentationDefinition are provided (only one is allowed)
+        '500':
+          description: Internal Server Error
+
 components:
   securitySchemes:
     BearerAuth:

@@ -2081,6 +2081,9 @@ components:
         Type-specific properties can also be updated using the appropriate property paths.
 
         Note that claims cannot be deleted, but instead the status can be set to revoked or inactive.
+
+        Because the claimId must be provided in the URL, only the properties of that 
+        specific claim may be updated in one request.
       additionalProperties:
         oneOf:
           - type: string

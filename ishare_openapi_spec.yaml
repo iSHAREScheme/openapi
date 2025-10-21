@@ -1210,6 +1210,7 @@ components:
           dataspaceAgreement: '#/components/schemas/claimDataspaceAgreement'
           dataspaceRole: '#/components/schemas/claimDataspaceRole'
           x509Certificate: '#/components/schemas/claimX509Certificate'
+          idpAssertion: '#/components/schemas/claimIdpAssertion'
       oneOf:
         - $ref: '#/components/schemas/claimFrameworkMembership'
         - $ref: '#/components/schemas/claimAuthRegistry'
@@ -1220,6 +1221,7 @@ components:
         - $ref: '#/components/schemas/claimDataspaceAgreement'
         - $ref: '#/components/schemas/claimDataspaceRole'
         - $ref: '#/components/schemas/claimX509Certificate'
+        - $ref: '#/components/schemas/claimIdpAssertion'
     claimSkeleton:
       type: object
       required:
@@ -1259,7 +1261,10 @@ components:
               example: iSHARE
             capabilityUrl:
               type: string
-              description: Capabilities endpoint of the party in the framework
+              description: >-
+                Capabilities endpoint of the party in the framework. Required base on the
+                role of the party in the framework (in iSHARE Framework required for Service 
+                Provider, Identity Provider, Participant Registry and Authorisation Registry).
               format: uri
               example: https://www.example.com/capabilities
             status:
@@ -1348,7 +1353,9 @@ components:
               example: DSP.EU.NL.DutchMobility
             capabilityUrl:
               type: string
-              description: Capabilities endpoint of the party in the dataspace
+              description: >-
+                Capabilities endpoint of the party in the dataspace May be required based on the
+                role of the party in the dataspace.
               format: uri
               example: https://www.example.com/capabilities
             status:
@@ -1505,6 +1512,30 @@ components:
               example: 4E4FD2B1D7D5DF3858CDAA80DE02AD4E0C530939BB65C57E18CEADA431C6872C
             status:
               description: Status of the certificate (active or revoked)
+              type: string
+              enum: [active, revoked]
+    claimIdpAssertion:
+      allOf:
+        - $ref: '#/components/schemas/claimSkeleton'
+        - type: object
+          title: idpAssertionClaim
+          description: >-
+            Required if no x509Certificate claim is present. idpAssertion claim 
+            must be a valid assertion issued by an Identity Provider.
+          required:
+            - value
+            - status
+          properties:
+            type:
+              type: string
+              enum: [dataspaceRole]
+            value:
+              description: Value of the assertion
+              type: string
+              example: >-
+                eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+            status:
+              description: Status of the assertion (active or revoked)
               type: string
               enum: [active, revoked]
     authRegistry:

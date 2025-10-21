@@ -335,7 +335,7 @@ paths:
       description: >-
         Used to programatically create a participant. To create a party as part
         of the iSHARE Framework, at minimum the folowwing claims must be provided:
-        frameworkMembership, frameworkAgreement, frameworkRole, (x509Certificate 
+        frameworkCompliance, frameworkAgreement, frameworkRole, (x509Certificate 
         or idpAssertion).
   /parties/{partyId}/claims:
     options:
@@ -1201,7 +1201,7 @@ components:
       discriminator:
         propertyName: type
         mapping:
-          frameworkMembership: '#/components/schemas/claimFrameworkMembership'
+          frameworkCompliance: '#/components/schemas/claimframeworkCompliance'
           authRegistry: '#/components/schemas/claimAuthRegistry'
           frameworkAgreement: '#/components/schemas/claimFrameworkAgreement'
           frameworkRole: '#/components/schemas/claimFrameworkRole'
@@ -1212,7 +1212,7 @@ components:
           x509Certificate: '#/components/schemas/claimX509Certificate'
           idpAssertion: '#/components/schemas/claimIdpAssertion'
       oneOf:
-        - $ref: '#/components/schemas/claimFrameworkMembership'
+        - $ref: '#/components/schemas/claimframeworkCompliance'
         - $ref: '#/components/schemas/claimAuthRegistry'
         - $ref: '#/components/schemas/claimFrameworkAgreement'
         - $ref: '#/components/schemas/claimFrameworkRole'
@@ -1240,12 +1240,12 @@ components:
             Identifier of the party who registered the participant. This can 
             be any of the Party ID from id or alsoKnownAs attributes of that participant.
           example: did:ishare:EU.NL.NTRNL-12345678
-    claimFrameworkMembership:
+    claimframeworkCompliance:
       allOf:
         - $ref: '#/components/schemas/claimSkeleton'
         - type: object
-          title: frameworkMembershipClaim
-          description: Participant claim that holds framework membership
+          title: frameworkComplianceClaim
+          description: Participant claim that holds framework compliance
           required:
             - frameworkId
             - status
@@ -1254,10 +1254,10 @@ components:
           properties:
             type:
               type: string
-              enum: [frameworkMembership]
+              enum: [frameworkCompliance]
             frameworkId:
               type: string
-              description: ID of the framework the membership is claimed for
+              description: ID of the framework the compliance is claimed for
               example: iSHARE
             capabilityUrl:
               type: string
@@ -1269,16 +1269,16 @@ components:
               example: https://www.example.com/capabilities
             status:
               type: string
-              description: Status of the framework membership (active, revoked, notactive or pending)
+              description: Status of the framework compliance (active, revoked, notactive or pending)
               enum: [active, revoked, notactive, pending]
             startDate:
               type: string
-              description: UTC timestamp of the start date of the framework membership
+              description: UTC timestamp of the start date of the framework compliance
               format: date-time
               example: '2025-01-01T00:00:00.000Z'
             endDate:
               type: string
-              description: UTC timestamp of the end date of the framework membership
+              description: UTC timestamp of the end date of the framework compliance
               format: date-time
               example: '2026-12-31T00:00:00.000Z'
             additionalInfo:

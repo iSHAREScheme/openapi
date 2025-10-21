@@ -1528,7 +1528,7 @@ components:
           properties:
             type:
               type: string
-              enum: [dataspaceRole]
+              enum: [idpAssertion]
             value:
               description: Value of the assertion
               type: string

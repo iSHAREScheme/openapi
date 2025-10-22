@@ -237,7 +237,7 @@ paths:
             identifier.
           schema:
             type: string
-            example: 'did:elsi:LEIXG-724500AZSGBRY55MNS59'
+            example: 'did:ebsi:LEIXG-724500AZSGBRY55MNS59'
         - in: query
           style: form
           explode: true
@@ -1191,7 +1191,7 @@ components:
             type: string
           example: 
             - "did:ishare:EU.NL.NTRNL-12345678"
-            - "did:elsi:LEIXG-724500AZSGBRY55MNS59"
+            - "did:ebsi:LEIXG-724500AZSGBRY55MNS59"
             - "did:web:example.com"
             - "CoC:123456789"
         claims:
@@ -2067,7 +2067,7 @@ components:
             type: string
           example: 
             - "did:ishare:EU.NL.NTRNL-12345678"
-            - "did:elsi:LEIXG-724500AZSGBRY55MNS59"
+            - "did:ebsi:LEIXG-724500AZSGBRY55MNS59"
             - "did:web:example.com"
             - "CoC:123456789"
     claimUpdate:

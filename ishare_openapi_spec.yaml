@@ -335,8 +335,10 @@ paths:
       description: >-
         Used to programatically create a participant. To create a party as part
         of the iSHARE Framework, at minimum the folowwing claims must be provided:
-        frameworkCompliance, frameworkAgreement, frameworkRole, (x509Certificate 
-        or idpAssertion).
+        frameworkCompliance, frameworkAgreement, frameworkRole. For all roles 
+        except for Service Consumer and Entitled Party an x509Certificate claim is
+        required. Service Consumer and Entitled Party may choose to use and idpAssertion 
+        claim instead.
   /parties/{partyId}/claims:
     options:
       tags:
@@ -1441,8 +1443,10 @@ components:
         - type: object
           title: x509CertificateClaim
           description: >-
-            Required if no idpAssertion claim is present. x509Certificate claim 
-            must be a valid certificate issued by a Root from the trusted list.
+            x509Certificate claim must be a valid certificate issued by a Root from the 
+            trusted list. It is required for all roles except for Service Consumer and 
+            Entitled Party. Service Consumer and Entitled Party may still choose to use
+            an x509Certificate.
           required:
             - subjectName
             - certificateType
@@ -1520,8 +1524,10 @@ components:
         - type: object
           title: idpAssertionClaim
           description: >-
-            Required if no x509Certificate claim is present. idpAssertion claim 
-            must be a valid assertion issued by an Identity Provider.
+            The idpAssertion is allowed for the roles Entitled Party and Service
+            Consumer. It is required if those roles do not have a x509Certificate claim
+            present. idpAssertion claim must be a valid assertion issued by an Identity 
+            Provider.
           required:
             - value
             - status

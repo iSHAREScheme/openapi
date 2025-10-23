@@ -1230,12 +1230,27 @@ components:
         - id
         - registrarId
         - type
+        - status
       properties:
         id:
           type: string
           format: uuid
           description: Unique identifier of the claim, must be a UUID
           example: 5ffb4bb9-2020-4045-a922-3bd84e78f709
+        status:
+          type: string
+          description: >-
+            The status of a claim concerns the status of that what the claim contains. 
+            For example: the status "active" for frameworkCompliance means that the 
+            party currently complies to the framework. Statusses are defined as follows:
+            
+            - active: The claim is currently valid (every claim that should be used 
+              (trusted) mus have this status)
+            - inactive: The claim is not yet valid or is expired (only for claims that 
+              contain startDate and endDate)
+            - revoked: The claim has been revoked permanently
+            - suspended: The claim is suspended temporarily
+          enum: [active, inactive, revoked, suspended]
         registrarId:
           type: string
           description: >-
@@ -1269,10 +1284,6 @@ components:
                 Provider, Identity Provider, Participant Registry and Authorisation Registry).
               format: uri
               example: https://www.example.com/capabilities
-            status:
-              type: string
-              description: Status of the framework compliance (active, revoked, notactive or pending)
-              enum: [active, revoked, notactive, pending]
             startDate:
               type: string
               description: UTC timestamp of the start date of the framework compliance
@@ -1341,7 +1352,6 @@ components:
           description: Participant claim that holds dataspace membership
           required:
             - dataspaceId
-            - status
             - startDate
             - endDate
             - legalAdherence
@@ -1360,10 +1370,6 @@ components:
                 role of the party in the dataspace.
               format: uri
               example: https://www.example.com/capabilities
-            status:
-              type: string
-              description: Status of the dataspace membership (active, revoked, notactive or pending)
-              enum: [active, revoked, notactive, pending]
             startDate:
               type: string
               description: UTC timestamp of the start date of the dataspace membership
@@ -1530,7 +1536,6 @@ components:
             Identity Provider.
           required:
             - value
-            - status
           properties:
             type:
               type: string
@@ -1540,10 +1545,6 @@ components:
               type: string
               example: >-
                 eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
-            status:
-              description: Status of the assertion (active or revoked)
-              type: string
-              enum: [active, revoked]
     authRegistry:
       title: authRegistry
       description: >-
@@ -1553,7 +1554,6 @@ components:
         - name
         - id
         - authUrl
-        - status
         - authRegistryId
       type: object
       properties:
@@ -1571,12 +1571,6 @@ components:
             queried/checked from
           type: string
           example: http://ar.isharetest.net/
-        status:
-          description: >-
-            Status of the Autorization Registry. Available values are active, inactive.
-          type: string
-          enum: [active, inactive]
-          example: active
     partiesInfo:
       title: partiesInfo
       allOf:

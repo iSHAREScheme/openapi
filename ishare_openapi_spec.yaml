@@ -572,7 +572,7 @@ paths:
         - "agreement.agreementId" - Update agreement ID
         - "agreement.status" - Update agreement status
         - "agreement.title" - Update agreement title
-        - "additionalInfo.contact.email" - Update contact email in additional info
+        - "additionalInfo.companyEmail" - Update company email in additional info
         
         The claim ID and type cannot be changed through this operation.
 

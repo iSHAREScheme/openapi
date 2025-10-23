@@ -1174,7 +1174,7 @@ components:
       type: object
       properties:
         id:
-          description: Primary identifier (iSHARE-ID) of the party.
+          description: Primary identifier (did:ishare) of the party.
           type: string
           example: did:ishare:EU.NL.NTRNL-12345678
         name:
@@ -1185,7 +1185,7 @@ components:
           description: >-
             Array of registered party ids of the party with which the party is
             also identified. Optional, because a party could be identified with
-            only its iSHARE-ID (in the 'id' property).
+            only its did:ishare (in the 'id' property).
           type: array
           items:
             type: string
@@ -1526,8 +1526,8 @@ components:
           description: >-
             The idpAssertion is allowed for the roles Entitled Party and Service
             Consumer. It is required if those roles do not have a x509Certificate claim
-            present. idpAssertion claim must be a valid assertion issued by an Identity 
-            Provider.
+            present. idpAssertion claim must be a valid assertion issued by a certified
+            Identity Provider.
           required:
             - value
             - status
@@ -1535,7 +1535,7 @@ components:
             type:
               type: string
               enum: [idpAssertion]
-            value:
+            assertion:
               description: Value of the assertion
               type: string
               example: >-
@@ -2061,7 +2061,7 @@ components:
           description: >-
             Array of registered party ids of the party with which the party is
             also identified. Optional, because a party could be identified with
-            only its iSHARE-ID (in the 'id' property).
+            only its did:ishare (in the 'id' property).
           type: array
           items:
             type: string

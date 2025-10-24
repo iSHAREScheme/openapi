@@ -333,7 +333,7 @@ paths:
       operationId: register-new-party
       summary: Create new party
       description: >-
-        Used to programatically create a participant. To create a party as part
+        Used to programmatically create a participant. To create a party as part
         of the iSHARE Framework, at minimum the folowwing claims must be provided:
         frameworkCompliance, frameworkAgreement, frameworkRole. For all roles 
         except for Service Consumer and Entitled Party an x509Certificate claim is
@@ -1203,7 +1203,7 @@ components:
       discriminator:
         propertyName: type
         mapping:
-          frameworkCompliance: '#/components/schemas/claimframeworkCompliance'
+          frameworkCompliance: '#/components/schemas/claimFrameworkCompliance'
           authRegistry: '#/components/schemas/claimAuthRegistry'
           frameworkAgreement: '#/components/schemas/claimFrameworkAgreement'
           frameworkRole: '#/components/schemas/claimFrameworkRole'
@@ -1214,7 +1214,7 @@ components:
           x509Certificate: '#/components/schemas/claimX509Certificate'
           idpAssertion: '#/components/schemas/claimIdpAssertion'
       oneOf:
-        - $ref: '#/components/schemas/claimframeworkCompliance'
+        - $ref: '#/components/schemas/claimFrameworkCompliance'
         - $ref: '#/components/schemas/claimAuthRegistry'
         - $ref: '#/components/schemas/claimFrameworkAgreement'
         - $ref: '#/components/schemas/claimFrameworkRole'
@@ -1243,7 +1243,7 @@ components:
             The status of a claim concerns the status of that what the claim contains. 
             For example: the status "active" for frameworkCompliance means that the 
             party currently complies to the framework. Statusses are defined as follows:
-            
+
             - active: The claim is currently valid (every claim that should be used 
               (trusted) mus have this status)
             - inactive: The claim is not yet valid or is expired (only for claims that 
@@ -1257,7 +1257,7 @@ components:
             Identifier of the party who registered the participant. This can 
             be any of the Party ID from id or alsoKnownAs attributes of that participant.
           example: did:ishare:EU.NL.NTRNL-12345678
-    claimframeworkCompliance:
+    claimFrameworkCompliance:
       allOf:
         - $ref: '#/components/schemas/claimSkeleton'
         - type: object
@@ -1334,7 +1334,7 @@ components:
         - type: object
           title: frameworkRoleClaim
           description: >-
-            Required if defined by dataspace. When dataspace adefines its own 
+            Required if defined by dataspace. When a dataspace defines its own 
             roles for participants, it can be added through this claim.
           properties:
             type:
@@ -1398,7 +1398,7 @@ components:
           title: dataspaceAuthRegistryClaim
           description: >-
             Presents the selected Authorisation Registry to be used for the 
-            party in this a dataspace.
+            party in this dataspace.
           required:
             - dataspaceId
           properties:

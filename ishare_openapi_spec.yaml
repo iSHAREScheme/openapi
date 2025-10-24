@@ -2144,9 +2144,9 @@ components:
           description: Title of dataspace.
           type: string
           example: DLDS_Logistics_DataSpace
-        dataSpaceSelfDescriptionUrl:
+        dataSpaceDescriptionUrl:
           description: >-
-            URL pointing to the dataspace self description (structured JSON 
+            URL pointing to the dataspace description (structured JSON 
             file containing a description of the dataspace).
           type: string
           example: https://www.example.com/definition

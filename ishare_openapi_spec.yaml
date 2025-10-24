@@ -1802,7 +1802,7 @@ components:
         - startDate
         - endDate
         - loa
-        - compliancyVerified
+        - complianceVerified
         - legalAdherence
       type: object
       properties:
@@ -1841,7 +1841,7 @@ components:
           type: string
           enum: [low, substantial, high]
           example: high
-        compliancyVerified:
+        complianceVerified:
           description: >-
             Compliance requirements of this role has been met by party. 
             Possible values are yes, no and not_applicable

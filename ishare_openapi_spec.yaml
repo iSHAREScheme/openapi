@@ -2150,6 +2150,22 @@ components:
             file containing a description of the dataspace).
           type: string
           example: https://www.example.com/definition
+        defaultParticipantIdentifierName:
+          description: >-
+            Name of the default participant identifier used in the dataspace, 
+            which must be mentioned in the dataspace description. If no default 
+            identifier has been selected, the default identifier must be 
+            assumed to be ishare:did.
+          type: string
+          example: iSHARE-DID
+        defaultParticipantIdentifierPrefix:
+          description: >-
+            Prefix of the default participant identifier used in the dataspace, 
+            which must be mentioned in the dataspace description. If no default 
+            identifier has been selected, the default identifier must be 
+            assumed to be ishare:did.
+          type: string
+          example: did:ishare
         dataspace_website:
           description: >-
             Website address of the dataspace, typically dataspace authority. The

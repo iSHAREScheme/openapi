@@ -1112,7 +1112,7 @@ components:
       type: object
       properties:
         alg:
-          description: MUST be "RS256" algorithm
+          description: MUST be "RS256", "RS384" or "RS512" algorithm
           type: string
           example: RS256
         typ:

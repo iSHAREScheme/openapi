@@ -1251,7 +1251,7 @@ components:
         registrarId:
           type: string
           description: >-
-            Identifier of the party who registered the participant. This can 
+            Identifier of the party who registered the claim. This can 
             be any of the Party ID from id or alsoKnownAs attributes of that participant.
           example: did:ishare:EU.NL.NTRNL-12345678
         startDate:

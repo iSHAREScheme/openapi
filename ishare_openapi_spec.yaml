@@ -1208,7 +1208,6 @@ components:
           frameworkAgreement: '#/components/schemas/claimFrameworkAgreement'
           frameworkRole: '#/components/schemas/claimFrameworkRole'
           dataspaceMembership: '#/components/schemas/claimDataspaceMembership'
-          dataspaceAuthRegistry: '#/components/schemas/claimDataspaceAuthRegistry'
           dataspaceAgreement: '#/components/schemas/claimDataspaceAgreement'
           dataspaceRole: '#/components/schemas/claimDataspaceRole'
           x509Certificate: '#/components/schemas/claimX509Certificate'
@@ -1219,7 +1218,6 @@ components:
         - $ref: '#/components/schemas/claimFrameworkAgreement'
         - $ref: '#/components/schemas/claimFrameworkRole'
         - $ref: '#/components/schemas/claimDataspaceMembership'
-        - $ref: '#/components/schemas/claimDataspaceAuthRegistry'
         - $ref: '#/components/schemas/claimDataspaceAgreement'
         - $ref: '#/components/schemas/claimDataspaceRole'
         - $ref: '#/components/schemas/claimX509Certificate'
@@ -1246,8 +1244,7 @@ components:
 
             - active: The claim is currently valid (every claim that should be used 
               (trusted) mus have this status)
-            - inactive: The claim is not yet valid or is expired (only for claims that 
-              contain startDate and endDate)
+            - inactive: The claim is not yet valid or is expired
             - revoked: The claim has been revoked permanently
             - suspended: The claim is suspended temporarily
           enum: [active, inactive, revoked, suspended]
@@ -1257,6 +1254,16 @@ components:
             Identifier of the party who registered the participant. This can 
             be any of the Party ID from id or alsoKnownAs attributes of that participant.
           example: did:ishare:EU.NL.NTRNL-12345678
+        startDate:
+          type: string
+          description: UTC timestamp of the start date of the claim validity
+          format: date-time
+          example: '2025-01-01T00:00:00.000Z'
+        endDate:
+          type: string
+          description: UTC timestamp of the end date of the claim validity
+          format: date-time
+          example: '2026-12-31T00:00:00.000Z'
     claimFrameworkCompliance:
       allOf:
         - $ref: '#/components/schemas/claimSkeleton'
@@ -1284,16 +1291,6 @@ components:
                 Provider, Identity Provider, Participant Registry and Authorisation Registry).
               format: uri
               example: https://www.example.com/capabilities
-            startDate:
-              type: string
-              description: UTC timestamp of the start date of the framework compliance
-              format: date-time
-              example: '2025-01-01T00:00:00.000Z'
-            endDate:
-              type: string
-              description: UTC timestamp of the end date of the framework compliance
-              format: date-time
-              example: '2026-12-31T00:00:00.000Z'
             additionalInfo:
               allOf:
                 - $ref: '#/components/schemas/additionalInfo'
@@ -1304,12 +1301,37 @@ components:
         - type: object
           title: authRegistryClaim
           description: >-
-            Presents the selected Authorisation Registry to be used for the 
-            party.
+            Presents the selected Authorisation Registry (AR) to be used for the 
+            party. An AR can be selected for use in a dataspace (then provide the
+            dataspaceId) or for use in a framework (then provide the frameworkId),
+            or for use with a specific service (then provide the serviceProviderPartyId 
+            and optionally theserviceIdentifier), or a combination of these. 
+            If none is provided, the AR must be considered as the default AR for the party.
           properties:
             type:
               type: string
               enum: [authRegistry]
+            dataspaceId:
+              description: Optional ID of the dataspace
+              type: string
+              example: DSP.EU.NL.DutchMobility
+            frameworkId:
+              description: Optional ID of the framework
+              type: string
+              example: iSHARE
+            serviceProviderPartyId:
+              description: >-
+                Optional party id of the Service Provider for which this AR is selected by
+                the Entitled Party.
+              type: string
+              example: did:ishare:EU.NL.NTRNL-12345678
+            serviceIdentifier:
+              description: >-
+                Optional identifier of the Service (Capability) of the Service Provider for 
+                which this AR is selected by the Entitled Party 
+                (#/components/schemas/Service/identifier).
+              type: string
+              example: /capabilities
     claimFrameworkAgreement:
       allOf:
         - $ref: '#/components/schemas/claimSkeleton'
@@ -1370,16 +1392,6 @@ components:
                 role of the party in the dataspace.
               format: uri
               example: https://www.example.com/capabilities
-            startDate:
-              type: string
-              description: UTC timestamp of the start date of the dataspace membership
-              format: date-time
-              example: '2025-01-01T00:00:00.000Z'
-            endDate:
-              type: string
-              description: UTC timestamp of the end date of the dataspace membership
-              format: date-time
-              example: '2026-12-31T00:00:00.000Z'
             legalAdherence:
               type: string
               description: >-
@@ -1390,25 +1402,6 @@ components:
             additionalInfo:
               allOf:
                 - $ref: '#/components/schemas/additionalInfo'
-    claimDataspaceAuthRegistry:
-      allOf:
-        - $ref: '#/components/schemas/claimSkeleton'
-        - $ref: '#/components/schemas/authRegistry'
-        - type: object
-          title: dataspaceAuthRegistryClaim
-          description: >-
-            Presents the selected Authorisation Registry to be used for the 
-            party in this dataspace.
-          required:
-            - dataspaceId
-          properties:
-            type:
-              type: string
-              enum: [dataspaceAuthRegistry]
-            dataspaceId:
-              description: ID of the dataspace
-              type: string
-              example: DSP.EU.NL.DutchMobility
     claimDataspaceAgreement:
       allOf:
         - $ref: '#/components/schemas/claimSkeleton'
@@ -1449,14 +1442,13 @@ components:
         - type: object
           title: x509CertificateClaim
           description: >-
-            x509Certificate claim must be a valid certificate issued by a Root from the 
-            trusted list. It is required for all roles except for Service Consumer and 
-            Entitled Party. Service Consumer and Entitled Party may still choose to use
-            an x509Certificate.
+            x509Certificate claim must be a valid certificate issued by a _certificate root_ 
+            from the trusted list. It is required for all roles except for Service Consumer that
+            does not have machine to machine (M2M)interaction and Entitled Party. Service Consumer 
+            with no M2M interaction and Entitled Party may still choose to use an x509Certificate.
           required:
             - subjectName
             - certificateType
-            - enabledFrom
             - x5c
             - x5t#s256
             - status
@@ -1476,11 +1468,6 @@ components:
               description: type of certificate
               type: string
               example: eSEAL
-            enabledFrom:
-              format: date-time
-              description: UTC timestamp which states since when certificate is valid.
-              type: string
-              example: '2023-01-31T00:00:00.000Z'
             x5c:
               description: >-
                 The base64 encoded pem format value of the certificate identified by
@@ -1530,10 +1517,10 @@ components:
         - type: object
           title: idpAssertionClaim
           description: >-
-            The idpAssertion is allowed for the roles Entitled Party and Service
-            Consumer. It is required if those roles do not have a x509Certificate claim
-            present. idpAssertion claim must be a valid assertion issued by a certified
-            Identity Provider.
+            The idpAssertion is allowed only for the roles Entitled Party and Service
+            Consumer without M2M interaction. It is required if those roles do not 
+            have a x509Certificate claim present. idpAssertion claim must be a valid
+            assertion issued by a certified Identity Provider.
           required:
             - value
           properties:
@@ -1773,18 +1760,6 @@ components:
           type: string
           enum: [draft, signed, accepted, obsolete]
           example: accepted
-        signDate:
-          format: date-time
-          description: UTC timestamp of the date of signature of the agreement.
-          type: string
-          example: '2025-01-31T00:00:00.000Z'
-        expiryDate:
-          format: date-time
-          description: >-
-            UTC timestamp of the expiry date of the agreement. For non expiring 
-            agreements the end date is far in future
-          type: string
-          example: '2026-01-31T00:00:00.000Z'
         verificationHash:
           description: >-
             The calculated hash of the agreement file that has been uploaded.
@@ -1820,20 +1795,6 @@ components:
           type: string
           enum: [active, inactive]
           example: active
-        startDate:
-          format: date-time
-          description: >-
-            UTC timestamp which states since when this role for the party is
-            valid.
-          type: string
-          example: '2023-01-31T00:00:00.000Z'
-        endDate:
-          format: date-time
-          description: >-
-            UTC timestamp which states till when this role for the party is
-            valid.
-          type: string
-          example: '2024-01-31T00:00:00.000Z'
         loa:
           description: >-
             Party's level of assurance. Available values are low, substantial

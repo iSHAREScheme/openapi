@@ -1307,8 +1307,6 @@ components:
             or for use with a specific service (then provide the serviceProviderPartyId 
             and optionally theserviceIdentifier), or a combination of these. 
             If none is provided, the AR must be considered as the default AR for the party.
-          required:
-            - frameworkId
           properties:
             type:
               type: string
@@ -1765,10 +1763,11 @@ components:
           example: terms-of-use
         verificationHash:
           description: >-
-            The calculated hash of the agreement file that has been uploaded.
-            Note agreements are not stored in ledger, but only their hash.
+            The calculated hash of the agreement file that has been uploaded. 
+            Note agreements are not stored in the ledger, but only their hash. 
+            The verificationHash must be calculated using the SHA256 hashing algorithm.
           type: string
-          example: 614331b0003219f2d2d123b0cd6105fb
+          example: aef5bb5e3ab49150a53b89628ab8593315b6686f3f96497277feb9d658527acb
     role:
       title: Role
       description: >-

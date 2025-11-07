@@ -1401,7 +1401,7 @@ components:
               description: >-
                 Whether legal adherence is required, not required or not
                 applicable
-              enum: [yes, no, not_applicable]
+              enum: [yes, no, not-applicable]
               example: yes
             additionalInfo:
               allOf:
@@ -1779,7 +1779,7 @@ components:
         - startDate
         - endDate
         - loa
-        - complianceVerified
+        - compliancyVerified
         - legalAdherence
       type: object
       properties:
@@ -1796,21 +1796,21 @@ components:
             Party's level of assurance. Available values are low, substantial
             and high.
           type: string
-          enum: [low, substantial, high]
+          enum: [low, substantial, high, not-applicable]
           example: high
-        complianceVerified:
+        compliancyVerified:
           description: >-
             Compliance requirements of this role has been met by party. 
-            Possible values are yes, no and not_applicable
+            Possible values are yes, no and not-applicable
           type: string
-          enum: [yes, no, not_applicable]
+          enum: [yes, no, not-applicable]
           example: yes
         legalAdherence:
           description: >-
             Legal requirements of this role has been met by party including
             signing of appropriate agreements
           type: string
-          enum: [yes, no, not_applicable]
+          enum: [yes, no, not-applicable]
           example: yes
     capabilitiesInfo:
       title: capabilitiesInfo
@@ -2260,8 +2260,8 @@ components:
                 description: >-
                   Whether a participant in this role is required to have an 
                   x.509 certificate.
-                type: boolean
-                example: true
+                enum: [yes, no]
+                example: yes
               agreements:
                 description: >-
                   Array of agreement IDs that a participant in this role is
@@ -2275,14 +2275,14 @@ components:
                 description: >-
                   Whether a participant in this role must provide a Level of 
                   Assurance (LoA) statement.
-                type: boolean
-                example: true
-              technicalCompliance:
+                enum: [yes, no]
+                example: yes
+              technicalComplianceRequired:
                 description: >-
                   Whether a participant in this role must provide a technical 
                   compliance statement.
                 type: string
-                enum: [yes, no, not_applicable]
+                enum: [yes, no]
                 example: yes
     jwtPayloadFrameworksToken:
       title: jwtPayloadFrameworksToken
@@ -2426,7 +2426,7 @@ components:
                   Whether a participant in this role must provide a technical 
                   compliance statement.
                 type: string
-                enum: [yes, no, not_applicable]
+                enum: [yes, no, not-applicable]
                 example: yes
     connectTokenResponse:
       title: ConnectTokenResponse

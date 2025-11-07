@@ -2260,6 +2260,7 @@ components:
                 description: >-
                   Whether a participant in this role is required to have an 
                   x.509 certificate.
+                type: string
                 enum: [yes, no]
                 example: yes
               agreements:
@@ -2275,6 +2276,7 @@ components:
                 description: >-
                   Whether a participant in this role must provide a Level of 
                   Assurance (LoA) statement.
+                type: string
                 enum: [yes, no]
                 example: yes
               technicalComplianceRequired:
@@ -2299,6 +2301,9 @@ components:
     framework:
       title: framework
       type: object
+      required:
+        - id
+        - title
       properties:
         id:
           description: >-
@@ -2404,12 +2409,13 @@ components:
                 description: >-
                   Whether a participant in this role is required to have an 
                   x.509 certificate.
-                type: boolean
-                example: true
+                type: string
+                enum: [yes, no]
+                example: yes
               agreements:
                 description: >-
                   Array of agreement IDs that a participant in this role is
-                  required to accept to join the framework.
+                  required to accept to join the dataspace.
                 type: array
                 items:
                   type: string
@@ -2419,14 +2425,15 @@ components:
                 description: >-
                   Whether a participant in this role must provide a Level of 
                   Assurance (LoA) statement.
-                type: boolean
-                example: true
-              technicalCompliance:
+                type: string
+                enum: [yes, no]
+                example: yes
+              technicalComplianceRequired:
                 description: >-
                   Whether a participant in this role must provide a technical 
                   compliance statement.
                 type: string
-                enum: [yes, no, not-applicable]
+                enum: [yes, no]
                 example: yes
     connectTokenResponse:
       title: ConnectTokenResponse

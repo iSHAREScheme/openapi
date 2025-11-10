@@ -1,11 +1,11 @@
 openapi: 3.1.0
 info:
-  version: '0.1'
+  version: '3.0'
   title: iSHARE Decentralized Claims Protocol (DCP) API specifications
   description: >-
     These are the API specifications for the iSHARE implementation of the Eclipse 
-    Decentralized Claims Protocol v1.0, which is part of the iSHARE Framework >v3.0
-    for machine-to-machine verifiable credential exchange.
+    Decentralized Claims Protocol v1.0, which is part of the iSHARE Framework 3.0
+    and above, for machine-to-machine verifiable credential exchange.
     
     These specifications describe the standardised endpoints that different iSHARE
     roles must provide to support the Decentralized Claims Protocol. The DCP enables

@@ -66,17 +66,17 @@ paths:
                 - $ref: 'https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol/v1.0/resources/issuance/credential-message-schema.json'
       responses:
         '201':
-          description: Credential request created successfully
+          description: Credential (request) created successfully
           headers:
             Location:
-              description: URL to the credential request status endpoint
+              description: URL to the credential request status endpoint (only after credential issuance request)
               schema:
                 type: string
                 format: uri
                 examples: 
                   - "/requests/urn:uuid:550e8400-e29b-41d4-a716-446655440000"
         '400':
-          description: Bad Request - Invalid credential request
+          description: Bad Request - Invalid request
         '401':
           description: Unauthorized - Invalid or missing authentication
         '403':

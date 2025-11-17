@@ -2191,12 +2191,28 @@ components:
           description: Title of dataspace.
           type: string
           example: DLDS_Logistics_DataSpace
-        defUrl:
+        dataSpaceDescriptionUrl:
           description: >-
-            URL pointing to the dataspace self description (structured JSON 
+            URL pointing to the dataspace description (structured JSON 
             file containing a description of the dataspace).
           type: string
           example: https://www.example.com/definition
+        defaultParticipantIdentifierName:
+          description: >-
+            Name of the default participant identifier used in the dataspace, 
+            which must be mentioned in the dataspace description. If no default 
+            identifier has been selected, the default identifier must be 
+            assumed to be ishare:did.
+          type: string
+          example: iSHARE-DID
+        defaultParticipantIdentifierPrefix:
+          description: >-
+            Prefix of the default participant identifier used in the dataspace, 
+            which must be mentioned in the dataspace description. If no default 
+            identifier has been selected, the default identifier must be 
+            assumed to be ishare:did.
+          type: string
+          example: did:ishare
         website:
           description: >-
             Website address of the dataspace, typically dataspace authority. The

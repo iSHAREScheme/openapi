@@ -1067,12 +1067,12 @@ components:
         exp:
           type: integer
           format: int64
-          description: Expiration time - the time after which the JWT expires (Unix timestamp)
+          description: UNIX timestamp (in seconds) until when this JWT is valid.
           example: 1740675316
         iat:
           type: integer
           format: int64
-          description: Issued at - the time at which the JWT was issued (Unix timestamp)
+          description: UNIX timestamp (in seconds) when this JWT was issued.
           example: 1740675286
     licenseRuleList:
       type: array
@@ -1109,8 +1109,51 @@ components:
           items:
             $ref: '#/components/schemas/licenseRule'
           minItems: 1
-    jwtHeader:
-      title: jwtHeader
+    SchemeRole:
+      title: SchemeRole
+      type: object
+      properties:
+        role:
+          nullable: true
+          description: >-
+             Possible roles are ServiceConsumer, ServiceProvider, EntitledParty, 
+             AuthorisationRegistry, IdentityProvider, IdentityBroker and 
+             IdentityBroker and ParticipantRegistry, iShareSatellite (deprecated, 
+             will be removed in future releases, use ParticipantRegistry instead).
+          type: string
+    Adherence:
+      title: Adherence
+      description: >-
+        Adherence details of a party. Object which contains status and validity
+        timestamps of the party.
+      required:
+        - status
+        - start_date
+        - end_date
+      type: object
+      properties:
+        status:
+          description: >-
+            Status of the party. Available values are Active, Pending, NotActive
+            and Revoked.
+          type: string
+          example: Active
+        start_date:
+          format: date-time
+          description: >-
+            UTC timestamp (RFC3339, ISO8601) which states since when adherence status has
+            established.
+          type: string
+          example: '2023-01-31T00:00:00.000Z'
+        end_date:
+          format: date-time
+          description: >-
+            UTC timestamp (RFC3339, ISO8601) which states till when adherence status has
+            established.
+          type: string
+          example: '2024-02-01T00:00:00.000Z'
+    jwt_header:
+      title: jwt_header
       required:
         - alg
         - typ
@@ -1262,12 +1305,12 @@ components:
           example: did:ishare:EU.NL.NTRNL-12345678
         startDate:
           type: string
-          description: UTC timestamp of the start date of the claim validity
+          description: UTC timestamp (RFC3339, ISO8601) of the start date of the claim validity
           format: date-time
           example: '2025-01-01T00:00:00.000Z'
         endDate:
           type: string
-          description: UTC timestamp of the end date of the claim validity
+          description: UTC timestamp (RFC3339, ISO8601) of the end date of the claim validity
           format: date-time
           example: '2026-12-31T00:00:00.000Z'
     claimFrameworkCompliance:
@@ -1879,8 +1922,7 @@ components:
         endpointDescription: 
           description: >-
             URL that points to the definition of the service. Could be for instance a URL 
-            to an OpenAPI description, a WSDL document, a SPARQL Service Description, a 
-            DCAT Data Catalog, etc.
+            to an OpenAPI description, a WSDL document, a SPARQL Service Description, etc.
           type: string
           example: https://api.swaggerhub.com/apis/iSHARE/iSHARE_Scheme_Specification/2.0
           format: uri

@@ -105,7 +105,7 @@ paths:
   /parties/{partyId}:
     options:
       tags:
-        - Participant Registry (Required)
+        - Participant Registry (Optional)
       security:
         - BearerAuth: []
       parameters:
@@ -209,7 +209,7 @@ paths:
   /parties:
     options:
       tags:
-        - Participant Registry (Required)
+        - Participant Registry (Optional)
       security:
         - BearerAuth: []
       responses:
@@ -325,7 +325,7 @@ paths:
               $ref: '#/components/schemas/party'
         required: true
       tags:
-        - Participant Registry
+        - Participant Registry (Optional)
       security:
         - BearerAuth: []
       responses:
@@ -348,7 +348,7 @@ paths:
   /parties/{partyId}/claims:
     options:
       tags:
-        - Participant Registry
+        - Participant Registry (Optional)
       security:
         - BearerAuth: []
       parameters:
@@ -368,7 +368,7 @@ paths:
           description: List the allowed HTTP methods for this endpoint
     get:
       tags:
-        - Participant Registry
+        - Participant Registry (Required)
       security:
         - BearerAuth: []
       parameters:
@@ -409,7 +409,7 @@ paths:
               $ref: '#/components/schemas/claim'
         required: true
       tags:
-        - Participant Registry
+        - Participant Registry (Optional)
       security:
         - BearerAuth: []
       parameters:
@@ -440,7 +440,7 @@ paths:
   /parties/{partyId}/claims/{claimId}:
     options:
       tags:
-        - Participant Registry
+        - Participant Registry (Optional)
       security:
         - BearerAuth: []
       parameters:
@@ -468,7 +468,7 @@ paths:
           description: List the allowed HTTP methods for this endpoint
     get:
       tags:
-        - Participant Registry
+        - Participant Registry (Required)
       security:
         - BearerAuth: []
       parameters:
@@ -512,7 +512,7 @@ paths:
         the decoded response will look like.
     patch:
       tags:
-        - Participant Registry
+        - Participant Registry (Optional)
       security:
         - BearerAuth: []
       parameters:
@@ -543,10 +543,6 @@ paths:
             schema:
               $ref: '#/components/schemas/claimUpdate'
         required: true
-      tags:
-        - Participant Registry (Optional)
-      security:
-        - BearerAuth: []
       responses:
         '200':
           content:

@@ -1618,6 +1618,30 @@ components:
             queried/checked from
           type: string
           example: http://ar.isharetest.net/
+        dataspaceId:
+          description: >-
+            The id of the data space where the party uses this authorisation
+            registry provider
+          type: string
+          example: EU.DSP.NL.TESTDATASPACE
+        dataspaceName:
+          description: The name of the data space corresponding to the data space id
+          type: string
+          example: TESTDATASPACE
+          readOnly: true
+        serviceProviderPartyId:
+          description: >-
+            Optional party id of the Service Provider for which this AR is selected by
+            the Entitled Party.
+          type: string
+          example: did:ishare:EU.NL.NTRNL-12345678
+        serviceIdentifier:
+          description: >-
+            Optional identifier of the Service (Capability) of the Service Provider for 
+            which this AR is selected by the Entitled Party 
+            (#/components/schemas/Service/identifier).
+          type: string
+          example: /capabilities
     partiesInfo:
       title: partiesInfo
       allOf:

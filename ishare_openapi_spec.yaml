@@ -2748,7 +2748,9 @@ components:
             context:
               type: object
               description: >
-                A key-value map representing contextual information applicable to the rule.
+                A key-value map representing contextual information 
+                to be processed by AR according to the rules 
+                defined in the policy.
         rules:
           type: array
           items:

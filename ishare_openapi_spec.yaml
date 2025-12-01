@@ -1365,9 +1365,9 @@ components:
             Presents the selected Authorisation Registry (AR) to be used for the 
             party. An AR can be selected for use in a dataspace (then provide the
             dataspaceId) or for use in a framework (then provide the frameworkId),
-            or for use with a specific service (then provide the serviceProviderPartyId 
-            and optionally theserviceIdentifier), or a combination of these. 
-            If none is provided, the AR must be considered as the default AR for the party.
+            or for use with a specific Service Provider (then provide the serviceProviderPartyId), 
+            or a combination of these. If none is provided, the AR must be considered 
+            as the default AR for the party.
           properties:
             type:
               type: string
@@ -1386,13 +1386,6 @@ components:
                 the Entitled Party.
               type: string
               example: did:ishare:EU.NL.NTRNL-12345678
-            serviceIdentifier:
-              description: >-
-                Optional identifier of the Service (Capability) of the Service Provider for 
-                which this AR is selected by the Entitled Party 
-                (#/components/schemas/Service/identifier).
-              type: string
-              example: /capabilities
     claimFrameworkAgreement:
       allOf:
         - $ref: '#/components/schemas/claimSkeleton'

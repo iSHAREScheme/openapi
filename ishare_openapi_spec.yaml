@@ -2661,6 +2661,16 @@ components:
               type: array
               items:
                 type: string
+            context:
+              type: object
+              properties:
+                conditions:
+                  description: >
+                    Only to be used as part of Delegation Policy creation request. 
+                    Contains conditions which must be evaluated by the Authorisation 
+                    Registry using context information provided by the Service Provider
+                    or Service Consumer when requesting Delegation Evidence.
+                  $ref: '#/components/schemas/conditionTree'
         rules:
           type: array
           items:
@@ -2671,12 +2681,14 @@ components:
               effect:
                 type: string
               conditions:
+                description: >
+                  Conditions which must be evaluated by the Service Provider.
+                  
+                  Represents a logical tree structure using nested anyOf/allOf constructs.
+                  Each leaf node contains a leftOperand, operator, and rightOperand.
                 $ref: '#/components/schemas/conditionTree'
     conditionTree:
       type: object
-      description: >
-        Represents a logical tree structure using nested anyOf/allOf constructs.
-        Each leaf node contains a leftOperand, operator, and rightOperand.
       properties:
         anyOf:
           type: array

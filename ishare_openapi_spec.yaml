@@ -694,22 +694,15 @@ paths:
                 response_type:
                   description: >-
                     OAuth 2.0 Response Type. For iSHARE using the Authorization 
-                    Code Flow, with value ‘code’ is REQUIRED. MUST be identical 
+                    Code Flow, with value `code` is REQUIRED. MUST be identical 
                     to the response_type value in the request JWT.
                   type: string
-                  example: response_type
+                  example: code
                 scope:
                   description: >-
-                    OAuth 2.0 scope for OpenID Connect 1.0. MUST contain the 
-                    ‘openid’ scope value and one or more scopes identifying the 
-                    attributes from the Human Service Consumer that are 
-                    requested. Supported scopes under iSHARE are described on 
-                    the Technical Agreements page, in the Human2Machine 
-                    interaction section. MUST be identical to the scope value 
-                    in the request JWT. Scope values determine the permissions 
-                    to be asked to the user.
+                    OAuth 2.0 scope for OpenID Connect 1.0. The scope parameter MUST contain atleast the `openid` and the `iSHARE` scope values. In addition to that it MAY also contain one or more [scopes](https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims) identifying the attributes from the Human Service Consumer that are requested (depending on the OpenID implementation of the Identity Provider). The iSHARE scope contains the minimal information required for authorisations. The scope parameter MUST be identical to the scope value in the body parameter of the /authorize request. 
                   type: string
-                  example: scope
+                  example: openid iSHARE
                 client_id:
                   description: >-
                     OpenID Connect 1.0 client ID. Used in iSHARE for all client 
@@ -717,16 +710,16 @@ paths:
                     valid party identifier. MUST be identical to the client_id 
                     value in the request JWT.
                   type: string
-                  example: client_id
+                  example: did:ishare:EU.NL.NTRNL-10000001
                 request:
                   description: >-
                     OpenID Connect 1.0 signed JWT containing all request 
                     parameters. See also Generic iSHARE JWT specifications for 
                     a.o. basic content and signing requirements. Additionally 
-                    JWT MUST be encrypted using JWE as a user can access this 
+                    the signed JWT MUST be encrypted as a JWE as a user can access this 
                     JWT itself and decode the data contained therein.
                   type: string
-                  example: request
+                  example: eyJ0eXAiOiJKV1QiLCJ4NWMiOlsiTUlJRWdUQ0NBbW1nQXdJQkFnSUlOOVZpQ0RpM0J3c3dEUVlKS29aSWh2Y05BUUVMQlFBd1NERVpNQmNHQTFVRUF3d1FhVk5JUVZKRlZHVnpkRU5CWDFSTVV6RU5NQXNHQTFVRUN3d0VWR1Z6ZERFUE1BMEdBMVVFQ2d3R2FWTklRVkpGTVFzd0NRWURWUVFHRXdKT1REQWVGdzB4T1RBeU1UVXhNVFEyTVRWYUZ3MHlNVEF5TVRReE1UUTJNVFZhTUVJeEZUQVRCZ05WQkFNTURFRkNReUJVY25WamEybHVaekVjTUJvR0ExVUVCUk1UUlZVdVJVOVNTUzVPVERBd01EQXdNREF3TVRFTE1Ba0dBMVVFQmhNQ1Rrd3dnZ0VpTUEwR0NTcUdTSWIzRFFFQkFRVUFBNElCRHdBd2dnRUtBb0lCQVFDME80aFVoRCtWb09LVklaU05NTlRmemMwTzJrWWorWnpwUUVBQlpHdFB0eTBrS1BKZXAwK281eHN0b3UxSytVeHZIZnhFcEh4SEdUZHRxWnVjMjhMaFU0Q2VDZ29lRE1EVCtDSFMzTm9zaUVTUU13aC9aWmVUYzkvZUtDbzU2OUdDbisyWHRUaUdTcEJTd01TV3FOSGdwQVpZS2RIclQva0VNSXlUS29hdXVpS1E4Y1VwN293N21aei85SytxVjNzOUwwMzBXOElhd0xKQkpLLzJhcEF0NWpoMWo0L21GN2YwcTh6aHpockM4djAxUExsWmR1VHpqakJyZTdteit5aS92bFl6L2VhcDBlWVRqaHhJYXR5VjlGRndsbWk0RkMxQ05jTXRMaDhuc2lKb2U1Y0JtMTNMS2JRRnUzR1lINzZvZUxadldxYlBicDExbXhsSGEvS2RBZ01CQUFHamRUQnpNQXdHQTFVZEV3RUIvd1FDTUFBd0h3WURWUjBqQkJnd0ZvQVVGanpuSU9uV2xPOGY1YUx4dVB5KzZ0OHNONEV3RXdZRFZSMGxCQXd3Q2dZSUt3WUJCUVVIQXdFd0hRWURWUjBPQkJZRUZBUEgrOFVyWWlWTFhhS1BSR2Zsa0ErY3VzUTdNQTRHQTFVZER3RUIvd1FFQXdJRm9EQU5CZ2txaGtpRzl3MEJBUXNGQUFPQ0FnRUFZbDV0V0gwWXRZUzlKeXF5bFpKV29tQTU1U2hLbGxhQlJjdnJvNkNIeGxsSldIbzBxQzlaVE1jdkN5d012MTRWSnlRZDZlRlpxY1Z0T2x1R3JSWkJrbEg5QWFua292cDJKTGFxY0Q3OXQxQ3l1WFpuSXpURmwvQmtNc0U2d2xBSlhZL3Nhcm5veGVpZWpQNEUvRWYvMGV1SUZ2QmFJQ0NGK0tkMldKWWJibjBXeTBkSDQ4NFFKYkh5TXRWZnI0Mm9JcFVOVnVMU3U4NHlLWUFlbTlKQnVZVHAzWTBLMmhpRUFXL2JPS0R2dkhldFZmNWZ1NjZ5ZmVrRFg1M2ozTktpRkpDWFMycktJWm9EdU1GdXhwU3lWa1Mya2JXazErNUpveTdxT1NOQU5SRlBscEhjZ3pMUVpwOEhyZ3Zoc21oSXQxVlRWWWt5eGNkOHFYQWxod3FWZ09xNU5nTHhrcXVsOWhOTUdpTTdzcStINzNRL0ZpOGlmN2dQOElWQVN6UUd3dUhnMlo4N2liNkEydm9uMGZSSlpxM2ZJdWJIb3hJNjNBVHdmY1JLODZ5MTcyeGJGRTNWVTBkdU4xdEk1WjBUQ2cwR0FKWXRKcGJudmV4SXQ1bGs1RklrNFRodlIwTDhtTkx5MURVYTExTitFTXhrcWJmcWxUdXJCOFpnM0NZL1FhU0ttWFk1Q01Vd1dlRUJYUkhoeWZrWlE1alBQVUhyRmFveU9SWDhwMUVyWURrdEIxSzlvNGptdUVWcEIzM2N2Z1lCRWlBeVY1ejQ0MjZGdVZDTWJIYUZEVjdpS1c5ZUJsWG94ZVpvNFhYOCtqWHlTTDVHVzhYd05SVEs1YzR2VzAyUTNWSnlZVmU1dW1lc3RzS1ErTFI4aUF6b1VTcmVLMTgrSmtBakFKVT0iXX0
         required: true
       tags:
         - Identity Provider
@@ -971,6 +964,120 @@ components:
           allOf:
             - $ref: '#/components/schemas/Party'
             - {}
+    ep_creation_request:
+      title: Entited Party Creation Request
+      required:
+        - id
+        - party_name
+        - registrar_id
+        - adherence
+        - agreements
+        - spor
+        - roles
+      type: object
+      properties:
+        id:
+          description: Identifier of the participant. Usually it is an `did:ishare` id. MUST be provided when spor does not contain a JWT with organisationIdentifier claim in it.
+          type: string
+          example: did:ishare:EU.NL.NTRNL-12345678
+        alsoKnownAs:
+          description: Array of registered party ids of the party.
+          type: array
+          items:
+            type: string
+          example: 
+            - "did:ishare:EU.NL.NTRNL-12345678"
+            - "did:elsi:LEIXG-724500AZSGBRY55MNS59"
+            - "did:web:example.com"
+            - "CoC:123456789"
+        party_name:
+          description: Name of the party.
+          type: string
+          example: Example Corporation
+        capability_url:
+          description: Capabilities endpoint of the party.
+          pattern: ''
+          type: string
+          example: https://www.example.com/capabilities
+        registrar_id:
+          description: >-
+            Identifier of the party who registered the participant, identified by
+            one of the id registered
+          type: string
+          example: did:ishare:EU.NL.NTRNL-12345678
+        adherence:
+          allOf:
+            - $ref: '#/components/schemas/Adherence'
+            - {}
+        additional_info:
+          allOf:
+            - $ref: '#/components/schemas/AdditionalInfo'
+            - {}
+        agreements:
+          description: >-
+            Object which contains details about contracts including data space
+            contracts that party has agreed and signed to.
+          type: array
+          items:
+            $ref: '#/components/schemas/Agreement'
+          example:
+            - type: TermsOfUse
+              title: TOU
+              status: Accepted
+              sign_date: '2023-01-31T00:00:00.000Z'
+              expiry_date: '2024-01-31T00:00:00.000Z'
+              agreement_file: "RGF0ZQpSZWNpcGllbnQgTmFtZVQgRSBTIFQKSSBTIEggQSBSIEUgQSBEIEQgUiBFIFMgUyBTIEkgRyBOIEUgRCBDIE8gTiBUIFIgQSBDIFQKfCBDIEkgVCBZICwgQyBPIFUgTiBUIFkgLyBSIEUgRyBJIE8gTiAsIFAgTyBTIFQgQyBPIEQgRQpUbyBnZXQgc3RhcnRlZCBzdHJhaWdodCBhd2F5LCBzaW1wbHkgdGFwIGFueSBwbGFjZWhvbGRlciB0ZXh0IChzdWNoIGFzIHRoaXMpIGFuZCBzdGFydCB0eXBpbmcuClVzZSBzdHlsZXMgdG8gZWFzaWx5IGZvcm1hdCB5b3VyIFdvcmQgZG9jdW1lbnRzIGluIG5vIHRpbWUuIEZvciBleGFtcGxlLCB0aGlzIHRleHQgdXNlcwpOb3JtYWwgc3R5bGUuIFRvIGFwcGx5IGFueSB0ZXh0IGZvcm1hdHRpbmcgeW91IGNhbiBzZWUgaW4gdGhpcyBkb2N1bWVudCB3aXRoIGp1c3QgYSB0YXAsIGluIHRoZQpIb21lIHRhYiBvZiB0aGUgcmliYm9uLCB0YWtlIGEgbG9vayBhdCBTdHlsZXMuClMgSSBOIEMgRSBSIEUgTCBZICwKWSBPIFUgUiBOIEEgTSBFCkFkZHJlc3MgfCBDaXR5LCBDb3VudHkvUmVnaW9uLCBQb3N0Y29kZQ=="
+              framework: iSHARE
+              dataspace_id: ''
+              dataspace_title: ''
+              compliancy_verified: 'yes'
+            - type: AccessionAgreement
+              title: AA
+              status: Accepted
+              sign_date: '2023-01-31T00:00:00.000Z'
+              expiry_date: '2024-01-31T00:00:00.000Z'
+              agreement_file: "RGF0ZQpSZWNpcGllbnQgTmFtZVQgRSBTIFQKSSBTIEggQSBSIEUgQSBEIEQgUiBFIFMgUyBTIEkgRyBOIEUgRCBDIE8gTiBUIFIgQSBDIFQKfCBDIEkgVCBZICwgQyBPIFUgTiBUIFkgLyBSIEUgRyBJIE8gTiAsIFAgTyBTIFQgQyBPIEQgRQpUbyBnZXQgc3RhcnRlZCBzdHJhaWdodCBhd2F5LCBzaW1wbHkgdGFwIGFueSBwbGFjZWhvbGRlciB0ZXh0IChzdWNoIGFzIHRoaXMpIGFuZCBzdGFydCB0eXBpbmcuClVzZSBzdHlsZXMgdG8gZWFzaWx5IGZvcm1hdCB5b3VyIFdvcmQgZG9jdW1lbnRzIGluIG5vIHRpbWUuIEZvciBleGFtcGxlLCB0aGlzIHRleHQgdXNlcwpOb3JtYWwgc3R5bGUuIFRvIGFwcGx5IGFueSB0ZXh0IGZvcm1hdHRpbmcgeW91IGNhbiBzZWUgaW4gdGhpcyBkb2N1bWVudCB3aXRoIGp1c3QgYSB0YXAsIGluIHRoZQpIb21lIHRhYiBvZiB0aGUgcmliYm9uLCB0YWtlIGEgbG9vayBhdCBTdHlsZXMuClMgSSBOIEMgRSBSIEUgTCBZICwKWSBPIFUgUiBOIEEgTSBFCkFkZHJlc3MgfCBDaXR5LCBDb3VudHkvUmVnaW9uLCBQb3N0Y29kZQ=="
+              framework: iSHARE
+              dataspace_id: ''
+              dataspace_title: ''
+              compliancy_verified: 'yes'
+        spor:
+          description: 
+            The signed proof received from recognised issuer of information 
+            about the organisation and the authorised representative of that
+            organisation being authenticated with "High" level of assurance
+          allOf:
+            - $ref: '#/components/schemas/Spor'
+            - {}
+          example: 
+            signed_request: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsIng1YyI6WyJNSUlFNlRDQ0E5R2dBd0lCQWdJSVUrVkNVWmo1dCtBd0RRWUpLb1pJaHZjTkFRRUxCUUF3UERFNk1EZ0dBMVVFQXd3eFZFVlRWQ0JwVTBoQlVrVWdSVlVnU1hOemRXbHVaeUJEWlhKMGFXWnBZMkYwYVc5dUlFRjFkR2h2Y21sMGVTQkhOVEFlRncweU16QTVNRGt4TWpBMk16RmFGdzB6TXpBNU1EWXhNakEyTXpCYU1IVXhHakFZQmdOVkJBTU1FV2xUU0VGU1JTQlVaWE4wSUZCSlVpQXhNUnd3R2dZRFZRUUZFeE5GVlM1RlQxSkpMazVNTURBd01EQXdNREF3TVJRd0VnWURWUVFMREF0VVpYTjBJR0Z1WkNCUlFURVdNQlFHQTFVRUNnd05hVk5JUVZKRlZHVnpkRkJKVWpFTE1Ba0dBMVVFQmhNQ1Rrd3dnZ0lpTUEwR0NTcUdTSWIzRFFFQkFRVUFBNElDRHdBd2dnSUtBb0lDQVFEQ1puQlVCM2s1R05sa0piVThIbFFhY2IxdnVScTN5UkRVZlQyUzFaSFBJVEJuWUFSQTZvMDdLNmxKZWpyRnQ1YWRsSzRsK3ZxTDFvaWlTeWdTREFLdCtXYkxpUzZFakFocFlIeTFBNWtkNVFONnFmUUpUNnI4cVZvUXdrNnM5bmdldkc2SGRIQW5qMlcvR1d1UGNicU9JaHYxSEdaYVhIUDZrNGo3QzBuT042U1NRSXhQQko4bnUvdTloaDJzS0JpN0ZzRkNnZFpxL29OQzBaZjR3R3pJbVRlc3hQMUJrTXlETmdXVVIzK1JpZUlNTXNNQlJXcEhLRFE0aTI0blJZaGhqUjJGU3NQcitiTE85YXRKWFVKc3I4bElhVDNDaDRVOUE5MnNYY1A4V3lvVjJ1Ti9hOEJBTjVJWkw1bVRBZXA4NDJROXQrS1ltcXEzY1J2a21zUUN3WmxUZm1ZNUMzbDhKOHpHYTNETTZxUTViOFlCalZoUUljcEFISDJqQ3RpRmQ2Vk9XMjl3MVg2MHhKRU14dHB1dmhVNGQzZXlveFRiLzVYU05vRVJOUERRZzRRN0NHQWQvR3ZsbFFka2wrdGJPQW9EclYwY01PZFJ4eVpqa25UZUpzcWNaOHJYZWVDQkFkOVFYZEd0cGl0SUFsNnRyRFYxbEd4TmpZVldSN3o1MEJRUEUvaGpFOFZBb3ZuemMvOWlSenQ1ZmhFQkljclVJRVpzcmdKVUg1NXY0SVA2T2JjRisxVjNFdHNqMkJMZFI4cEdTNjdtL0t5TWdNcnVHN3IrTXZ0QUhaTHlLemZrWjBXdnczWFBsb1ZPWU1ha0NOaWNXTHNSUHR1clhEMEtyKy8xeWtrekllOFIxQWllVUVKbDBnR3ltWk04OXlPSDhuakNHd1psUHdJREFRQUJvNEcxTUlHeU1COEdBMVVkSXdRWU1CYUFGRzNGWlluTDM1RlUwV3M4dHdLbExzMkthSkFkTUNjR0ExVWRKUVFnTUI0R0NDc0dBUVVGQndNQ0JnZ3JCZ0VGQlFjREJBWUlLd1lCQlFVSEF3RXdOd1lJS3dZQkJRVUhBUU1FS3pBcE1BZ0dCZ1FBamtZQkFUQUlCZ1lFQUk1R0FRUXdFd1lHQkFDT1JnRUdNQWtHQndRQWprWUJCZ0l3SFFZRFZSME9CQllFRkhIdlM2VXVCMUhIL0NtZmlvSDkzOWMxSndCR01BNEdBMVVkRHdFQi93UUVBd0lHd0RBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQVNyYjZPLzVWbVJzTkNiazZzRHo1V1FYb1oxZG84MnhxZ1NibDIzK3hXekFHV2xNeEd5elJJdTZOSDQxbFNSeGcxNzRPU1EzS0orYXVTUlB1Si82NG9HUEp4MkVmekMyckZiOU5ZeWhGT2pqcnlSZVJBVUsxZzFBbkEzQVBpMUdLVkxTZ3hnTXBYTnhwNXo0Yk5pNGpzTG92ZW85Z2IxNzR3UWVZSVFzOXdUc3JOcU43eGpkc2UwcjNqTDdhdEJCK1ZOanR5bEYvOXBqaVBWeGR3a0o2MFFXeVg4ZFBobDZ3SWh4STdtVTVMclJZZk9TSEx4V1FhbzIvZWhXUURJeHFYOWQ1bVpEYlUrd0tFc3BiNWhSNmMvOEo1SFhyYy8yMXhvcTNxNjNPNkRoNFh5WEUxSEMzZ0hUeGxmTmtzRm5aOHpNeFlPVlZMc0hleHAwbGRITzhaUT09IiwiTUlJRFNEQ0NBakNnQXdJQkFnSUlTeFIzSW16RzFCY3dEUVlKS29aSWh2Y05BUUVMQlFBd0p6RWxNQ01HQTFVRUF3d2NWRVZUVkNCcFUwaEJVa1VnUm05MWJtUmhkR2x2YmlCbFNVUkJVekFlRncweE9UQXlNakl4TURBME16RmFGdzB6T1RBeU1UY3hNREF5TkRsYU1Ed3hPakE0QmdOVkJBTU1NVlJGVTFRZ2FWTklRVkpGSUVWVklFbHpjM1ZwYm1jZ1EyVnlkR2xtYVdOaGRHbHZiaUJCZFhSb2IzSnBkSGtnUnpVd2dnRWlNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUJEd0F3Z2dFS0FvSUJBUURIQjJBQlFMN3p3bWkxeElrTzBhMnE2aklKZG4zUUFtMHMxbFNlUWV2OUYyRjNNNVo4cWlxUUphdXJNWnl3WmZkTnZnOStJcUdIT2pEZTZoSWh1Unp6b0FvMEFiTzROOU9kZjJSRERVOTVON3RvSm1BeUNpWUdnWmZadDdCc0tGSWVRNnA2Q3NnS2NSWFBpMGZkWGRWU0hwNGJaZlFPUWRjbE1idElUaXJuRnRVMDZOUEFob1k2NzZZejk2eEZBRTB6b202ZU1WUFBPSW0wRzhnZDQ0WGxuYkwwdzBtY2NDaTJWVVpqdkNJTDU5TzYxTzh2bFZ5THNCcU5OVEN2ZjlDMkNNWWFFYXRYWnl6L2x3Z0g2SllIdEQwdXNYdC8rTTBxS1llMW9lb0xrMFppY0ZaWGNrMWlTMDlrRmRnZ0s1QmxOb2RvV0phREJScm81MVdoWTJXbkFnTUJBQUdqWXpCaE1BOEdBMVVkRXdFQi93UUZNQU1CQWY4d0h3WURWUjBqQkJnd0ZvQVVsWk1reWJ5aEN6SzVIT0JGSEtSTytNTFNSLzR3SFFZRFZSME9CQllFRkczRlpZbkwzNUZVMFdzOHR3S2xMczJLYUpBZE1BNEdBMVVkRHdFQi93UUVBd0lCaGpBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQVpINVFqdXErTzlGcHY2MzdnMGNGNm4xSUxZQkx6MWVOWmpFQjNkb0FleHZpNUN6U3czb3N3SkNTZWRHVzNoaDBxSE9USzJnSTgzamgwVzJFQW4yaXNGZ3doTW9HMmpkMllTRlNrbThRLzJlT2ZjNk1nR1NDNXNPVEw3NUo3YnlMQ29yZHFkL040ZWFqM0VxS0xhV3E3cjd1c3RQODFQOEVJbHowRDhhN2xmZjFGU28yM0hXWFRXWDIrbTJ2b0xBRTVsOTdhR1RHUlMxVWJ4aFAyakZLWUo5WHppS2U5TVFKU1pFbFRROGpxZzJrUEZrRXgvWHFBV3FsRzFkbDF5d0xKcTVpZVB2SzFSNEFZTkkvWWJaUWs5c2xqOHYrUC82TTdFdEVyc2YydUlTZ2V3TFRjV2wyNHgzbkc1eGJRWnhyUDhsMmpTR1ltT1RJbmdLT1FTbmJmZz09IiwiTUlJRE16Q0NBaHVnQXdJQkFnSUlCTFUyY1pBWnFMRXdEUVlKS29aSWh2Y05BUUVMQlFBd0p6RWxNQ01HQTFVRUF3d2NWRVZUVkNCcFUwaEJVa1VnUm05MWJtUmhkR2x2YmlCbFNVUkJVekFlRncweE9UQXlNakl4TURBeU5EbGFGdzB6T1RBeU1UY3hNREF5TkRsYU1DY3hKVEFqQmdOVkJBTU1IRlJGVTFRZ2FWTklRVkpGSUVadmRXNWtZWFJwYjI0Z1pVbEVRVk13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLQW9JQkFRQ3JEUDJEV1gzL2I4dU1hcHpFQkFUU2E2aVpmdmdneklCVUV4a1dFYkc5ZTFuVnkvalFrMjBuZlNGTVVtUlQ2TmhZY2RrU1lPL1dya2k5WTRFcEN5MXh2WkhxTCs0WTZTOUpMWndKNzYwTHBZbGUrTmFWdTdtaW5NVVFjdW9qNW5LekNsdmF6YjAwQXg1Z2tKVWZSM3YzWDVHWHFRcmtXYXpNdCtrNVROTTZUV3VKMzBxT2Z3ckh4NXZUTG1UVVVpaCtCc0dMM2Y1R09zMVZUWUlDTmhpVGpONzRuMldxcDJrVUxXSWUrL1g2UlovaEtzcGFIR1puS0RWVHdJKzhabVdGZWp1eEE2RE9YN1JzWUxLdlFPMjFGbWJJQm9TczlBenY1OS9SeFdVSlZNTzBXaERoS3BRZ0NHandnVjMyb2ZOZGtGZ21kVnVsek5QSUQyUk5iVFRMQWdNQkFBR2pZekJoTUE4R0ExVWRFd0VCL3dRRk1BTUJBZjh3SHdZRFZSMGpCQmd3Rm9BVWxaTWt5YnloQ3pLNUhPQkZIS1JPK01MU1IvNHdIUVlEVlIwT0JCWUVGSldUSk1tOG9Rc3l1UnpnUlJ5a1R2akMwa2YrTUE0R0ExVWREd0VCL3dRRUF3SUJoakFOQmdrcWhraUc5dzBCQVFzRkFBT0NBUUVBbHphQlZhRmhabUg5dXhzTFN2M0Zra3hXVndCUjFHaEF4d2NKbFY0eCtrcVg4dGNoSjRTRExFdVdSckY0RE50dlNSM3I2OUt6OGVZSTVYdVcxZUcxMllqR0dWbFlpamR4ckcxQU56R24ydmRvOXZMN2RFRlVFTUsxQUt4UnN0YlRkRTd5d3pJVi9DNjF3OEpyeHdMdHQ5T2pkVUVVUEh1R1RqdXY1bkZCUGRGek9jdnUrRFRNbDczQ0pQMnplWlVGZ3VqNTVNc1hZNDVNclhyYmd0K0xKcVV1NHBrQjJiTHU5RmJlUkxXWkp1a25ZU3JXNGZ5UUJaMmkrTXNHZGlCS1FjZjNmTFhqcGNoNDgvcDdTaVRrNHVmbG9CYXFUQ2x0L0V0V1hEU21GY3Y0UWpCazFtVVB1OXZ4aWtjSERrQXZKck9YR2cwYiszZUk0YTdPVGZBYjFnPT0iXX0.eyJpc3MiOiJkaWQ6aXNoYXJlOkVVLk5MLk5UUk5MLTEwMDAwMDA2Iiwic3ViIjoiNDE5NDA0ZTEtMDdjZS00ZDgwLTllOGEtZWNhOTR2ZGUwMDAzZGUiLCJhdWQiOiJkaWQ6aXNoYXJlOkVVLk5MLk5UUk5MLTEwMDAwMDAxIiwianRpIjoiNzgyYmIzOWUtMjQ4YS00NzA4LWI2MmUtZWZiMDVmYzM2MDQyIiwiZXhwIjoxNzY3MTc5ODY5LCJpYXQiOjE3NjcxNzk4MzksImF1dGhfdGltZSI6IjE1ODg5MjY3MDIiLCJub25jZSI6ImM0MjgyMjRjYTVhIiwiYWNyIjoidXJuOmh0dHA6Ly9laWRhcy5ldXJvcGEuZXUvTG9BL05vdE5vdGlmaWVkL2xvdyIsImF6cCI6ImRpZDppc2hhcmU6RVUuTkwuTlRSTkwtMTAwMDAwMDEiLCJvcmdhbmlzYXRpb25JZGVudGlmaWVyIjoiZGlkOmlzaGFyZTpFVS5OTC5OVFJOTC0xMDAwMDAwMiIsIm5iZiI6MTc2NzE3OTgzOX0.si963X3hhlpjMK67yyVt1Jo6ZGVCat3d4SeWMiYmx5Gp4FdvPFrEh6dNwew2_tUW41mzxZ4fRmD_AnWGa4_CmEVcmQMApncrtlm7hm43bMfuEcrQtfzaRZXAe_g2NmWnI20-IlPIHFPrsfqOs_BcJTWUezdT8yHD-SuVHxK0phDsYUMYG1JHeT3Hp6A4Ssz47EpmDBEAYCuyo5vyHiGjT0xE4OaDhic5fdUJacliNKYdEpj8ZYYQKJfGCO8onLJaGvl0F6MCjimbSq06FBiJUPyHiTjbSx_t-IdRVovsYkXFQkIKxF6eCBfl90zp_8SooxBc91uB_gFNy6nl3V6edL6tGuO0ddMTusD6xbB7h2znwF3rDcC-pFtT3oosd_Eu3lgSwGfBL8bVX8tu5XgW4gpNd-Oza3QHaKJb1AtArrVOT9dm7ha-ysOeNXfXhDIK5K98y2us9M2NhD1_E6ghS3SsyS4DDKx34T7fJGWfhp5CspY3_TnyYpjbBrpIzcVKdoa7lZChOUMdDk6krabyAtelR-4db9ftshbNZbUuDnT_6HyU1osjagDWtDjXdpLQPeBv2uIicimF5ABe7riJsHKgCAoSZxfp4l4DqecA_zKeo4thBB0nLg94zv8r1NU0jc00zC-iqE8fARKVub8HjfMe5VMyj0eKgkFsDhu8WcY
+        roles:
+          description: >-
+            Object which contains details about the iSHARE roles of the party.
+            Role MUST be either "EntitledParty" or "ServiceConsumer".
+          type: array
+          items:
+            $ref: '#/components/schemas/Role_definition'
+          example:
+            - role: EntitledParty
+              start_date: '2023-01-31T00:00:00.000Z'
+              end_date: '2024-01-31T00:00:00.000Z'
+              loa: High
+              compliancy_verified: true
+              legal_adherence: true
+        auth_registries:
+          description: >-
+            Object which contains details about the authorisation registers that
+            the party uses.
+          type: array
+          items:
+            $ref: '#/components/schemas/auth_registry'
+          example:
+            - name: iSHARE Test Authorization Registry
+              id: did:ishare:EU.NL.NTRNL-12345678
+              url: https://ar.isharetest.net/
+              dataspace_id: EU.DS.GND.NL.NGDDS
+              dataspace_name: Netherlands Green Deal Dataspace
     Party:
       title: Party
       required:
@@ -1130,11 +1237,21 @@ components:
           example: Netherlands Green Deal Dataspace
     PartiesInfo:
       title: PartiesInfo
+      required: 
+        -  data
       type: object
       properties:
         count:
           format: int32
           description: Count of parties returned based on search
+          type: integer
+        total_count:
+          format: int32
+          description: Total count of parties available based on search
+          type: integer
+        pageCount:
+          format: int32
+          description: Current page count
           type: integer
         data:
           description: Object containing parties information
@@ -1629,8 +1746,13 @@ components:
       properties:
         signed_request:
           description: >-
-            Credentials of the participant signed by a trusted
-            authority vouching for its authenticity
+            Credentials of the participant signed by a trusted authority vouching for its authenticity.
+            
+            Value MUST be a JWT or a base64 string.
+            
+            - If JWT, it MUST be an “id_token” as defined in Open ID Connect, issued to the user, with an additional “organisationIdentifier” attribute contained within, being the identifier of the organisation the authenticated user is representing. OrganizationIdentifier (issued by a Trust Service Provider (TSP)), SHOULD be in the format of this field described in ETSI EN 319 412-1 V1.5.1, paragraph 5.1.4.
+            
+            - If the base64 encoded value, it MUST be a proof demonstrating that the authenticated user is validated by the Identity Provider and that the user is agreeing to sign up to become a participant. This can have similar information to id_token or verifiable credential above, but in a different format.
           type: string
           example: f1aec63b5b6f545718dc1c86efda3a9e8d8c74c4c2af42b39d9e8d41f3fc2b4e
     CapabilitiesInfo:
@@ -1804,7 +1926,7 @@ components:
         - exp
         - iat
         - nbf
-        - parties_info
+        - epRequest
       type: object
       properties:
         iss:
@@ -1838,9 +1960,9 @@ components:
           description: UNIX timestamp in seconds since when this JWT is valid.
           type: integer
           example: 1504683475
-        parties_info:
+        epRequest:
           allOf:
-            - $ref: '#/components/schemas/Party'
+            - $ref: '#/components/schemas/ep_creation_request'
             - {}
     jwt_payload_ep_creation_response_token:
       title: jwt_payload_ep_creation_response_token

@@ -2489,6 +2489,47 @@ components:
         userinfo_token:
           type: string
           format: application/jwt
+    jwt_payload_userinfo_token:
+      required:
+        - organisationIdentifier
+        - iss
+        - sub
+        - aud
+        - jti
+        - exp
+        - iat
+      type: object
+      properties:
+        iss:
+          description: The id of the issuer of this JWT. MUST be the Identity Provider's id.
+          type: string
+          example: did:ishare:EU.NL.NTRNL-12345678
+        sub:
+          description: The id of the subject of this JWT i.e the pseudonym of the authenticated user. Please refer to human pseudonym section.
+          type: string
+          example: 419404e1-07ce-4d80-9e8a-eca94vde0003de
+        aud:
+          description: The id of the audience of this JWT. MUST be the Service Provider's id.
+          type: string
+          example: did:ishare:EU.NL.NTRNL-12345678
+        jti:
+          description: jti value of JWT. MUST be unique per JWT.
+          type: string
+          example: 378a47c4-2822-4ca5-a49a-7e5a1cc7ea59
+        exp:
+          format: int32
+          description: UNIX timestamp in seconds until when this JWT is valid.
+          type: integer
+          example: 1504684475
+        iat:
+          format: int32
+          description: UNIX timestamp in seconds when this JWT was issued.
+          type: integer
+          example: 1504683475
+        organisationIdentifier:
+              type: string
+              description: The validated organisation identifier of the entity the authenticated user is representing.
+              example: NTRNL-10000001
     delegationPolicyRequest:
       description: >-
         The model used for requesting delegation policy creation.

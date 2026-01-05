@@ -36,7 +36,7 @@ tags:
   - name: Authorisation Registry
     description: Endpoints that form the Authorisation Registry API specification.
 paths:
-  /[v2.1]/capabilities:
+  /[v2.1.1]/capabilities:
     get:
       tags:
         - Participant Registry
@@ -74,7 +74,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_capabilities_token' which indicate
         what the decoded response will look like.
-  /[v2.1]/trusted_list:
+  /[v2.1.1]/trusted_list:
     get:
       tags:
         - Participant Registry
@@ -98,7 +98,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_trusted_list_token' which indicate
         what the decoded response will look like.
-  /[v2.1]/parties/{id}:
+  /[v2.1.1]/parties/{id}:
     get:
       tags:
         - Participant Registry
@@ -131,7 +131,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_party_token' which indicate what
         the decoded response will look like.
-  /[v2.1]/parties:
+  /[v2.1.1]/parties:
     get:
       tags:
         - Participant Registry
@@ -450,7 +450,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_party_token' which indicate what
         the decoded response will look like.
-  /[v2.1]/versions:
+  /[v2.1.1]/versions:
     get:
       tags:
         - Participant Registry
@@ -472,7 +472,7 @@ paths:
         current state. Server response is an iSHARE signed JSON Web Token.
         Please refer to the models 'jwt_header' and 'jwt_payload_versions_token'
         which indicate what the decoded response will look like. 
-  /[v2.1]/dataspaces:
+  /[v2.1.1]/dataspaces:
     get:
       tags:
         - Participant Registry
@@ -495,7 +495,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_dataspaces_token' which indicate
         what the decoded response will look like.
-  /[v2.1]/connect/token:
+  /[v2.1.1]/connect/token:
     post:
       requestBody:
         content:
@@ -563,7 +563,7 @@ paths:
         Registry or Service Provider. The access token must be added 
         under "Authorization" header attribute for secured endpoints. Refer to relevant 
         endpoints on proper usage.
-  /[v2.1]/ep_creation:
+  /[v2.1.1]/ep_creation:
     post:
       requestBody:
         content:
@@ -627,7 +627,7 @@ paths:
         to their business specific logic. Note: Additional headers for security,
         statefulnes, application functionality could be added and is out of
         scope of this specification.
-  /[v2.1]/delegation:
+  /[v2.1.1]/delegation:
     post:
       requestBody:
         description: >-
@@ -656,7 +656,7 @@ paths:
         response is a signed JSON Web Token. Please refer to the models
         ‘jwt_header’ and ‘jwt_payload_delegation_evidence_token’ which indicate what
         the decoded response will look like.
-  /[v2.1]/connect/userinfo:
+  /[v2.1.1]/connect/userinfo:
     get:
       tags:
         - Identity Provider
@@ -680,7 +680,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_userinfo_token' which indicate what
         the decoded response will look like.
-  /[v2.1]/connect/authorize:
+  /[v2.1.1]/connect/authorize:
     post:
       requestBody:
         content:
@@ -823,7 +823,7 @@ paths:
             Provider needs to verify state parameter and make use of code
             parameter in order to retrieve the access token. There are no
             specific response requirements for this endpoint.
-  /[v2.1]/delegationPolicy:
+  /[v2.1.1]/delegationPolicy:
     post:
       tags:
         - Authorisation Registry

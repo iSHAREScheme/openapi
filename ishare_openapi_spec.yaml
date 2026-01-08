@@ -992,10 +992,6 @@ components:
             - "did:elsi:LEIXG-724500AZSGBRY55MNS59"
             - "did:web:example.com"
             - "CoC:123456789"
-        schemaVersion: 
-          description: Version of the this request/response model corresponding to iSHARE version. MUST be 'v2.1.1' for current version.
-          type: string
-          example: 'v2.1.1'
         party_name:
           description: Name of the party.
           type: string
@@ -1109,6 +1105,10 @@ components:
             - "did:elsi:LEIXG-724500AZSGBRY55MNS59"
             - "did:web:example.com"
             - "CoC:123456789"
+        schemaVersion: 
+          description: Version of the this request/response model corresponding to iSHARE version. MUST be 'v2.1.1' for current version.
+          type: string
+          example: 'v2.1.1'
         party_name:
           description: Name of the party.
           type: string

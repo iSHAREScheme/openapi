@@ -21,6 +21,9 @@ info:
   contact:
     url: http://dev.ishare.eu
     email: support@iSHARE.eu
+  license:
+    name: iSHARE Specific License
+    url: https://github.com/iSHAREScheme/openapi/blob/main/LICENSE
 servers:
   # Added by API Auto Mocking Plugin
   - description: iSHARE test network base domain

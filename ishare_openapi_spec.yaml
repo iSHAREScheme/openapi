@@ -281,7 +281,7 @@ paths:
             A (set of) key/value pair(s) used to filter parties based on claim attributes.
             The key represents the property name, the value the search criterion.
             To filter on a property inside a claim, construct the key as
-            \<claimType>\.<propertyName>.
+            `<claimType>.<propertyName>`.
           example: "/parties?claimFilter[frameworkRole.roleId]=ServiceConsumer&claimFilter[frameworkAgreement.agreementId]=tou"
         - in: query
           name: page

@@ -314,7 +314,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/partiesResponse'
-          description: ''
+          description: Signed JWT containing the paginated list of parties matching the query.
         '401':
           description: authentication is required and has failed or has not yet been provided.
       deprecated: false

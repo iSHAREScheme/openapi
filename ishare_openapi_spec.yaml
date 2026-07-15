@@ -1649,6 +1649,12 @@ components:
               type: string
               example: >-
                 eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+            verificationHash:
+              description: >-
+                The calculated hash of the assertion that has been uploaded.
+                The verificationHash must be calculated using the SHA256 hashing algorithm.
+              type: string
+              example: aef5bb5e3ab49150a53b89628ab8593315b6686f3f96497277feb9d658527acb
     authRegistry:
       title: authRegistry
       description: >-

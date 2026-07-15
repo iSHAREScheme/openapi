@@ -69,7 +69,7 @@ paths:
       description: >-
         The /capabilities endpoint is required for every participant that
         provides services. The endpoint returns iSHARE capabilities (supported
-        versions & optional features) of the iSHARE party. 
+        versions & optional features) of the iSHARE party.
 
 
         The capabilities endpoint should only return the public endpoints if no
@@ -103,8 +103,8 @@ paths:
       operationId: get-trusted-list
       summary: Retrieves list of trusted certificate authorities
       description: >
-        Used to obtain the list of trusted certificate authorities (roots) 
-        as described in the iSHARE framework. 
+        Used to obtain the list of trusted certificate authorities (roots)
+        as described in the iSHARE framework.
 
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwtHeader' and 'jwtPayloadTrustedListToken' which indicate
@@ -136,16 +136,16 @@ paths:
           description: authentication is required and has failed or has not yet been provided.
     get:
       tags:
-        - Participant Registry (Required) 
+        - Participant Registry (Required)
       security:
         - BearerAuth: []
       parameters:
         - style: simple
           name: id
           description: >-
-            The id of the party whose record must be fetched. Can be anyone of 
+            The id of the party whose record must be fetched. Can be anyone of
             the party id from id or alsoKnownAs attributes of that participant.
-            Since all participants are automatically allocated the derived 
+            Since all participants are automatically allocated the derived
             ishare did, that id is always an option to search for a participant.
           schema:
             type: string
@@ -165,7 +165,7 @@ paths:
       operationId: get-single-party-token
       summary: Retrieves one party
       description: >-
-        Used to obtain information on an iSHARE participant from the Participant 
+        Used to obtain information on an iSHARE participant from the Participant
         Registry. It returns exact participant matched using its ID.
 
         Server response is an iSHARE signed JSON Web Token. Please refer to the
@@ -180,7 +180,7 @@ paths:
         - style: simple
           name: id
           description: >-
-            The id of the party whose record must be updated. Can be anyone of 
+            The id of the party whose record must be updated. Can be anyone of
             the party id from id or alsoKnownAs attributes of that participant.
           schema:
             type: string
@@ -191,7 +191,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/partyUpdate'
+              $ref: '#/components/schemas/partyUpdateRequest'
         required: true
       responses:
         '200':
@@ -210,9 +210,13 @@ paths:
       operationId: update-party-information
       summary: Update party information
       description: >-
-        Used to partially update information of an iSHARE participant in the Participant 
+        Used to partially update information of an iSHARE participant in the Participant
         Registry. Only the provided fields will be updated, other fields remain unchanged.
         The party ID cannot be changed through this operation, however, new party id can be added to `alsoKnownAs` array.
+
+        Request body must be an iSHARE signed JSON Web Token. Please refer to the
+        models 'jwtHeader' and 'jwtPayloadPartyUpdateRequest' which indicate what
+        the decoded request body should look like.
 
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwtHeader' and 'jwtPayloadPartyToken' which indicate what
@@ -235,7 +239,7 @@ paths:
           description: Method is not supported for the requested resource.
     get:
       tags:
-        - Participant Registry (Required) 
+        - Participant Registry (Required)
       security:
         - BearerAuth: []
       parameters:
@@ -244,7 +248,7 @@ paths:
           explode: true
           name: id
           description: >-
-            Optional parameter used to search by a party's ID. Endpoint 
+            Optional parameter used to search by a party's ID. Endpoint
             /parties/{id} may be used instead.
           schema:
             type: string
@@ -254,7 +258,7 @@ paths:
           explode: true
           name: alsoKnownAs
           description: >-
-            Optional parameter used to search by a party's alsoKnownAs 
+            Optional parameter used to search by a party's alsoKnownAs
             identifier.
           schema:
             type: string
@@ -292,7 +296,7 @@ paths:
             default: 1
             minimum: 1
           description: >-
-            Page number to retrieve (starts at 1). Used for pagination when results 
+            Page number to retrieve (starts at 1). Used for pagination when results
             exceed the page size.
           example: 1
         - in: query
@@ -305,7 +309,7 @@ paths:
             minimum: 1
             maximum: 100
           description: >-
-            Number of items per page (maximum 100). Used for pagination to control 
+            Number of items per page (maximum 100). Used for pagination to control
             the number of results returned.
           example: 10
       responses:
@@ -322,7 +326,7 @@ paths:
       summary: Lists and searches parties
       description: >-
         Search for participant information from your Participant Registry. Various search
-        parameters are supported as shown below. Results are paginated to improve 
+        parameters are supported as shown below. Results are paginated to improve
         performance and usability.
 
         **Pagination:**
@@ -339,7 +343,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/party'
+              $ref: '#/components/schemas/partyRequest'
         required: true
       tags:
         - Participant Registry (Optional)
@@ -358,15 +362,19 @@ paths:
       operationId: register-new-party
       summary: Create new party
       description: >-
-        Used to programmatically create a participant. To create a party as part 
-        of the iSHARE Framework, at minimum the following claims MUST be provided: 
+        Used to programmatically create a participant. To create a party as part
+        of the iSHARE Framework, at minimum the following claims MUST be provided:
         - x509Certificate or idpAssertion
         - frameworkCompliance
         - frameworkAgreement
-        - frameworkRole. 
-        For all roles except for Service Consumer and Entitled Party an x509Certificate 
-        claim is required. Service Consumer and Entitled Party MUST either provide 
+        - frameworkRole.
+        For all roles except for Service Consumer and Entitled Party an x509Certificate
+        claim is required. Service Consumer and Entitled Party MUST either provide
         a x509Certificate claim or idpAssertion claim if authenticating via Identity Provider.
+
+        Request body must be an iSHARE signed JSON Web Token. Please refer to the
+        models 'jwtHeader' and 'jwtPayloadPartyRequest' which indicate what
+        the decoded request body should look like.
   /[v3.0]/parties/{partyId}/claims:
     options:
       tags:
@@ -401,9 +409,9 @@ paths:
         - style: simple
           name: partyId
           description: >-
-            The id of the party whose claims must be fetched. Can be anyone of 
+            The id of the party whose claims must be fetched. Can be anyone of
             the party id from id or alsoKnownAs attributes of that participant.
-            Since all participants are automatically allocated the derived 
+            Since all participants are automatically allocated the derived
             ishare did, that id is always an option to search for a participant.
           schema:
             type: string
@@ -423,7 +431,7 @@ paths:
       operationId: get-party-claims
       summary: Retrieves all claims of a party
       description: >-
-        Used to obtain the claims about an iSHARE participant from the Participant 
+        Used to obtain the claims about an iSHARE participant from the Participant
         Registry. It returns claims for the exact participant matched using its ID.
 
         Server response is an iSHARE signed JSON Web Token. Please refer to the
@@ -434,7 +442,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/claim'
+              $ref: '#/components/schemas/claimRequest'
         required: true
       tags:
         - Participant Registry (Optional)
@@ -444,9 +452,9 @@ paths:
         - style: simple
           name: partyId
           description: >-
-            The id of the party for who a claim must be added. Can be anyone of 
+            The id of the party for who a claim must be added. Can be anyone of
             the party id from id or alsoKnownAs attributes of that participant.
-            Since all participants are automatically allocated the derived 
+            Since all participants are automatically allocated the derived
             ishare did, that id is always an option to search for a participant.
           schema:
             type: string
@@ -467,6 +475,10 @@ paths:
       summary: Create new claim for a party
       description: >-
         Used to create a new claim for a participant.
+
+        Request body must be an iSHARE signed JSON Web Token. Please refer to the
+        models 'jwtHeader' and 'jwtPayloadClaimRequest' which indicate what
+        the decoded request body should look like.
   /[v3.0]/parties/{partyId}/claims/{claimId}:
     options:
       tags:
@@ -509,9 +521,9 @@ paths:
         - style: simple
           name: partyId
           description: >-
-            The id of the party whose claim must be fetched. Can be anyone of 
+            The id of the party whose claim must be fetched. Can be anyone of
             the party id from id or alsoKnownAs attributes of that participant.
-            Since all participants are automatically allocated the derived 
+            Since all participants are automatically allocated the derived
             ishare did, that id is always an option to search for a participant.
           schema:
             type: string
@@ -540,9 +552,9 @@ paths:
       operationId: get-single-claim
       summary: Retrieves one claim of a party
       description: >-
-       Used to obtain a specific claim using its id about an iSHARE participant 
-       from the Participant Registry. It returns the exact claim for the exact 
-       participant matched using its ID. 
+       Used to obtain a specific claim using its id about an iSHARE participant
+       from the Participant Registry. It returns the exact claim for the exact
+       participant matched using its ID.
 
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwtHeader' and 'jwtPayloadClaimToken' which indicate what
@@ -556,14 +568,14 @@ paths:
         - style: simple
           name: partyId
           description: >-
-            The id of the party whose claim must be updated. Can be anyone of 
+            The id of the party whose claim must be updated. Can be anyone of
             the party id from id or alsoKnownAs attributes of that participant.
-            Since all participants are automatically allocated the derived 
+            Since all participants are automatically allocated the derived
             ishare did, that id is always an option to search for a participant.
 
-            When updating alsKnownAs all existing values must also be provided. 
-            Implementations should raise an error if any of the existing values 
-            are missing (meaning deletion) as Ids in this field cannot be 
+            When updating alsKnownAs all existing values must also be provided.
+            Implementations should raise an error if any of the existing values
+            are missing (meaning deletion) as Ids in this field cannot be
             deleted once registered.
           schema:
             type: string
@@ -583,7 +595,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/claimUpdate'
+              $ref: '#/components/schemas/claimUpdateRequest'
         required: true
       responses:
         '200':
@@ -602,14 +614,14 @@ paths:
       operationId: update-claim-information
       summary: Update claim information
       description: >-
-        Used to partially update a specific claim of an iSHARE participant in the Participant 
+        Used to partially update a specific claim of an iSHARE participant in the Participant
         Registry. This flexible update mechanism allows updating any claim property using
         a key-value structure in the request body.
-        
-        The key represents the property path within the claim (using dot notation for 
-        nested properties), and the value is the new value to set. Only the provided 
+
+        The key represents the property path within the claim (using dot notation for
+        nested properties), and the value is the new value to set. Only the provided
         fields will be updated, other fields remain unchanged.
-        
+
         Examples of property paths:
         - "status" - Update claim status
         - "validFrom" - Update validity start time (ISO 8601 date-time)
@@ -621,8 +633,12 @@ paths:
         - "agreement.status" - Update agreement status
         - "agreement.title" - Update agreement title
         - "additionalInfo.companyEmail" - Update company email in additional info
-        
+
         The claim ID and type cannot be changed through this operation.
+
+        Request body must be an iSHARE signed JSON Web Token. Please refer to the
+        models 'jwtHeader' and 'jwtPayloadClaimUpdateRequest' which indicate what
+        the decoded request body should look like.
 
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwtHeader' and 'jwtPayloadClaimToken' which indicate what
@@ -643,7 +659,7 @@ paths:
             default: 1
             minimum: 1
           description: >-
-            Page number to retrieve (starts at 1). Used for pagination when results 
+            Page number to retrieve (starts at 1). Used for pagination when results
             exceed the page size.
           example: 1
         - in: query
@@ -656,7 +672,7 @@ paths:
             minimum: 1
             maximum: 100
           description: >-
-            Number of items per page (maximum 100). Used for pagination to control 
+            Number of items per page (maximum 100). Used for pagination to control
             the number of results returned.
           example: 10
       responses:
@@ -672,7 +688,7 @@ paths:
       operationId: get-dataspaces-list
       summary: Retrieves list of dataspaces
       description: >-
-        Used to obtain a list of dataspaces. Results are paginated to improve 
+        Used to obtain a list of dataspaces. Results are paginated to improve
         performance and usability.
 
         **Pagination:**
@@ -700,7 +716,7 @@ paths:
             default: 1
             minimum: 1
           description: >-
-            Page number to retrieve (starts at 1). Used for pagination when results 
+            Page number to retrieve (starts at 1). Used for pagination when results
             exceed the page size.
           example: 1
         - in: query
@@ -713,7 +729,7 @@ paths:
             minimum: 1
             maximum: 100
           description: >-
-            Number of items per page (maximum 100). Used for pagination to control 
+            Number of items per page (maximum 100). Used for pagination to control
             the number of results returned.
           example: 10
       responses:
@@ -729,7 +745,7 @@ paths:
       operationId: get-frameworks-list-token
       summary: Retrieves list of frameworks
       description: >-
-        Used to obtain a list of frameworks. Results are paginated to improve 
+        Used to obtain a list of frameworks. Results are paginated to improve
         performance and usability.
 
         **Pagination:**
@@ -809,8 +825,8 @@ paths:
       summary: Obtains access token
       description: >-
         Used to obtain an OAuth access token from a Participant Registry, Authorization
-        Registry or Service Provider. The access token must be added 
-        under "Authorization" header attribute for secured endpoints. Refer to relevant 
+        Registry or Service Provider. The access token must be added
+        under "Authorization" header attribute for secured endpoints. Refer to relevant
         endpoints on proper usage.
   /service:
     get:
@@ -874,8 +890,13 @@ paths:
       operationId: request-delegation-evidence
       summary: Obtains delegation evidence
       description: >-
-        Used to obtain delegation evidence from an Authorization Registry. The
-        response is a signed JSON Web Token. Please refer to the models
+        Used to obtain delegation evidence from an Authorization Registry.
+
+        Request body must be an iSHARE signed JSON Web Token. Please refer to the
+        models 'jwtHeader' and 'jwtPayloadDelegationRequest' which indicate what
+        the decoded request body should look like.
+
+        The response is a signed JSON Web Token. Please refer to the models
         'jwtHeader' and 'jwtPayloadDelegationEvidenceToken' which indicate what
         the decoded response will look like.
   /[v3.0]/connect/userinfo:
@@ -919,34 +940,34 @@ paths:
               properties:
                 response_type:
                   description: >-
-                    OAuth 2.0 Response Type. For iSHARE using the Authorization 
-                    Code Flow, with value ‘code id_token’ is REQUIRED. MUST be identical 
+                    OAuth 2.0 Response Type. For iSHARE using the Authorization
+                    Code Flow, with value ‘code id_token’ is REQUIRED. MUST be identical
                     to the response_type value in the request JWT.
                   type: string
                   example: code id_token
                 scope:
                   description: >-
-                    OAuth 2.0 scope for OpenID Connect 1.0. The scope parameter MUST contain atleast the `openid` and the `iSHARE` scope values. 
-                    In addition to that it MAY also contain one or more [scopes](https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims) 
-                    identifying the attributes from the Human Service Consumer that are requested (depending on the OpenID implementation of the Identity Provider). 
-                    The iSHARE scope contains the minimal information required for authorisations. The scope parameter MUST be identical to the scope value 
+                    OAuth 2.0 scope for OpenID Connect 1.0. The scope parameter MUST contain atleast the `openid` and the `iSHARE` scope values.
+                    In addition to that it MAY also contain one or more [scopes](https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims)
+                    identifying the attributes from the Human Service Consumer that are requested (depending on the OpenID implementation of the Identity Provider).
+                    The iSHARE scope contains the minimal information required for authorisations. The scope parameter MUST be identical to the scope value
                     in the request JWT. Scope values determine the permissions to be asked to the user.
                   type: string
                   example: openid iSHARE
                 client_id:
                   description: >-
-                    OpenID Connect 1.0 client ID. Used in iSHARE for all client 
-                    identification for OAuth/OpenID Connect. MUST contain a 
-                    valid party identifier. MUST be identical to the client_id 
+                    OpenID Connect 1.0 client ID. Used in iSHARE for all client
+                    identification for OAuth/OpenID Connect. MUST contain a
+                    valid party identifier. MUST be identical to the client_id
                     value in the request JWT.
                   type: string
                   example: did:ishare:EU.NL.NTRNL-10000001
                 request:
                   description: >-
-                    OpenID Connect 1.0 JWT [request parameter](https://openid.net/specs/openid-connect-core-1_0.html#JWTRequests) containing all request 
-                    parameters. See also Generic iSHARE JWT specifications for 
-                    a.o. basic content and signing requirements. Additionally 
-                    the signed JWT MUST be encrypted as a JWE as a user can access this 
+                    OpenID Connect 1.0 JWT [request parameter](https://openid.net/specs/openid-connect-core-1_0.html#JWTRequests) containing all request
+                    parameters. See also Generic iSHARE JWT specifications for
+                    a.o. basic content and signing requirements. Additionally
+                    the signed JWT MUST be encrypted as a JWE as a user can access this
                     JWT/s itself and decode the data contained therein.
                   type: string
                   example: eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMjU2R0NNIn0.Nuh5_NlmJRUtZKQYn_CLSxIYbyRwaegXZYBl4szaLUDnFIYG1m7jOpqCHmkFVb06Kq4Ir5we1_A9tXaww0c_CfMMTM8PPnV-z6hyNKhyXcdeXi0ywg9yLMWuBglHN4KjeeTzo-2earBq_KebvIearLPL3JtEcZKKU-LIpVmI2Ohcp8UARhVnCgLNn5OEnoI-w_kZGcqFnZK8omJjef1TySXZ8O57ZcH7xX_uOjtW6poootk8hD-1Ga88fkL8_q1CaveNpgbvy_yg9VvC3V9R3lvkJa8BTAhjoEhg5iB5UJeqft1RG3zlaiHOuLSGNEMejcRzTjHr0YS7OFVe--1fsn3GkEReoaoK-eBGy51PsKcZI8DEzq5K2zalmYUE1eDUKBMtwVTJrOOZHhrrRn-j8Irjx3_tUcHnhX04j9u913tlQZTQ42xa88-DDvYir3gyK5OxKYkxzR2E-aOD8IPzZDn5uEFuA0-RwfFTa_g9F9dzADpKMFzCgzWJDfFRBvY-y8_ZFuzgM-Om-5qRYG3p4I9aKCWcVf5MhcNW-arXi41wJS0H2mujqGSHZjJUpBvfXJ7M4-DqRU5WtKTS2qteTkMBd7IDjttQ1F4nULcw4MTihjlmYIREUJXHuAI98a9EbUJ1BSzfXsKYGpphtH8hcCvQIkD6UA89vhSrAnlh_0s.Gwv1eQtS4gZi78wm.XLttIUHGr5FKtxhK1tg6E1SxPgk7EZ1gYaZ2FRuea99bKPla3LVbvrdLIf1D_Ys_s7YcKW-kgTq47gTpCfEqOkvOXpjS-r0FGOyN3Gd2JBrmcxEgoBjzQyLMQCw7BrB8GmyCubwvfIW3tNPSbRkwZHwNpc59yFycIp_3e5-T_RZkS7OpH2bQ0aQyloE89UWzyAnJGkaQZOBCGCxV6CZlko02vNyAal5D9J2RNyGDwy0KKGeal87bIOEkGwS87ElyyNYUr6xZj1D4Q8A35mMwvxEN93lr_8e5GrFP4XH3Xx0gGP-A7dqKiWi5GzFIVLwNlAB0EKPHalkx9swhBoRplDvhKL8MBB93m_ReIgCVyfegBDERAkIDIF1ufd8IcVuX99_76TQr_9-MEWXsFdP4OrlS2Zd5QRZg6vJVh9CBy8xvq52ABD0wWqvXUw2kzvRMbUEgHMXcEHXJuAWj7RwdhuUDx-PhDzRgGvl3jxXqsQ8-ELUAhXJGFH4WWbxiEAFkxYszMp1xxCytKmi-e8CFaOTAeeOtyXqVJccuuVnee9cqWj-4ddyBEC_DtqOzpBWjNJVfibZwXphfeAcoQwRuzw1mKYM8t35HWOEK4F0Y8GiyWRyjSmvb7q-52-k6nDwsWVR1V--XjnfmFjL2AKNAGtZ-VWujJG_hXNO50XMVvoLjhyNEv-R2w9pKIzAJgOEEVUCK9LDdsXhqXrhSP6x9pQj2CoAh9nj2lKAq83z5RSvpWukxo-ROoASXX8RjCNo-zaimTfcI8XERM0pj93NPU4P2bquYQ9LgBkz4HouiWe8Zp-6tKwLMCw_o5iOWekU6fy4DeySCWRBhaawnPgnCnAAGO5w_sE01llyzzLrA46rAzA9k_2QKrPe213Wz7mFTG5gmZqnDknaA4zXXTCP2xwWpTh1pbyEMk9UxgSQUxlDT5HdOpSUMG4l5k6kKEdnQDMCx2E5TBWI6bxp2q1WTwt16k6qZigfgFPjvK0YFxcE3Yq0OkI0TJZMjSQ0CnVKvcHriizM5abIDQwwKxpLAkQ3gJl837vNaJfzIh47gfg7q1BOr0NAcmYyEDPghI3SgItrCqS0NJDWjVw6tZeH5MP7n8uxklf8wCzyUX2TzKwNV_xLk7A5sqKvLActLzW14KfgPSjfOKE9YBdzx3LbII3zwIs3tOcRNaAxPiARI5tYTXfVJuGCHjqlGTa7HoGfWSx8dhG7Py1kfWOfukHtwS1UmQuPsPrvBlA8ZRzn52wHnNgP1IOpBDQAPw7r57EKgEqRXHQc5EzdEEgIAInaNxySMkbSVKVYhcamvkWtowjzRvuq1IHhQYbEDOb4yHAu2w3ODqourlDHRblO3kS3w0a2ei5mhdjTdM1dKlpuuoBJKTIknI2hSBSGtq_V4RrSxL6UUYIGUtOy2gNB_wSyeqc65GoKKi_iBQRTmxpAId3EoG3PIUZ03EJGAZkhs_Q3RU_EyFco3MJbbu4i3fmPZNdrYClMlCJrwqo--hiKtkBrSnbP19oEKIJ5d-fN8YpaVA7UpdaMZnhUMeDjs-_fkDDWmHnWkC43iZ_tT2u5HCGGkVcTSIF932XqNORadCk1r9aPbnU1AlnAa4BWwQzebVPv7SXXKdTquLCbLZeWBWLlydmXx7A1YKExoHDvEd5hzUdU4dRNobkp5ETyyi8EMPswkcMJ9cDRCOnOxrlqTa7AmNZqvB1y8KsCVQlAB69KlpjQzjKytb2-NqbgLmx_HZJl6-g28rBWuefWIrkmZ58rSSxv88K50xtFRH27R_1uO3jS-P0e33q5iWS9RnMigO3cp4m5oABw7J0jbW3UIFfR8ZbOYnbSfz0Mc57ZQHk55a9iFwpEVhU8sPnoc4CsMz9inUhucMkaqi5e5lhiRk9dGkvMBIs-1XI2MREi0ZBLNFc8Yjyxrj-3rM6AKMux3mNSZ95NN9m5Lzp4R9gfcKyUEac-JZ3ECE38iUuMxjewZ5534ZhbZCh5FpSSn0vnvAp-eAWYZ5QGcldQ9kfBfkrGkY5mgTnyELDO-LNW6n80q6hoLErSnvIAzt5gEMFGLvhYUUklfekhA30MwFXnFgRw6qeOmzgOwVUkFRca2E_0zyYvi5f2P-EPhoWfrKpoNAxdjFiVUS7irxBd-FjrKSZEbHAvEhcWmnachdRMYlCA6HhnxUA5dP3SkzFQEK6cLY_XoW6T55xupL40nKxg1sEbl4kHN2Ln-HPvJ78D32W8DVZwk60oIbF-sgsOLnga99UViVa1-Zl7ofZ-7nbLR52OiShHbm12Js2aiHMMsIxI-pP1DfDMLy3Ncf3TugpWjh-bufWeQUldSWX0d5OzXzBzwkKF4QhWdRNsIYdr7MeBDi57SKZ9M52fVXvN7KqVKAJkJmCejBAQ9ppijMCAzuiuxkfgVX1LJBkbUPpgiIhnvVh59szYb8OIS66pfYUWD7NtIQ9e9XdKuBBgLhhZxdSDmKsCjY6coQyT51Vr9Kwyg9Hmy_4BlDHcplQZKgsjGLBzvYYzZv4JL8pRBMc3p7-EkhxgZNCbGBgPJyIixLWL0ZbkR6THoCwTp76UPUYQxefK0VJOH4m-7C9ZPnnFDQwmHOiT0MwjvFflnb1_FRlEuoQRAJdEnUysFYwbITVoB0R5FPqV4J9379JwELFEtGHdHvFgxK-6YywP5-VTnva_cFWbHm7E15B_IFfVOHedlJzfoGHYMPAI7auR9b4E-2zSYsSKkT14mdoVI63toaYZKZ6oZNAvwNLvi7M7D1ulHi0tA8UcM80Jkl4PD3KYZ6pziNhC8tenPlTfs-Ilj19UjyyyF3fxgAek1GOPq61RwTZseU5NsYuaRaVfRpxxBy9kcrwiyA_5YeR9jln9_N0HzJLHo96e40gwlEBzBbJuAHzKR_EwvtH9scct6eGIon9-85qQ3uy99HlMQmYYcoHVWDJNpDlJxkGLUJR_GlQRiZ9pypGyLVME68YCVncWBaPjR_MGek9TvHsmFU1kaevKeVtbl5veX_6j6_nf8UgQaTQseVurcHAyW-dITLUOQv_vn-K90LIT2MADLl-j9AIoW5mjUKINRTbdmAxBFDYa9-xw7gt-jRpqZQCNfOPGVKGpvvt43a8Y81AAB9hBCCy4xYMZbMuIDrMM6CxlBX22P2GwCGJeCgGOL8DZnoqCm3tTyCOTB_-lhzZ-lMFnVf1s7TTBdDag2SVpKZQC2X9cMjga3clLIWxd30rzyQiLIt4fsOWZ0garIMOJ99ZkAX83dJDlpTqR3Fz_RG99xEzghoYjEv1MdLK5fPcBK5KqUbeVu9P3hKdk9qxAtWEyH4vsnACH5jncFpcFftsQ5YlbJTGRlLoyxK7GIWG_0SciyUb9xPPmP17jveoadK4mwN-TJLHFc3F2hnqV72z0x2VreWODuG3801rpsZgEysp-Fj-8Tw9aiX4R0Tim3XgXIhb4mwhMLSAuXsLShaoisz_RK62Drjdhobg1zduid-ZLJ5Nc_FlGZDsH3znVMmWTYFikhz78BxgTGM3wkwOTB8MfZ0BjPbvw4ClFcLEt26w-ikwot52t5lYUT7EgRVySVh0dx3ilgJ0VLGx0snP_TwqaJOx0rO9WHZ4BEoJQSmWwvxIrAhbn9TBc3l58z9-9AcZMhWjveb5ZoMzhRz8lKcQYo7fCUfB-oFXungcIuTrijeu8WXLKai2BQZV-VOdZ296_mpb0RURksux8QsjG21Ac-t8dp2tzsEQNmuiYIrwEBLb1TEUJcxRVWCJKfOcx9nopNrnui9DZouIK5Vi5L_sAE05p_P3fN0ZBQ0WrrUwU9dY1CK14GP_hLhA2ND42VwOXMrOR3dP8o6b5kd7m2ARXvVJZTxKyv-641tTNkQpou6lTKkh6J-pGGtocYJxcSoP-foILQJFEaDgBS3S7ruVXfi8hAV3C5Bj39vYkk0mecbXL3WEMiuUNXOHcTx-p0N80WJ--sl9-2bVcnhxF_MRGsprJrobaJP66tEj5mTo6uMRmoglwHepbY20KA3RLF-353N13dt-Bge-Xz2TnS43wE1K-vBQE-2X10kg57XnBtOcGMFL5E6WMa9deMRhQvcLavokpt7m3-p4IWixNO1zPGLsSYBf3g0p66grMQVGYLe38ZAa4RXudevbGp-72d4bEIkY_S0ekXYi-BDe7MAP8ntoQG76LW9rHlmcWWtcQf4J-PL7dGZGEk5x834CcFWTbmRcyr1zpgrUqGa1Y9v1iHXxiuG4PJ1eNGImRDfSHHgjhNqgeKQZr4JOra3d61bdA7j0urgcDF8J0ArUQHZuJ8znhxtepRkSEaMVqgrUhS-T6eYWYfe0FCGx8UHhlsZmMiYMXzj8RVPtYH1mDqq-kukGnefr7Maz2XHCLR4XjkD0Wq8y-jzk92dtqQoc1U57GOf9S8WlzXfwO3_KgcF565YR01sluJ1Gob0lRS4wl98MTJTF-8f9j6zG-EyOCOkVDJib4ExXRpSK284GV6BqQlktgMawW4b6PtnNwwaDiQ_rXyVyFOuzvlNqZDdFlAqBOKeqxckkGgQKuQpK_o25cfLiEIx46pIzzXrgk41gfSTsemFU1SHu7qYrUlr414xwBzONsRBsvyJ5fNjhoDv14y--LG5ewOLVrLwPjqC7xI0YDjmB82A7BEo4Tf9ZnBbWq_HsEKVk639Rfj3hkxs9wIU1sSIv2K5NOiU7N0jXaEIMh03HD79qgF9ax8g_3PLcpCCNPtxa2jZ27UCT2q65KQkUC1P2z1jwW3PaUH0BFeg3_kZT2Bx5YGOLhF2v3pS4tBtYSnMPDzeDUIFByw0U-6FDMaC4d_-ysXvDRmc7WObZsspPIMd0gyp7rtDAv4y8FDMMBbLMyC2tgzUpiUC9KBQU_RcOxb6lTaeh25TENrB-LS69U9qDC9FTNV6VP8o86ay35QkjDvFCH4cwZE96pZLv4VEv7m40Un9RchJdF-MQfkfbBRWhDi3vb--STSOrZ9nSBRenBkpIQNXGr-c-_X3xMVgZppI0uDPfsbcZVow3XLka4tmhWTPAFN_yU7_RfDrcJrfsfoJs3hsg8zM6-WyNYAZ9mnfn2ltTi8SzvyXyOOLP3raQfV_BxTxRCpG_Kbp5k1CbSGPcwBL13J3OHJgBTB6fdhyzr9hBjKicqoXTm1p9tQ0CSyVwzyyayuM7YnEzgc72Mg6HmEFb4lzRJaRs468IeSGie4HwqNmNDbvtgGHi_E2atYplBYcvPVdqgLbJqw1jjsU6HFfAmcU48YJQFIN98ycSOZUykmfEad5IVwGbbvO0MAcDOtoV43glHGTJSX9QdQzfrAB5dWrg9LW1fvFDmwMa6byPmYqbWCXSrOXdfy4lhCuXktZxhzrgQ5vE0qG3yaPf10ZbvOxoz8Aiy0FMKtJSdey_kXDbdpZA3-T66mgoTboqK_e09sZ5f2vCNICtXGUFmRtjP64OQNMnZWl-OuO3IFaS0nlZDjcCeSQxZ0pB2qi-AOnMjWrXXpxlpGr4IGkc4UO8IteUMfSysQVZ1bdrzxUj4YsDvahL4U6i_99r7Y71XsglxbxN9LSWyMiKFAwh4U2vrlNoLI2TA5prjAExkxXhnftHBONuZv7R_8MYIi7tJUxSuGJSckKC77E27lIXc4EB47W38w4mIiGdK4FwC-agC2OjlPs54aPA7FW0UbLFul8IqeJAME4S_XmrNlF4jyDgL9Km4NbWxKor25x_iflFnq4RahSm8lc0PJCMxD8UHlo4dkgzQTfEY8EBh3Vk4rACLdf5R8MQMvVxhN3dd5i08dkpurKKXrLvYy7Agpbr_AwxvzeLYGJyp41is8b0sCemP1EDhxflCeJS9vf9uYnXE-fIQpqYX3kXOkd9Dg-uKZzV8dlcY-14jCF-MSbY1Qn7e2EvFBP6L8J3qasdFW71hRSsS3CyusCr1XEk_r1YiZyL0zzALBcWaNKT-xCsNfT3SNZqCI5a4M0sislieipZdImFjvi4HaJ7hsx8fS1KMXQ6B6iCYnwQVw_BMhJ4YDAkhKgRV-BXgWd7DobjqIEOqshHix7yulYrxmEy9EKPu1otswITUUxBlgH9TsoUd9FpZVEwE7VmXxHL2ELY7-xPb7Q94M69jGVCOGyyuVtEENhsI4R17bzAo1YQoT0K_-Sd8EWdsVxt83YVijIAoK_P-xy7sOwFkDtCtJzN-H5YZ12Fl3d3DSam_iwON8Lb9sa3MszCCJGZAsAssIPfXQvGEzohQZQmwsd759Rcv5okGzbZFCn0oj-9X67TEA5cpzgp3_hvdicpa5A0qtosnb1GlEbwNcYZu56WWOT2ElQ_6nBudf6B9rPi2tqytqe7z7QRkPyHnu-_F3kusWpIiyMzPJiPexDZXnqNTe3NPwwpqXjvz3HjWXZaWLtkA4lUJYK7rqs7E47bRXr8BHi07TtVrgX038HZ660FJzhTUBr8yvLs_pl8Lo5qDfTfdC4tAHMQjLH4PG7y6DnEjeqnzdbMV7MfFfx8-V4KCWKB3qfYlOSbadelrQDYO4MtnSRBw5TWEdIZhwhH7qxwKkQ_rw7Xbaeici5ETByGKJc7QZC6mjTtYAoXTyKf7gfRibLfTQuo3NRJdDUmITWiPDLVBMMINR3z-tGWD42BD8_inv8TKivcwPKGRT-mWPqJoEBkmyOpufiC9oLzG-vI39IwSInYauR6COHpg9csjB_YC82ZjvfPCzFabCvD6EDYRZa46d0DiXnxWHiAHqXaNrvuwT4i18cpCbN1yV9x9m3g3GDmTXgvIcXEgIrspdcyFukIQN5515VCuiVAFWJFNAr0y3JuaEd5kQAqXkX6QyRuFhKUJElY1CUVuGRkmqyjZ7iNOsJvQCxNr244cGXIAMTgyq82rs2xBE1KtqylNT1ZFGrjPEOjcPARTzagTbtLehoLoslaVCJeDjcmNO6BJLtuDzk6b9qjCBNDYSkfxQZ7q-4vPVNhCXlOggY8Scw8Q9T34xklVLeT_peC767-Eu6NpmOvegC0qczwlH0ePK-2OvIjGUE6fO7AvXfsNvJqYMnYj89IdFQj833VyCttn0jYF3Va346U96TnWxsp3LGtcc3gxoAitia84z2C1-CDcISHWakiAifqOBtDc7szLPf6_FAfLpRoj_8Ovz3kKe5gxyuc5FHBtb5K8eoNC4IuMymn0FiEiM0Tx_YXc-0Iur3PJJrvHX_Fu8uB8BVYNs5ZFd9m_-w0f5BiknvNVQnwpGrIQg1jv4iFg7hg4QA63cnyFq3pRsLoyXEb02AqUvkCBly00Wnt2vN_lt5Ee0SQryxX8oEeoMxUTvnhNTMhDwz02xzjOMSwrssUC7LRV8Ew-tlj_M3UTBm0VT0u1D5yntCOHfTPUsNxPv3pwtwMr4obNIFbQP_nHS8HBQ3MLNSwWLSggo1SeOPUsVN2Fp53EGiTl-2F4WQ3sWGzlUmrKHJc2iUjdUBX6e0U9VISiO2CikTi9pqS8_-YkCkqy9jl9XAL6mg7qcGiAOcfvmFUhuOXj01GB8aKMoGEEDYeKtNhEtoHB0sLybpjwc0z4ltptcQR4qJTJf8kIviFJ0-2sntLwdQki9vZ2UmfLpKwGvJNbnVU2Ko_XTl0VRdTBM5qyPCBzUIIvgaMIKNgVfsSIBNStt8wZnXt2mKHBxaNZEo28FRp0hebSkshcuQ-XWi9E2HwE3JmN1At6DSreac4XeJDXbRaHNtfC3-eKGJizTFhowRzxTLQ207UHzvsD2iBFOIRFf8RN5Ci5E4_zszTWeXaJ2Cn0fcS5FF49oNvN8C-yo9YZYz1GnnX5x3TKqJ7XdgyYalUW4UICk_ZoDIrVjnrGH_oVQ_I1VfIcUuOtqROko4spCJXZVIbm1haLgxjGd2oESj0T6Jn2ov1pc0yKzmcowKxT0UcjMa13z1ewvTJNfOGr9BMMrlVk9pr67GavgYwYyn9MAjt1UPmwwNVFC8-XnVljUz10IK1-logfjm7wz_kU6j9xb8sQcuE3SyIat50XcRNDZ7e5OdXLVRW9obvuKJqOrr4b_C-LO0bPZWP9equvEoCsulfE7XiS2SKWAwBboQeNYBkBVBAhqZ5NoQXpdl5DUeBjZC2MLWWojQSXAZUGIZNFJoidyrZQ_RsR_sPTHCE90TQacqTqKMqolLDCmmZVcig62CsBar15ojju_L4H_4EqwaAlclE7sOiTASQgTxkomvG3CWz1-81E6xvr3hbGwcNztP7Q_jEYaDtrJaNPSaYWTrmI7OuiuFkpQcMwxqnnoGQ_l1cMHlrKuaXswW645wpwppGLYLKFYdItr3bkhQ6_a0WBtLtCjraZuxXZUMdrLqvpdTHglB0DRrGZ6OcTLW6bbhtZYMFrZ2Vsjt_8dza94LeS1e1Kt0E3RkfRqPSx2bg-XV4OMbzyIniq2vK7vZn0zJFfYoyMj3IruJM-9HcNW2RJMJ-6w4zKo8u5haTCdOaMABLb6so0Ogd6m2w4cvpZunGvuVQXcn-6pkNamXlyW2OuUOEn1ILmlHMrHZCPcUXzBomIhUzvgTtO_1KV6hdgETb6uuYHKvKMEa7E97toEfci4gYHJUKqZ1osef9LUeQ9OzwGpX14zhyiaU7Ee7e1xc-wyllyzvym9cDYLhTgk8C0sc1ibZBEScwh8q2T2Fm7h00fDO0kb1fcsoNiu3B_9PxHYHoX03tbTb-pbdCMqt8WzjvrCWxlW_xeUOvbSP6B5KEMghtOB7mOMAlZysYelYee5saKfb5HoOlZ3xk-XhHiSzH1J-IU3V0Q5N3C7QFYFEbOIcOOvMEDQeJB2w04Kges856YMnZZ4BoqSkvUVvlrnghUQVGoPYoo0036HAyScMxvvXtOOK5s6wR6EgVba7GqTuUI5tq89-ZJjVAqeM7o5zVgqba8wk-oEzpb09ZVtdpXDnPIRJ8Gii0fv06Hm6n8pc9-b4TsjiKY7ZgDIbNtsqg_m3gnEom5PLQpOf6uns1WlvZ8SDZq1g6b_wCH3GibvskuC9Cw9Qi24Ng.jhXt3g-QUqeibO6LdVRpzw
@@ -968,7 +989,7 @@ paths:
       operationId: initiate-authorization-flow
       summary: Redirect human service consumer for authentication
       description: >-
-        OpenID Connect endpoint for redirecting Human Service Consumer for 
+        OpenID Connect endpoint for redirecting Human Service Consumer for
         authentication by the Identity Provider. Server response is directed  to
         the Service Provider's return endpoint.
   /login:
@@ -984,7 +1005,7 @@ paths:
               properties:
                 username:
                   description: >-
-                    Human user’s login name. Could be email, mobile phone 
+                    Human user’s login name. Could be email, mobile phone
                     number, nickname etc.
                   type: string
                   example: username
@@ -1064,8 +1085,8 @@ paths:
       security:
         - BearerAuth: []
       description: >-
-        The Delegation policy request endpoint is an API endpoint that receives 
-        policy creation requests. The POST body accepts a JWT token: the Policy 
+        The Delegation policy request endpoint is an API endpoint that receives
+        policy creation requests. The POST body accepts a JWT token: the Policy
         Creation Request Token.
       operationId: create-delegation-policy
       summary: Request creation of a delegation policy
@@ -1081,16 +1102,16 @@ paths:
             OK: The requested policy is created.
         '401':
           description: >-
-            Unauthorized: When Authorization header is either missing, invalid 
+            Unauthorized: When Authorization header is either missing, invalid
             or token has already expired.
         '403':
           description: >-
-            Forbidden: This error message is return when a policy creation request 
-            could not be processed after rules evaluation. The requested policy 
+            Forbidden: This error message is return when a policy creation request
+            could not be processed after rules evaluation. The requested policy
             does not comply with the rules as set by the Entitled Party.
         '500':
           description: >-
-            Server Error: When the Authorization Registry was unable to process 
+            Server Error: When the Authorization Registry was unable to process
             the request
 components:
   schemas:
@@ -1174,9 +1195,9 @@ components:
         role:
           nullable: true
           description: >-
-             Possible roles are ServiceConsumer, ServiceProvider, EntitledParty, 
-             AuthorisationRegistry, IdentityProvider, IdentityBroker and 
-             IdentityBroker and ParticipantRegistry, iShareSatellite (deprecated, 
+             Possible roles are ServiceConsumer, ServiceProvider, EntitledParty,
+             AuthorisationRegistry, IdentityProvider, IdentityBroker and
+             IdentityBroker and ParticipantRegistry, iShareSatellite (deprecated,
              will be removed in future releases, use ParticipantRegistry instead).
           type: string
     Adherence:
@@ -1297,12 +1318,12 @@ components:
           type: array
           items:
             type: string
-          example: 
+          example:
             - "did:ishare:EU.NL.NTRNL-12345678"
             - "did:ebsi:LEIXG-724500AZSGBRY55MNS59"
             - "did:web:example.com"
             - "CoC:123456789"
-        schemaVersion: 
+        schemaVersion:
           description: Version of the this request/response model corresponding to iSHARE version. MUST be 'v3.0' for current version.
           type: string
           example: 'v3.0'
@@ -1351,11 +1372,11 @@ components:
         status:
           type: string
           description: >-
-            The status of a claim concerns the status of that what the claim contains. 
-            For example: the status "active" for frameworkCompliance means that the 
+            The status of a claim concerns the status of that what the claim contains.
+            For example: the status "active" for frameworkCompliance means that the
             party currently complies to the framework. Statusses are defined as follows:
 
-            - active: The claim is currently valid (every claim that should be used 
+            - active: The claim is currently valid (every claim that should be used
               (trusted) mus have this status)
             - inactive: The claim is not yet valid or is expired
             - revoked: The claim has been revoked permanently
@@ -1364,7 +1385,7 @@ components:
         registrarId:
           type: string
           description: >-
-            Identifier of the party who registered the claim. This can 
+            Identifier of the party who registered the claim. This can
             be any of the Party ID from id or alsoKnownAs attributes of that participant.
           example: did:ishare:EU.NL.NTRNL-12345678
         startDate:
@@ -1400,7 +1421,7 @@ components:
               type: string
               description: >-
                 Capabilities endpoint of the party in the framework. Required base on the
-                role of the party in the framework (in iSHARE Framework required for Service 
+                role of the party in the framework (in iSHARE Framework required for Service
                 Provider, Identity Provider, Participant Registry and Authorisation Registry).
               format: uri
               example: https://www.example.com/capabilities
@@ -1414,11 +1435,11 @@ components:
         - type: object
           title: authRegistryClaim
           description: >-
-            Presents the selected Authorisation Registry (AR) to be used for the 
+            Presents the selected Authorisation Registry (AR) to be used for the
             party. An AR can be selected for use in a dataspace (then provide the
             dataspaceId) or for use in a framework (then provide the frameworkId),
-            or for use with a specific Service Provider (then provide the serviceProviderPartyId), 
-            or a combination of these. If none is provided, the AR must be considered 
+            or for use with a specific Service Provider (then provide the serviceProviderPartyId),
+            or a combination of these. If none is provided, the AR must be considered
             as the default AR for the party.
           properties:
             type:
@@ -1445,7 +1466,7 @@ components:
         - type: object
           title: frameworkAgreementClaim
           description: >-
-            Required. Claims for Accession Agreement and Terms of Use 
+            Required. Claims for Accession Agreement and Terms of Use
             are required at minimum, may have additional agreements.
           required:
             - frameworkId
@@ -1464,7 +1485,7 @@ components:
         - type: object
           title: frameworkRoleClaim
           description: >-
-            Required if defined by dataspace. When a dataspace defines its own 
+            Required if defined by dataspace. When a dataspace defines its own
             roles for participants, it can be added through this claim.
           required:
             - frameworkId
@@ -1519,7 +1540,7 @@ components:
         - type: object
           title: dataspaceAgreementClaim
           description: >-
-            Required if defined by dataspace. When a dataspace defines its own 
+            Required if defined by dataspace. When a dataspace defines its own
             agreement for participants, it can be added through this claim.
           required:
             - dataspaceId
@@ -1538,7 +1559,7 @@ components:
         - type: object
           title: dataspaceRoleClaim
           description: >-
-            Required if defined by dataspace. When dataspace adefines its own 
+            Required if defined by dataspace. When dataspace adefines its own
             roles for participants, it can be added through this claim.
           required:
             - dataspaceId
@@ -1556,9 +1577,9 @@ components:
         - type: object
           title: x509CertificateClaim
           description: >-
-            x509Certificate claim must be a valid certificate issued by a _certificate root_ 
+            x509Certificate claim must be a valid certificate issued by a _certificate root_
             from the trusted list. It is required for all roles except for Service Consumer that
-            does not have machine to machine (M2M)interaction and Entitled Party. Service Consumer 
+            does not have machine to machine (M2M)interaction and Entitled Party. Service Consumer
             with no M2M interaction and Entitled Party may still choose to use an x509Certificate.
           required:
             - subjectName
@@ -1632,7 +1653,7 @@ components:
           title: idpAssertionClaim
           description: >-
             The idpAssertion is allowed only for the roles Entitled Party and Service
-            Consumer without M2M interaction. It is required if those roles do not 
+            Consumer without M2M interaction. It is required if those roles do not
             have a x509Certificate claim present. idpAssertion claim must be a valid
             assertion issued by a certified Identity Provider.
           required:
@@ -1700,8 +1721,8 @@ components:
           example: did:ishare:EU.NL.NTRNL-12345678
         serviceIdentifier:
           description: >-
-            Optional identifier of the Service (Capability) of the Service Provider for 
-            which this AR is selected by the Entitled Party 
+            Optional identifier of the Service (Capability) of the Service Provider for
+            which this AR is selected by the Entitled Party
             (#/components/schemas/Service/identifier).
           type: string
           example: /capabilities
@@ -1888,7 +1909,7 @@ components:
       properties:
         agreementType:
           description: >-
-            Descriptive type of the agreement. Framework or dataspace may 
+            Descriptive type of the agreement. Framework or dataspace may
             define agreement types.
           type: string
           example: Terms of Use
@@ -1902,8 +1923,8 @@ components:
           example: terms-of-use
         verificationHash:
           description: >-
-            The calculated hash of the agreement file that has been uploaded. 
-            Note agreements are not stored in the ledger, but only their hash. 
+            The calculated hash of the agreement file that has been uploaded.
+            Note agreements are not stored in the ledger, but only their hash.
             The verificationHash must be calculated using the SHA256 hashing algorithm.
           type: string
           example: aef5bb5e3ab49150a53b89628ab8593315b6686f3f96497277feb9d658527acb
@@ -1939,7 +1960,7 @@ components:
           example: high
         compliancyVerified:
           description: >-
-            Compliance requirements of this role has been met by party. 
+            Compliance requirements of this role has been met by party.
             Possible values are yes, no and not-applicable
           type: string
           enum: [yes, no, not-applicable]
@@ -1957,9 +1978,9 @@ components:
       properties:
         publicServices:
           description: >-
-            When no Authorization header is presented when invoking the 
+            When no Authorization header is presented when invoking the
             /capabilities endpoint, only publicServices are returned.
-            publicServices themselves may (and usually will) require 
+            publicServices themselves may (and usually will) require
             authentication to invoke them.
           type: array
           items:
@@ -1967,11 +1988,11 @@ components:
         restrictedServices:
           description: >-
             When an Authorization header is presented when invoking the
-            /capabilities endpoint, in addition to the public services, 
-            restricted services may be returned, based on the information 
-            provided on the participant by the Authorization  header. This 
-            could for example be implemented to expose services only to 
-            participants of a dataspaces. restrictedServices themselves may 
+            /capabilities endpoint, in addition to the public services,
+            restricted services may be returned, based on the information
+            provided on the participant by the Authorization  header. This
+            could for example be implemented to expose services only to
+            participants of a dataspaces. restrictedServices themselves may
             (and usually will) require authentication to invoke them.
           type: array
           items:
@@ -1987,14 +2008,14 @@ components:
         - serviceType
         - version
       properties:
-        identifier: 
+        identifier:
           description: >-
-            Free text identifier of the service. Must be unique within the capabilities 
-            definition, a URI is preferred. For iSHARE defined services, it must contain 
-            the predefined identifier (defined as operationId in the iSHARE generic 
-            OpenAPI specification). For other services, it might for instance refer to an 
-            operationId in OpenAPI specifications, or other forms of identifiers in 
-            other specification formats. If an iSHARE defined service is being extended, 
+            Free text identifier of the service. Must be unique within the capabilities
+            definition, a URI is preferred. For iSHARE defined services, it must contain
+            the predefined identifier (defined as operationId in the iSHARE generic
+            OpenAPI specification). For other services, it might for instance refer to an
+            operationId in OpenAPI specifications, or other forms of identifiers in
+            other specification formats. If an iSHARE defined service is being extended,
             for example for specific purposes in a dataspace, then the identifier of the
             extended service must be used.
           type: string
@@ -2009,17 +2030,17 @@ components:
             Free text description of the service.
           type: string
           example: Retrieves iSHARE capabilities
-        endpointDescription: 
+        endpointDescription:
           description: >-
-            URL that points to the definition of the service. Could be for instance a URL 
+            URL that points to the definition of the service. Could be for instance a URL
             to an OpenAPI description, a WSDL document, a SPARQL Service Description, etc.
           type: string
           example: https://api.swaggerhub.com/apis/iSHARE/iSHARE_Scheme_Specification/2.0
           format: uri
         endpointURL:
           description: >-
-            URL of the endpoint, including the correct host. Depending on the 
-            setup, this information could also already be included in the 
+            URL of the endpoint, including the correct host. Depending on the
+            setup, this information could also already be included in the
             description that is provided via the descriptionURL.
           type: string
           example: https://api.example.com/someservice
@@ -2027,7 +2048,7 @@ components:
         tokenEndpoint:
           description: >-
             URL where an access token for the feature can be retrieved. The tokenEndpoint
-            is optional, because if for the access token service it is not needed to 
+            is optional, because if for the access token service it is not needed to
             mention it twice. Also the tokenEndpoint could be omitted for public services
             that do not require authentication/authorisation.
           type: string
@@ -2044,11 +2065,11 @@ components:
             - name: active
         serviceType:
           description: >-
-            Can be either "framework-defined", "dataspace-defined" or "self-defined". 
-            A framework-defined service is required from a framework perspective 
-            (including for instance the /capabilities endpoint), a dataspace-defined 
-            service is required from a dataspace perspective and a self-defined 
-            service is define by the provider of the service (actual data services 
+            Can be either "framework-defined", "dataspace-defined" or "self-defined".
+            A framework-defined service is required from a framework perspective
+            (including for instance the /capabilities endpoint), a dataspace-defined
+            service is required from a dataspace perspective and a self-defined
+            service is define by the provider of the service (actual data services
             are part of this category).
           type: string
           example: active
@@ -2064,9 +2085,9 @@ components:
           properties:
             compliesWithFrameworkVersions:
               description: >-
-                Array of framework versions that the service complies with, at a 
-                framework level. If not included, the service is assumed to be compliant 
-                with the latest version. The versions can be retrieved using the 
+                Array of framework versions that the service complies with, at a
+                framework level. If not included, the service is assumed to be compliant
+                with the latest version. The versions can be retrieved using the
                 /frameworks endpoint. Required for framework-defined services.
               type: array
               items:
@@ -2074,7 +2095,7 @@ components:
               example: ["2.0.1", "2.1"]
             compliesWithDataspaceVersions:
               description: >-
-                Optional array of dataspace versions that the service complies with, at a 
+                Optional array of dataspace versions that the service complies with, at a
                 dataspace level. The dataspace version may be published in the dataspace
                 self description (not part of the /dataspaces response).
               type: array
@@ -2083,13 +2104,13 @@ components:
               example: ["1.0", "1.1"]
             capabilityVersion:
               description: >-
-                Version of the provided service. The version numbering of services is 
+                Version of the provided service. The version numbering of services is
                 not related to the version numbering of the framework or of a dataspace.
               type: string
               example: "1.0"
         methods:
           description: >-
-            Array of operations supported by the endpoint. It could be HTTP methods 
+            Array of operations supported by the endpoint. It could be HTTP methods
             when the endpoint is HTTP based, for example: GET, POST, etc.
           type: array
           items:
@@ -2154,7 +2175,7 @@ components:
           type: array
           items:
             type: string
-          example: 
+          example:
             - "did:ishare:EU.NL.NTRNL-12345678"
             - "did:ebsi:LEIXG-724500AZSGBRY55MNS59"
             - "did:web:example.com"
@@ -2166,20 +2187,20 @@ components:
         Schema for partial updates to a claim. This flexible schema allows updating
         any claim property by using a key-value structure. The key represents the
         property path within the claim, and the value is the new value to set.
-        
+
         For nested properties, use dot notation (e.g., "frameworkRole.roleId").
         The claim type, registrarId and ID cannot be changed through this operation.
-        
+
         Common claim properties that can be updated:
         - status: Claim status (active, inactive, suspended, revoked)
         - validFrom: ISO 8601 date-time when claim becomes valid
         - validUntil: ISO 8601 date-time when claim expires
-        
+
         Type-specific properties can also be updated using the appropriate property paths.
 
         Note that claims cannot be deleted, but instead the status can be set to revoked or inactive.
 
-        Because the claimId must be provided in the URL, only the properties of that 
+        Because the claimId must be provided in the URL, only the properties of that
         specific claim may be updated in one request.
       additionalProperties:
         oneOf:
@@ -2283,23 +2304,23 @@ components:
           example: DLDS_Logistics_DataSpace
         dataSpaceDescriptionUrl:
           description: >-
-            URL pointing to the dataspace description (structured JSON 
+            URL pointing to the dataspace description (structured JSON
             file containing a description of the dataspace).
           type: string
           example: https://www.example.com/definition
         defaultParticipantIdentifierName:
           description: >-
-            Name of the default participant identifier used in the dataspace, 
-            which must be mentioned in the dataspace description. If no default 
-            identifier has been selected, the default identifier must be 
+            Name of the default participant identifier used in the dataspace,
+            which must be mentioned in the dataspace description. If no default
+            identifier has been selected, the default identifier must be
             assumed to be ishare:did.
           type: string
           example: iSHARE-DID
         defaultParticipantIdentifierPrefix:
           description: >-
-            Prefix of the default participant identifier used in the dataspace, 
-            which must be mentioned in the dataspace description. If no default 
-            identifier has been selected, the default identifier must be 
+            Prefix of the default participant identifier used in the dataspace,
+            which must be mentioned in the dataspace description. If no default
+            identifier has been selected, the default identifier must be
             assumed to be ishare:did.
           type: string
           example: did:ishare
@@ -2326,7 +2347,7 @@ components:
           example: did:ishare:EU.NL.NTRNL-12345678
         registrarIds:
           description: >-
-            Array of ids of Participant Registries that are 
+            Array of ids of Participant Registries that are
             authorized to register (potential) participants in the dataspace.
           type: array
           items:
@@ -2410,7 +2431,7 @@ components:
                 example: Service Broker
               x509CertificateRequired:
                 description: >-
-                  Whether a participant in this role is required to have an 
+                  Whether a participant in this role is required to have an
                   x.509 certificate.
                 type: string
                 enum: [yes, no]
@@ -2426,14 +2447,14 @@ components:
                   - TermsofUse
               loaRequired:
                 description: >-
-                  Whether a participant in this role must provide a Level of 
+                  Whether a participant in this role must provide a Level of
                   Assurance (LoA) statement.
                 type: string
                 enum: [yes, no]
                 example: yes
               technicalComplianceRequired:
                 description: >-
-                  Whether a participant in this role must provide a technical 
+                  Whether a participant in this role must provide a technical
                   compliance statement.
                 type: string
                 enum: [yes, no]
@@ -2444,7 +2465,7 @@ components:
       allOf:
       - $ref: '#/components/schemas/jwtPayloadSkeleton'
       - type: object
-        required: 
+        required:
           - frameworksInfo
         properties:
           frameworksInfo:
@@ -2559,7 +2580,7 @@ components:
                 example: Service Provider
               x509CertificateRequired:
                 description: >-
-                  Whether a participant in this role is required to have an 
+                  Whether a participant in this role is required to have an
                   x.509 certificate.
                 type: string
                 enum: [yes, no]
@@ -2575,14 +2596,14 @@ components:
                   - TermsofUse
               loaRequired:
                 description: >-
-                  Whether a participant in this role must provide a Level of 
+                  Whether a participant in this role must provide a Level of
                   Assurance (LoA) statement.
                 type: string
                 enum: [yes, no]
                 example: yes
               technicalComplianceRequired:
                 description: >-
-                  Whether a participant in this role must provide a technical 
+                  Whether a participant in this role must provide a technical
                   compliance statement.
                 type: string
                 enum: [yes, no]
@@ -2613,43 +2634,52 @@ components:
         delegationPolicyRequestToken:
           type: string
           format: application/jwt
+    delegationMask:
+      title: DelegationMask
+      description: >-
+        The delegation mask that defines which delegation evidence is requested.
+      required:
+        - policyIssuer
+        - target
+        - policySets
+      type: object
+      properties:
+        policyIssuer:
+          type: string
+        target:
+          required:
+            - accessSubject
+          type: object
+          properties:
+            accessSubject:
+              type: string
+        policySets:
+          type: array
+          items:
+            $ref: '#/components/schemas/policySetEvidenceRequest'
+        delegationPath:
+          type: array
+          items:
+            type: string
+        previousSteps:
+          type: array
+          items:
+            type: string
     delegationRequestBody:
       title: DelegationRequestBody
       description: >-
         The model used for request body in /delegation endpoint, for obtaining
-        delegation evidence.
+        delegation evidence. The request must be a signed JSON Web Token.
+        Please refer to the models 'jwtHeader' and 'jwtPayloadDelegationRequest'
+        which indicate what the decoded request body should look like.
       required:
-        - delegationRequest
+        - delegationToken
       type: object
       properties:
-        delegationRequest:
-          required:
-            - policyIssuer
-            - target
-            - policySets
-          type: object
-          properties:
-            policyIssuer:
-              type: string
-            target:
-              required:
-                - accessSubject
-              type: object
-              properties:
-                accessSubject:
-                  type: string
-            policySets:
-              type: array
-              items:
-                $ref: '#/components/schemas/policySetEvidenceRequest'
-            delegationPath:
-              type: array
-              items:
-                type: string
-            previousSteps:
-              type: array
-              items:
-                type: string
+        delegationToken:
+          type: string
+          format: application/jwt
+          example: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsIng1YyI6WyI8Y2VydGlmaWNhdGUtaW4tYmFzZTY0PiJdfQ.eyJpc3MiOiJkaWQ6aXNoYXJlOkVVLk5MLk5UUk5MLTEwMDAwMDAwIiwic3ViIjoiZGlkOmlzaGFyZTpFVS5OTC5OVFJOTC0xMDAwMDAwMCIsImF1ZCI6ImRpZDppc2hhcmU6RVUuTkwuTlRSTkwtMTAwMDAwMDEiLCJqdGkiOiJ1bmlxdWUtaWQiLCJpYXQiOjE3MTkzMjEzMjQsImV4cCI6MTcxOTMyMTM1NCwiZGVsZWdhdGlvbk1hc2siOnsicG9saWN5SXNzdWVyIjoiZGlkOmlzaGFyZTpFVS5OTC5OVFJOTC0xMjM0NTY3OCIsInRhcmdldCI6eyJhY2Nlc3NTdWJqZWN0IjoiZGlkOmlzaGFyZTpFVS5OTC5OVFJOTC0xMDAwMDAwMCJ9LCJwb2xpY3lTZXRzIjpbeyJ0YXJnZXQiOnsiZW52aXJvbm1lbnQiOnsibGljZW5zZXMiOlsiSVNIQVJFLjAwMDEiXX19LCJwb2xpY2llcyI6W3sidGFyZ2V0Ijp7InJlc291cmNlIjp7InR5cGUiOiJkYXRhc2V0IiwiaWRlbnRpZmllcnMiOlsiRVUuTkwuTlRSTkwtMTIzNDU2Nzg6ZGF0YXNldDpsb2dpc3RpY3MiXSwiYXR0cmlidXRlcyI6WyJFVEEiLCJsb2NhdGlvbiJdfSwiYWN0aW9ucyI6WyJSRUFEIl0sImNvbnRleHQiOnsicHVycG9zZSI6InBsYW5uaW5nIn19LCJydWxlcyI6W3siZWZmZWN0IjoiUGVybWl0IiwiY29uZGl0aW9ucyI6eyJsZWZ0T3BlcmFuZCI6InJlcXVlc3RlZFNlcnZpY2VQcm92aWRlciIsIm9wZXJhdG9yIjoiZXF1YWwiLCJyaWdodE9wZXJhbmQiOiJkaWQ6aXNoYXJlOkVVLk5MLk5UUk5MLTEwMDAwMDAxIn19XX1dfV0sImRlbGVnYXRpb25QYXRoIjpbImRpZDppc2hhcmU6RVUuTkwuTlRSTkwtMTIzNDU2NzgiXSwicHJldmlvdXNTdGVwcyI6WyJkZWxlZ2F0aW9uLXJlcXVlc3QtcHJldmlvdXMtc3RlcC1pZCJdfX0.<signature>"
     policySet:
       required:
         - policies
@@ -2725,8 +2755,8 @@ components:
               properties:
                 conditions:
                   description: >
-                    Only to be used as part of Delegation Policy creation request. 
-                    Contains conditions which must be evaluated by the Authorisation 
+                    Only to be used as part of Delegation Policy creation request.
+                    Contains conditions which must be evaluated by the Authorisation
                     Registry using context information provided by the Service Provider
                     or Service Consumer when requesting Delegation Evidence.
                   $ref: '#/components/schemas/conditionTree'
@@ -2742,7 +2772,7 @@ components:
               conditions:
                 description: >
                   Conditions which must be evaluated by the Service Provider.
-                  
+
                   Represents a logical tree structure using nested anyOf/allOf constructs.
                   Each leaf node contains a leftOperand, operator, and rightOperand.
                 $ref: '#/components/schemas/conditionTree'
@@ -2807,8 +2837,8 @@ components:
             context:
               type: object
               description: >
-                A key-value map representing contextual information 
-                to be processed by AR according to the rules 
+                A key-value map representing contextual information
+                to be processed by AR according to the rules
                 defined in the policy.
         rules:
           type: array
@@ -2824,7 +2854,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/jwtPayloadSkeleton'
         - type: object
-          required: 
+          required:
             - delegationEvidence
           properties:
             delegationEvidence:
@@ -2962,6 +2992,122 @@ components:
             delegationPolicyRequest:
               allOf:
                 - $ref: '#/components/schemas/delegationPolicyRequest'
+    jwtPayloadPartyRequest:
+      title: jwtPayloadPartyRequest
+      description: JWT payload for creating a new party
+      allOf:
+        - $ref: '#/components/schemas/jwtPayloadSkeleton'
+        - type: object
+          required:
+            - partyInfo
+          properties:
+            partyInfo:
+              allOf:
+                - $ref: '#/components/schemas/party'
+    partyRequest:
+      title: PartyRequest
+      description: >-
+        JWT-wrapped request body for creating a new party. The partyToken is an
+        iSHARE signed JSON Web Token. Please refer to the models 'jwtHeader' and
+        'jwtPayloadPartyRequest' which indicate what the decoded token should look like.
+      required:
+        - partyToken
+      type: object
+      properties:
+        partyToken:
+          type: string
+          format: application/jwt
+          example: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsIng1YyI6WyI8Y2VydGlmaWNhdGUtaW4tYmFzZTY0PiJdfQ.eyJpc3MiOiJkaWQ6aXNoYXJlOkVVLk5MLk5UUk5MLTEwMDAwMDAwIiwic3ViIjoiZGlkOmlzaGFyZTpFVS5OTC5OVFJOTC0xMDAwMDAwMCIsImF1ZCI6ImRpZDppc2hhcmU6RVUuTkwuTlRSTkwtMTAwMDAwMDEiLCJqdGkiOiJ1bmlxdWUtaWQiLCJpYXQiOjE3MTkzMjEzMjQsImV4cCI6MTcxOTMyMTM1NCwicGFydHlJbmZvIjp7ImlkIjoiZGlkOmlzaGFyZTpFVS5OTC5OVFJOTC0xMjM0NTY3OCIsIm5hbWUiOiJFeGFtcGxlIENvcnBvcmF0aW9uIiwiYWxzb0tub3duQXMiOlsiZGlkOmlzaGFyZTpFVS5OTC5OVFJOTC0xMjM0NTY3OCIsImRpZDp3ZWI6ZXhhbXBsZS5jb20iXSwic2NoZW1hVmVyc2lvbiI6InYzLjAiLCJjbGFpbXMiOlt7InR5cGUiOiJmcmFtZXdvcmtDb21wbGlhbmNlIiwic3RhdHVzIjoiYWN0aXZlIiwicmVnaXN0cmFySWQiOiJkaWQ6aXNoYXJlOkVVLk5MLk5UUk5MLTEwMDAwMDAwIiwic3RhcnREYXRlIjoiMjAyNS0wMS0wMVQwMDowMDowMC4wMDBaIiwiZW5kRGF0ZSI6IjIwMjYtMTItMzFUMDA6MDA6MDAuMDAwWiIsImZyYW1ld29ya0lkIjoiaVNIQVJFIn0seyJ0eXBlIjoiZnJhbWV3b3JrQWdyZWVtZW50Iiwic3RhdHVzIjoiYWN0aXZlIiwicmVnaXN0cmFySWQiOiJkaWQ6aXNoYXJlOkVVLk5MLk5UUk5MLTEwMDAwMDAwIiwic3RhcnREYXRlIjoiMjAyNS0wMS0wMVQwMDowMDowMC4wMDBaIiwiZW5kRGF0ZSI6IjIwMjYtMTItMzFUMDA6MDA6MDAuMDAwWiIsImZyYW1ld29ya0lkIjoiaVNIQVJFIiwiYWdyZWVtZW50VHlwZSI6IlRlcm1zT2ZVc2UiLCJhZ3JlZW1lbnRJZCI6IjNjZGU2ZmYzLTI0M2QtNDhjMC04MDAzLTMxZDNmZWEzYzFmMSIsInRpdGxlIjoiVGVybXMgb2YgVXNlIiwidmVyaWZpY2F0aW9uSGFzaCI6ImY3MjdhNDU5YjVjYTVhMzJlNWFmZjcxYzAzZmRhYTY5N2NkNDZhNDVlYjA0ZWVjYWFhZTU5MzFlYjlhNWMwMGUifSx7InR5cGUiOiJmcmFtZXdvcmtSb2xlIiwic3RhdHVzIjoiYWN0aXZlIiwicmVnaXN0cmFySWQiOiJkaWQ6aXNoYXJlOkVVLk5MLk5UUk5MLTEwMDAwMDAwIiwic3RhcnREYXRlIjoiMjAyNS0wMS0wMVQwMDowMDowMC4wMDBaIiwiZW5kRGF0ZSI6IjIwMjYtMTItMzFUMDA6MDA6MDAuMDAwWiIsImZyYW1ld29ya0lkIjoiaVNIQVJFIiwicm9sZUlkIjoiU2VydmljZUNvbnN1bWVyIiwidGl0bGUiOiJTZXJ2aWNlIENvbnN1bWVyIiwibG9hIjoiaGlnaCIsImNvbXBsaWFuY3lWZXJpZmllZCI6InllcyIsImxlZ2FsQWRoZXJlbmNlIjoieWVzIn0seyJ0eXBlIjoieDUwOUNlcnRpZmljYXRlIiwic3RhdHVzIjoiYWN0aXZlIiwicmVnaXN0cmFySWQiOiJkaWQ6aXNoYXJlOkVVLk5MLk5UUk5MLTEwMDAwMDAwIiwic3RhcnREYXRlIjoiMjAyNS0wMS0wMVQwMDowMDowMC4wMDBaIiwiZW5kRGF0ZSI6IjIwMjYtMTItMzFUMDA6MDA6MDAuMDAwWiIsInN1YmplY3ROYW1lIjoiQ049VGVzdCBTZXJ2aWNlIENvbnN1bWVyLG9yZ2FuaXphdGlvbklkZW50aWZpZXI9TlRSTkwtMTAwMDAwMDEsTz1UZXN0IFNlcnZpY2UgQ29uc3VtZXIsQz1OTCIsImNlcnRpZmljYXRlVHlwZSI6ImVTRUFMIiwieDVjIjoiPGNlcnRpZmljYXRlLWluLWJhc2U2ND4iLCJ4NXQjczI1NiI6IjQ2NzA1NTE0NTExMTNiMTk0MjVmOGQ2M2MzZDZjZTQ0NGI1OGRlNjA4MzExMDE3NDhlOWZiOTdiM2U4NzY2ZjgifV19fQ.<signature>"
+    jwtPayloadPartyUpdateRequest:
+      title: jwtPayloadPartyUpdateRequest
+      description: JWT payload for partially updating a party
+      allOf:
+        - $ref: '#/components/schemas/jwtPayloadSkeleton'
+        - type: object
+          required:
+            - partyInfo
+          properties:
+            partyInfo:
+              allOf:
+                - $ref: '#/components/schemas/partyUpdate'
+    partyUpdateRequest:
+      title: PartyUpdateRequest
+      description: >-
+        JWT-wrapped request body for partially updating a party. The partyToken is an
+        iSHARE signed JSON Web Token. Please refer to the models 'jwtHeader' and
+        'jwtPayloadPartyUpdateRequest' which indicate what the decoded token should look like.
+      required:
+        - partyToken
+      type: object
+      properties:
+        partyToken:
+          type: string
+          format: application/jwt
+          example: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsIng1YyI6WyI8Y2VydGlmaWNhdGUtaW4tYmFzZTY0PiJdfQ.eyJpc3MiOiJkaWQ6aXNoYXJlOkVVLk5MLk5UUk5MLTEwMDAwMDAwIiwic3ViIjoiZGlkOmlzaGFyZTpFVS5OTC5OVFJOTC0xMDAwMDAwMCIsImF1ZCI6ImRpZDppc2hhcmU6RVUuTkwuTlRSTkwtMTAwMDAwMDEiLCJqdGkiOiJ1bmlxdWUtaWQiLCJpYXQiOjE3MTkzMjEzMjQsImV4cCI6MTcxOTMyMTM1NCwicGFydHlJbmZvIjp7Im5hbWUiOiJVcGRhdGVkIEV4YW1wbGUgQ29ycG9yYXRpb24iLCJhbHNvS25vd25BcyI6WyJkaWQ6aXNoYXJlOkVVLk5MLk5UUk5MLTEyMzQ1Njc4IiwiZGlkOndlYjpleGFtcGxlLmNvbSIsIkNvQzoxMjM0NTY3ODkiXX19.<signature>"
+    jwtPayloadClaimRequest:
+      title: jwtPayloadClaimRequest
+      description: JWT payload for creating a new claim
+      allOf:
+        - $ref: '#/components/schemas/jwtPayloadSkeleton'
+        - type: object
+          required:
+            - claimInfo
+          properties:
+            claimInfo:
+              allOf:
+                - $ref: '#/components/schemas/claim'
+    claimRequest:
+      title: ClaimRequest
+      description: >-
+        JWT-wrapped request body for creating a new claim. The claimsToken is an
+        iSHARE signed JSON Web Token. Please refer to the models 'jwtHeader' and
+        'jwtPayloadClaimRequest' which indicate what the decoded token should look like.
+      required:
+        - claimsToken
+      type: object
+      properties:
+        claimsToken:
+          type: string
+          format: application/jwt
+          example: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsIng1YyI6WyI8Y2VydGlmaWNhdGUtaW4tYmFzZTY0PiJdfQ.eyJpc3MiOiJkaWQ6aXNoYXJlOkVVLk5MLk5UUk5MLTEwMDAwMDAwIiwic3ViIjoiZGlkOmlzaGFyZTpFVS5OTC5OVFJOTC0xMDAwMDAwMCIsImF1ZCI6ImRpZDppc2hhcmU6RVUuTkwuTlRSTkwtMTAwMDAwMDEiLCJqdGkiOiJ1bmlxdWUtaWQiLCJpYXQiOjE3MTkzMjEzMjQsImV4cCI6MTcxOTMyMTM1NCwiY2xhaW1JbmZvIjp7InR5cGUiOiJmcmFtZXdvcmtSb2xlIiwic3RhdHVzIjoiYWN0aXZlIiwicmVnaXN0cmFySWQiOiJkaWQ6aXNoYXJlOkVVLk5MLk5UUk5MLTEwMDAwMDAwIiwic3RhcnREYXRlIjoiMjAyNS0wMS0wMVQwMDowMDowMC4wMDBaIiwiZW5kRGF0ZSI6IjIwMjYtMTItMzFUMDA6MDA6MDAuMDAwWiIsImZyYW1ld29ya0lkIjoiaVNIQVJFIiwicm9sZUlkIjoiU2VydmljZUNvbnN1bWVyIiwidGl0bGUiOiJTZXJ2aWNlIENvbnN1bWVyIiwibG9hIjoiaGlnaCIsImNvbXBsaWFuY3lWZXJpZmllZCI6InllcyIsImxlZ2FsQWRoZXJlbmNlIjoieWVzIn19.<signature>"
+    jwtPayloadClaimUpdateRequest:
+      title: jwtPayloadClaimUpdateRequest
+      description: JWT payload for partially updating a claim
+      allOf:
+        - $ref: '#/components/schemas/jwtPayloadSkeleton'
+        - type: object
+          required:
+            - claimInfo
+          properties:
+            claimInfo:
+              allOf:
+                - $ref: '#/components/schemas/claimUpdate'
+    claimUpdateRequest:
+      title: ClaimUpdateRequest
+      description: >-
+        JWT-wrapped request body for partially updating a claim. The claimsToken is an
+        iSHARE signed JSON Web Token. Please refer to the models 'jwtHeader' and
+        'jwtPayloadClaimUpdateRequest' which indicate what the decoded token should look like.
+      required:
+        - claimsToken
+      type: object
+      properties:
+        claimsToken:
+          type: string
+          format: application/jwt
+          example: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsIng1YyI6WyI8Y2VydGlmaWNhdGUtaW4tYmFzZTY0PiJdfQ.eyJpc3MiOiJkaWQ6aXNoYXJlOkVVLk5MLk5UUk5MLTEwMDAwMDAwIiwic3ViIjoiZGlkOmlzaGFyZTpFVS5OTC5OVFJOTC0xMDAwMDAwMCIsImF1ZCI6ImRpZDppc2hhcmU6RVUuTkwuTlRSTkwtMTAwMDAwMDEiLCJqdGkiOiJ1bmlxdWUtaWQiLCJpYXQiOjE3MTkzMjEzMjQsImV4cCI6MTcxOTMyMTM1NCwiY2xhaW1JbmZvIjp7InN0YXR1cyI6ImFjdGl2ZSJ9fQ"
+    jwtPayloadDelegationRequest:
+      title: jwtPayloadDelegationRequest
+      description: JWT payload for requesting delegation evidence
+      allOf:
+        - $ref: '#/components/schemas/jwtPayloadSkeleton'
+        - type: object
+          required:
+            - delegationMask
+          properties:
+            delegationMask:
+              allOf:
+                - $ref: '#/components/schemas/delegationMask'
   headers:
     optionsAllowHeader:
       description: List of allowed HTTP methods
@@ -2983,8 +3129,8 @@ components:
     delegationEvidenceHeader:
       name: delegationEvidence
       description: >-
-        iSHARE delegation evidence regarding the requested service. The Service 
-        Consumer can obtain this evidence from an Authorization Registry / 
+        iSHARE delegation evidence regarding the requested service. The Service
+        Consumer can obtain this evidence from an Authorization Registry /
         Entitled Party before requesting a specific service.
       schema:
         type: string
@@ -2993,9 +3139,9 @@ components:
       name: serviceConsumerAssertion
       description: >-
         iSHARE specific optional client assertion. Used when a Service Consumer
-        is requesting a service on behalf of another Service Consumer in a 
-        'service broker' pattern. It is used to prove that the 'brokering' 
-        Service Consumer indeed has had a request from the original Service 
+        is requesting a service on behalf of another Service Consumer in a
+        'service broker' pattern. It is used to prove that the 'brokering'
+        Service Consumer indeed has had a request from the original Service
         Consumer
       schema:
         type: string

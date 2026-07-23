@@ -316,7 +316,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/partiesResponse'
-          description: ''
+          description: Signed JWT containing the paginated list of parties matching the query.
         '400':
           $ref: '#/components/responses/badRequest'
         '401':

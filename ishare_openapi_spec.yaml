@@ -62,7 +62,9 @@ paths:
                 $ref: '#/components/schemas/capabilitiesResponse'
           description: OK
         '401':
-          description: authentication is required and has failed or has not yet been provided.
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '500':
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: get-capabilities-token
       summary: Retrieves iSHARE capabilities
@@ -98,9 +100,9 @@ paths:
                 $ref: '#/components/schemas/trustedListResponse'
           description: OK
         '401':
-          $ref: '#/components/responses/bearerUnauthorized'
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
         '500':
-          $ref: '#/components/responses/internalServerError'
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: get-trusted-list
       summary: Retrieves list of trusted certificate authorities
@@ -134,8 +136,8 @@ paths:
             Allow:
               $ref: '#/components/headers/optionsAllowHeader'
           description: List the allowed HTTP methods for this endpoint
-        '401':
-          description: authentication is required and has failed or has not yet been provided.
+        '405':
+          description: Method is not supported for the requested resource.
     get:
       tags:
         - Participant Registry (Required) 
@@ -318,11 +320,11 @@ paths:
                 $ref: '#/components/schemas/partiesResponse'
           description: Signed JWT containing the paginated list of parties matching the query.
         '400':
-          $ref: '#/components/responses/badRequest'
+          description: Bad request. The request is malformed or fails validation.
         '401':
-          $ref: '#/components/responses/bearerUnauthorized'
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
         '500':
-          $ref: '#/components/responses/internalServerError'
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: get-parties-list-token
       summary: Lists and searches parties
@@ -673,7 +675,9 @@ paths:
                 $ref: '#/components/schemas/dataspacesResponse'
           description: OK
         '401':
-          description: authentication is required and has failed or has not yet been provided.
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '500':
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: get-dataspaces-list
       summary: Retrieves list of dataspaces
@@ -730,7 +734,9 @@ paths:
                 $ref: '#/components/schemas/frameworksResponse'
           description: OK
         '401':
-          description: authentication is required and has failed or has not yet been provided.
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '500':
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: get-frameworks-list-token
       summary: Retrieves list of frameworks
@@ -808,11 +814,11 @@ paths:
                 $ref: '#/components/schemas/connectTokenResponse'
           description: OK
         '400':
-          $ref: '#/components/responses/oauthBadRequest'
+          description: Bad request. The OAuth request is malformed or contains an unsupported parameter.
         '401':
-          $ref: '#/components/responses/oauthUnauthorized'
+          description: Unauthorized. OAuth client authentication failed.
         '500':
-          $ref: '#/components/responses/internalServerError'
+          description: Server error. The server was unable to process the request.
 
       deprecated: false
       operationId: request-oauth-token
@@ -880,13 +886,13 @@ paths:
                 $ref: '#/components/schemas/delegationResponse'
           description: ''
         '400':
-          $ref: '#/components/responses/badRequest'
+          description: Bad request. The request is malformed or fails validation.
         '401':
-          $ref: '#/components/responses/bearerUnauthorized'
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
         '403':
-          $ref: '#/components/responses/forbidden'
+          description: Forbidden. The authenticated client is not authorised to perform this operation.
         '500':
-          $ref: '#/components/responses/internalServerError'
+          description: Server error. The server was unable to process the request.
       operationId: request-delegation-evidence
       summary: Obtains delegation evidence
       description: >-
@@ -908,7 +914,9 @@ paths:
                 $ref: '#/components/schemas/userinfoResponse'
           description: OK
         '401':
-          description: authentication is required and has failed or has not yet been provided.
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '500':
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: get-user-information
       summary: Obtaining attributes of a Human Service Consumer
@@ -972,14 +980,26 @@ paths:
       parameters:
         - $ref: '#/components/parameters/content-type_form'
       responses:
-        '200':
-          content:
-            application/json:
+        '302':
+          description: >-
+            Authentication result delivered to the Service Provider's return
+            endpoint via a browser redirect. On success the redirect query
+            string carries `code`, `state` (and `id_token`, per response_type
+            `code id_token`); on an OAuth2/OpenID Connect error it instead
+            carries `error`, `error_description` and `state`. See the
+            'openid-authorize' model for the shape of the success parameters.
+          headers:
+            Location:
+              description: >-
+                The redirect_uri (the Service Provider's return endpoint) with
+                the authorization response or the error response appended as
+                query parameters.
+              required: true
               schema:
-                $ref: '#/components/schemas/openid-authorize'
-          description: OK
+                type: string
+                format: uri
         '400':
-          description: bad request or request is malformed
+          description: Bad request. The OAuth request is malformed or contains an unsupported parameter.
       deprecated: false
       operationId: initiate-authorization-flow
       summary: Redirect human service consumer for authentication
@@ -1096,63 +1116,17 @@ paths:
           description: >-
             OK: The requested policy is created.
         '400':
-          $ref: '#/components/responses/badRequest'
+          description: Bad request. The request is malformed or fails validation.
         '401':
-          $ref: '#/components/responses/bearerUnauthorized'
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
         '403':
-          $ref: '#/components/responses/forbidden'
+          description: Forbidden. The authenticated client is not authorised to perform this operation.
         '409':
-          $ref: '#/components/responses/conflict'
+          description: Conflict. The request conflicts with the current state of the resource.
         '500':
-          $ref: '#/components/responses/internalServerError'
+          description: Server error. The server was unable to process the request.
 components:
   schemas:
-    oauthError:
-      title: OAuth error
-      type: object
-      required:
-        - error
-      properties:
-        error:
-          type: string
-          description: OAuth 2.0 error code.
-        error_description:
-          type: string
-          description: Human-readable information for developers about the error.
-        error_uri:
-          type: string
-          format: uri
-          description: URI identifying a page with human-readable information about the error.
-    problemDetails:
-      title: Problem details
-      description: Machine-readable details of an HTTP API error, conforming to RFC 9457.
-      type: object
-      required:
-        - type
-        - title
-        - status
-      properties:
-        type:
-          type: string
-          format: uri-reference
-          description: URI reference identifying the problem type.
-          default: about:blank
-        title:
-          type: string
-          description: Short, human-readable summary of the problem type.
-        status:
-          type: integer
-          format: int32
-          minimum: 400
-          maximum: 599
-          description: HTTP status code generated by the server.
-        detail:
-          type: string
-          description: Human-readable explanation specific to this occurrence of the problem.
-        instance:
-          type: string
-          format: uri-reference
-          description: URI reference identifying this occurrence of the problem.
     jwtPayloadSkeleton:
       title: jwtPayloadSkeleton
       description: Skeleton for JWT payload
@@ -1566,8 +1540,8 @@ components:
               description: >-
                 Whether legal adherence is required, not required or not
                 applicable
-              enum: [yes, no, not-applicable]
-              example: yes
+              enum: ["yes", "no", not-applicable]
+              example: "yes"
             additionalInfo:
               allOf:
                 - $ref: '#/components/schemas/additionalInfo'
@@ -1836,6 +1810,8 @@ components:
     partyResponse:
       title: PartyResponse
       type: object
+      required:
+        - partyToken
       properties:
         partyToken:
           type: string
@@ -1976,15 +1952,15 @@ components:
             Compliance requirements of this role has been met by party. 
             Possible values are yes, no and not-applicable
           type: string
-          enum: [yes, no, not-applicable]
-          example: yes
+          enum: ["yes", "no", not-applicable]
+          example: "yes"
         legalAdherence:
           description: >-
             Legal requirements of this role has been met by party including
             signing of appropriate agreements
           type: string
-          enum: [yes, no, not-applicable]
-          example: yes
+          enum: ["yes", "no", not-applicable]
+          example: "yes"
     capabilitiesInfo:
       title: capabilitiesInfo
       type: object
@@ -2073,9 +2049,9 @@ components:
             "deprecated" or "active".
           type: string
           example: active
-          x-enum-elements:
-            - name: deprecated
-            - name: active
+          enum:
+            - deprecated
+            - active
         serviceType:
           description: >-
             Can be either "framework-defined", "dataspace-defined" or "self-defined". 
@@ -2085,11 +2061,11 @@ components:
             service is define by the provider of the service (actual data services 
             are part of this category).
           type: string
-          example: active
-          x-enum-elements:
-            - name: framework-defined
-            - name: dataspace-defined
-            - name: self-defined
+          example: framework-defined
+          enum:
+            - framework-defined
+            - dataspace-defined
+            - self-defined
         version:
           title: version
           type: object
@@ -2132,6 +2108,8 @@ components:
     trustedListResponse:
       title: TrustedListResponse
       type: object
+      required:
+        - trustedListToken
       properties:
         trustedListToken:
           type: string
@@ -2140,6 +2118,8 @@ components:
     capabilitiesResponse:
       title: CapabilitiesResponse
       type: object
+      required:
+        - capabilitiesToken
       properties:
         capabilitiesToken:
           type: string
@@ -2148,6 +2128,8 @@ components:
     partiesResponse:
       title: partiesResponse
       type: object
+      required:
+        - partiesToken
       properties:
         partiesToken:
           type: string
@@ -2156,6 +2138,8 @@ components:
     claimsResponse:
       title: ClaimsResponse
       type: object
+      required:
+        - claimsToken
       properties:
         claimsToken:
           type: string
@@ -2164,6 +2148,8 @@ components:
     claimResponse:
       title: ClaimResponse
       type: object
+      required:
+        - claimToken
       properties:
         claimToken:
           type: string
@@ -2246,6 +2232,8 @@ components:
     dataspacesResponse:
       title: DataspacesResponse
       type: object
+      required:
+        - dataspacesToken
       properties:
         dataspacesToken:
           type: string
@@ -2265,6 +2253,8 @@ components:
     frameworksResponse:
       title: FrameworksResponse
       type: object
+      required:
+        - frameworksToken
       properties:
         frameworksToken:
           type: string
@@ -2447,8 +2437,8 @@ components:
                   Whether a participant in this role is required to have an 
                   x.509 certificate.
                 type: string
-                enum: [yes, no]
-                example: yes
+                enum: ["yes", "no"]
+                example: "yes"
               agreements:
                 description: >-
                   Array of agreement IDs that a participant in this role is
@@ -2463,15 +2453,15 @@ components:
                   Whether a participant in this role must provide a Level of 
                   Assurance (LoA) statement.
                 type: string
-                enum: [yes, no]
-                example: yes
+                enum: ["yes", "no"]
+                example: "yes"
               technicalComplianceRequired:
                 description: >-
                   Whether a participant in this role must provide a technical 
                   compliance statement.
                 type: string
-                enum: [yes, no]
-                example: yes
+                enum: ["yes", "no"]
+                example: "yes"
     jwtPayloadFrameworksToken:
       title: jwtPayloadFrameworksToken
       description: JWT containing list of frameworks
@@ -2596,8 +2586,8 @@ components:
                   Whether a participant in this role is required to have an 
                   x.509 certificate.
                 type: string
-                enum: [yes, no]
-                example: yes
+                enum: ["yes", "no"]
+                example: "yes"
               agreements:
                 description: >-
                   Array of agreement IDs that a participant in this role is
@@ -2612,15 +2602,15 @@ components:
                   Whether a participant in this role must provide a Level of 
                   Assurance (LoA) statement.
                 type: string
-                enum: [yes, no]
-                example: yes
+                enum: ["yes", "no"]
+                example: "yes"
               technicalComplianceRequired:
                 description: >-
                   Whether a participant in this role must provide a technical 
                   compliance statement.
                 type: string
-                enum: [yes, no]
-                example: yes
+                enum: ["yes", "no"]
+                example: "yes"
     connectTokenResponse:
       title: ConnectTokenResponse
       type: object
@@ -2635,7 +2625,8 @@ components:
           example:
             "Bearer"
         expires_in:
-          type: number
+          type: integer
+          format: int32
           example:
             3600
     delegationPolicyCreationRequest:
@@ -2907,6 +2898,8 @@ components:
     userinfoResponse:
       title: UserinfoResponse
       type: object
+      required:
+        - userinfoToken
       properties:
         userinfoToken:
           type: string
@@ -2940,12 +2933,12 @@ components:
           type: string
           example: 378a47c4-2822-4ca5-a49a-7e5a1cc7ea59
         exp:
-          format: int32
+          format: int64
           description: UNIX timestamp in seconds until when this JWT is valid.
           type: integer
           example: 1504684475
         iat:
-          format: int32
+          format: int64
           description: UNIX timestamp in seconds when this JWT was issued.
           type: integer
           example: 1504683475
@@ -3001,7 +2994,7 @@ components:
       description: List of allowed HTTP methods
       schema:
         type: string
-      example: GET, PUT, POST, PATCH, OPTIONS
+      example: GET, POST, PATCH, OPTIONS
   parameters:
     delegation-evidence:
       deprecated: false
@@ -3064,58 +3057,4 @@ components:
       type: http
       scheme: bearer
       description: OAuth 2.0 authorization based on bearer token. MUST contain “Bearer “ + access token value. Must be provided if restricted endpoints are needed.
-  responses:
-    oauthBadRequest:
-      description: The OAuth request is malformed or contains an unsupported parameter.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/oauthError'
-    oauthUnauthorized:
-      description: OAuth client authentication failed.
-      headers:
-        WWW-Authenticate:
-          description: Authentication challenge as defined by the applicable OAuth authentication method.
-          schema:
-            type: string
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/oauthError'
-    badRequest:
-      description: The request is malformed or fails validation.
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/problemDetails'
-    bearerUnauthorized:
-      description: Bearer authentication is required and has failed or was not provided.
-      headers:
-        WWW-Authenticate:
-          description: Bearer authentication challenge conforming to RFC 6750.
-          schema:
-            type: string
-            example: Bearer error="invalid_token", error_description="The access token is invalid or expired"
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/problemDetails'
-    forbidden:
-      description: The authenticated client is not authorised to perform this operation.
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/problemDetails'
-    conflict:
-      description: The request conflicts with the current state of the resource.
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/problemDetails'
-    internalServerError:
-      description: The server was unable to process the request.
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/problemDetails'
 security: []

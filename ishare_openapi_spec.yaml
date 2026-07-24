@@ -45,7 +45,7 @@ tags:
   - name: Authorisation Registry (Optional)
     description: Optional endpoints for the iSHARE Authorisation Registry API.
 paths:
-  /[v3.0]/capabilities:
+  /v3.0/capabilities:
     get:
       tags:
         - Participant Registry (Required)
@@ -62,7 +62,9 @@ paths:
                 $ref: '#/components/schemas/capabilitiesResponse'
           description: OK
         '401':
-          description: authentication is required and has failed or has not yet been provided.
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '500':
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: get-capabilities-token
       summary: Retrieves iSHARE capabilities
@@ -84,7 +86,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwtHeader' and 'jwtPayloadCapabilitiesToken' which indicate
         what the decoded response will look like.
-  /[v3.0]/trustedList:
+  /v3.0/trustedList:
     get:
       tags:
         - Participant Registry (Required)
@@ -98,7 +100,9 @@ paths:
                 $ref: '#/components/schemas/trustedListResponse'
           description: OK
         '401':
-          description: authentication is required and has failed or has not yet been provided.
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '500':
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: get-trusted-list
       summary: Retrieves list of trusted certificate authorities
@@ -109,7 +113,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwtHeader' and 'jwtPayloadTrustedListToken' which indicate
         what the decoded response will look like.
-  /[v3.0]/parties/{id}:
+  /v3.0/parties/{id}:
     options:
       tags:
         - Participant Registry (Optional)
@@ -132,8 +136,8 @@ paths:
             Allow:
               $ref: '#/components/headers/optionsAllowHeader'
           description: List the allowed HTTP methods for this endpoint
-        '401':
-          description: authentication is required and has failed or has not yet been provided.
+        '405':
+          description: Method is not supported for the requested resource.
     get:
       tags:
         - Participant Registry (Required) 
@@ -217,7 +221,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwtHeader' and 'jwtPayloadPartyToken' which indicate what
         the decoded response will look like.
-  /[v3.0]/parties:
+  /v3.0/parties:
     options:
       tags:
         - Participant Registry (Optional)
@@ -281,7 +285,7 @@ paths:
             A (set of) key/value pair(s) used to filter parties based on claim attributes.
             The key represents the property name, the value the search criterion.
             To filter on a property inside a claim, construct the key as
-            \<claimType>\.<propertyName>.
+            `<claimType>.<propertyName>`.
           example: "/parties?claimFilter[frameworkRole.roleId]=ServiceConsumer&claimFilter[frameworkAgreement.agreementId]=tou"
         - in: query
           name: page
@@ -314,9 +318,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/partiesResponse'
-          description: ''
+          description: Signed JWT containing the paginated list of parties matching the query.
+        '400':
+          description: Bad request. The request is malformed or fails validation.
         '401':
-          description: authentication is required and has failed or has not yet been provided.
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '500':
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: get-parties-list-token
       summary: Lists and searches parties
@@ -367,7 +375,7 @@ paths:
         For all roles except for Service Consumer and Entitled Party an x509Certificate 
         claim is required. Service Consumer and Entitled Party MUST either provide 
         a x509Certificate claim or idpAssertion claim if authenticating via Identity Provider.
-  /[v3.0]/parties/{partyId}/claims:
+  /v3.0/parties/{partyId}/claims:
     options:
       tags:
         - Participant Registry (Required)
@@ -467,7 +475,7 @@ paths:
       summary: Create new claim for a party
       description: >-
         Used to create a new claim for a participant.
-  /[v3.0]/parties/{partyId}/claims/{claimId}:
+  /v3.0/parties/{partyId}/claims/{claimId}:
     options:
       tags:
         - Participant Registry (Required)
@@ -627,7 +635,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwtHeader' and 'jwtPayloadClaimToken' which indicate what
         the decoded response will look like.
-  /[v3.0]/dataspaces:
+  /v3.0/dataspaces:
     get:
       tags:
         - Participant Registry (Required)
@@ -667,7 +675,9 @@ paths:
                 $ref: '#/components/schemas/dataspacesResponse'
           description: OK
         '401':
-          description: authentication is required and has failed or has not yet been provided.
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '500':
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: get-dataspaces-list
       summary: Retrieves list of dataspaces
@@ -684,7 +694,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwtHeader' and 'jwtPayloadDataspacesToken' which indicate
         what the decoded response will look like.
-  /[v3.0]/frameworks:
+  /v3.0/frameworks:
     get:
       tags:
         - Participant Registry (Required)
@@ -724,7 +734,9 @@ paths:
                 $ref: '#/components/schemas/frameworksResponse'
           description: OK
         '401':
-          description: authentication is required and has failed or has not yet been provided.
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '500':
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: get-frameworks-list-token
       summary: Retrieves list of frameworks
@@ -741,7 +753,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwtHeader' and 'jwtPayloadFrameworksToken' which indicate
         what the decoded response will look like.
-  /[v3.0]/connect/token:
+  /v3.0/connect/token:
     post:
       requestBody:
         content:
@@ -802,7 +814,11 @@ paths:
                 $ref: '#/components/schemas/connectTokenResponse'
           description: OK
         '400':
-          description: bad request or request is malformed
+          description: Bad request. The OAuth request is malformed or contains an unsupported parameter.
+        '401':
+          description: Unauthorized. OAuth client authentication failed.
+        '500':
+          description: Server error. The server was unable to process the request.
 
       deprecated: false
       operationId: request-oauth-token
@@ -847,7 +863,7 @@ paths:
         to their business specific logic. Note: Additional headers for security,
         statefulnes, application functionality could be added and is out of
         scope of this specification.
-  /[v3.0]/delegation:
+  /v3.0/delegation:
     post:
       requestBody:
         description: >-
@@ -869,8 +885,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/delegationResponse'
           description: ''
+        '400':
+          description: Bad request. The request is malformed or fails validation.
         '401':
-          description: authentication is required and has failed or has not yet been provided.
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '403':
+          description: Forbidden. The authenticated client is not authorised to perform this operation.
+        '500':
+          description: Server error. The server was unable to process the request.
       operationId: request-delegation-evidence
       summary: Obtains delegation evidence
       description: >-
@@ -878,7 +900,7 @@ paths:
         response is a signed JSON Web Token. Please refer to the models
         'jwtHeader' and 'jwtPayloadDelegationEvidenceToken' which indicate what
         the decoded response will look like.
-  /[v3.0]/connect/userinfo:
+  /v3.0/connect/userinfo:
     get:
       tags:
         - Identity Provider (Required)
@@ -892,7 +914,9 @@ paths:
                 $ref: '#/components/schemas/userinfoResponse'
           description: OK
         '401':
-          description: authentication is required and has failed or has not yet been provided.
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '500':
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: get-user-information
       summary: Obtaining attributes of a Human Service Consumer
@@ -904,7 +928,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwtHeader' and 'jwtPayloadUserinfoToken' which indicate what
         the decoded response will look like.
-  /[v3.0]/connect/authorize:
+  /v3.0/connect/authorize:
     post:
       requestBody:
         content:
@@ -956,14 +980,26 @@ paths:
       parameters:
         - $ref: '#/components/parameters/content-type_form'
       responses:
-        '200':
-          content:
-            application/json:
+        '302':
+          description: >-
+            Authentication result delivered to the Service Provider's return
+            endpoint via a browser redirect. On success the redirect query
+            string carries `code`, `state` (and `id_token`, per response_type
+            `code id_token`); on an OAuth2/OpenID Connect error it instead
+            carries `error`, `error_description` and `state`. See the
+            'openid-authorize' model for the shape of the success parameters.
+          headers:
+            Location:
+              description: >-
+                The redirect_uri (the Service Provider's return endpoint) with
+                the authorization response or the error response appended as
+                query parameters.
+              required: true
               schema:
-                $ref: '#/components/schemas/openid-authorize'
-          description: OK
+                type: string
+                format: uri
         '400':
-          description: bad request or request is malformed
+          description: Bad request. The OAuth request is malformed or contains an unsupported parameter.
       deprecated: false
       operationId: initiate-authorization-flow
       summary: Redirect human service consumer for authentication
@@ -1057,7 +1093,7 @@ paths:
             specific response requirements for this endpoint.
         '400':
           description: bad request or request is malformed
-  /[v3.0]/delegationPolicy:
+  /v3.0/delegationPolicy:
     post:
       tags:
         - Authorisation Registry (Optional)
@@ -1079,19 +1115,16 @@ paths:
         '200':
           description: >-
             OK: The requested policy is created.
+        '400':
+          description: Bad request. The request is malformed or fails validation.
         '401':
-          description: >-
-            Unauthorized: When Authorization header is either missing, invalid 
-            or token has already expired.
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
         '403':
-          description: >-
-            Forbidden: This error message is return when a policy creation request 
-            could not be processed after rules evaluation. The requested policy 
-            does not comply with the rules as set by the Entitled Party.
+          description: Forbidden. The authenticated client is not authorised to perform this operation.
+        '409':
+          description: Conflict. The request conflicts with the current state of the resource.
         '500':
-          description: >-
-            Server Error: When the Authorization Registry was unable to process 
-            the request
+          description: Server error. The server was unable to process the request.
 components:
   schemas:
     jwtPayloadSkeleton:
@@ -1345,7 +1378,8 @@ components:
         id:
           type: string
           format: uuid
-          description: Unique identifier of the claim, must be a UUID
+          readOnly: true
+          description: Unique identifier of the claim. Generated by the service creating the claim.
           example: 5ffb4bb9-2020-4045-a922-3bd84e78f709
         status:
           type: string
@@ -1506,8 +1540,8 @@ components:
               description: >-
                 Whether legal adherence is required, not required or not
                 applicable
-              enum: [yes, no, not-applicable]
-              example: yes
+              enum: ["yes", "no", not-applicable]
+              example: "yes"
             additionalInfo:
               allOf:
                 - $ref: '#/components/schemas/additionalInfo'
@@ -1583,39 +1617,14 @@ components:
               example: eSEAL
             x5c:
               description: >-
-                The base64 encoded pem format value of the certificate identified by
-                its subject name and fingerprint
-              type: string
-              example: |-
-                MIIFVzCCAz+gAwIBAgINAgPlk28xsBNJiGuiFzANBgkqhkiG9w0BAQwFADBHMQsw
-                CQYDVQQGEwJVUzEiMCAGA1UEChMZR29vZ2xlIFRydXN0IFNlcnZpY2VzIExMQzEU
-                MBIGA1UEAxMLR1RTIFJvb3QgUjEwHhcNMTYwNjIyMDAwMDAwWhcNMzYwNjIyMDAw
-                MDAwWjBHMQswCQYDVQQGEwJVUzEiMCAGA1UEChMZR29vZ2xlIFRydXN0IFNlcnZp
-                Y2VzIExMQzEUMBIGA1UEAxMLR1RTIFJvb3QgUjEwggIiMA0GCSqGSIb3DQEBAQUA
-                A4ICDwAwggIKAoICAQC2EQKLHuOhd5s73L+UPreVp0A8of2C+X0yBoJx9vaMf/vo
-                27xqLpeXo4xL+Sv2sfnOhB2x+cWX3u+58qPpvBKJXqeqUqv4IyfLpLGcY9vXmX7w
-                Cl7raKb0xlpHDU0QM+NOsROjyBhsS+z8CZDfnWQpJSMHobTSPS5g4M/SCYe7zUjw
-                TcLCeoiKu7rPWRnWr4+wB7CeMfGCwcDfLqZtbBkOtdh+JhpFAz2weaSUKK0Pfybl
-                qAj+lug8aJRT7oM6iCsVlgmy4HqMLnXWnOunVmSPlk9orj2XwoSPwLxAwAtcvfaH
-                szVsrBhQf4TgTM2S0yDpM7xSma8ytSmzJSq0SPly4cpk9+aCEI3oncKKiPo4Zor8
-                Y/kB+Xj9e1x3+naH+uzfsQ55lVe0vSbv1gHR6xYKu44LtcXFilWr06zqkUspzBmk
-                MiVOKvFlRNACzqrOSbTqn3yDsEB750Orp2yjj32JgfpMpf/VjsPOS+C12LOORc92
-                wO1AK/1TD7Cn1TsNsYqiA94xrcx36m97PtbfkSIS5r762DL8EGMUUXLeXdYWk70p
-                aDPvOmbsB4om3xPXV2V4J95eSRQAogB/mqghtqmxlbCluQ0WEdrHbEg8QOB+DVrN
-                VjzRlwW5y0vtOUucxD/SVRNuJLDWcfr0wbrM7Rv1/oFB2ACYPTrIrnqYNxgFlQID
-                AQABo0IwQDAOBgNVHQ8BAf8EBAMCAYYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4E
-                FgQU5K8rJnEaK0gnhS9SZizv8IkTcT4wDQYJKoZIhvcNAQEMBQADggIBAJ+qQibb
-                C5u+/x6Wki4+omVKapi6Ist9wTrYggoGxval3sBOh2Z5ofmmWJyq+bXmYOfg6LEe
-                QkEzCzc9zolwFcq1JKjPa7XSQCGYzyI0zzvFIoTgxQ6KfF2I5DUkzps+GlQebtuy
-                h6f88/qBVRRiClmpIgUxPoLW7ttXNLwzldMXG+gnoot7TiYaelpkttGsN/H9oPM4
-                7HLwEXWdyzRSjeZ2axfG34arJ45JK3VmgRAhpuo+9K4l/3wV3s6MJT/KYnAK9y8J
-                ZgfIPxz88NtFMN9iiMG1D53Dn0reWVlHxYciNuaCp+0KueIHoI17eko8cdLiA6Ef
-                MgfdG+RCzgwARWGAtQsgWSl4vflVy2PFPEz0tv/bal8xa5meLMFrUKTX5hgUvYU/
-                Z6tGn6D/Qqc6f1zLXbBwHSs09dR2CQzreExZBfMzQsNhFRAbd03OIozUhfJFfbdT
-                6u9AWpQKXCBfTkBdYiJ23//OYb2MI3jSNwLgjt7RETeJ9r/tSQdirpLsQBqvFAnZ
-                0E6yove+7u7Y/9waLd64NnHi/Hm3lCXRSHNboTXns5lndcEZOitHTtNCjv0xyBZm
-                2tIMPNuzjsmhDYAPexZ3FL//2wmUspO8IFgV6dtxQ/PeEMMA3KgqlbbC1j+Qa3bb
-                bP6MvPJwNQzcmRk13NfIRmPVNnGuV/u3gm3c
+                X.509 certificate chain as defined by RFC 7515 section 4.1.6. Each item is
+                a base64-encoded DER certificate value. The certificate containing the
+                subject public key is first, followed by any issuer certificates in
+                certification order.
+              type: array
+              minItems: 1
+              items:
+                type: string
             x5t#s256:
               description: The SHA256 fingerprint of the certificate
               type: string
@@ -1648,6 +1657,12 @@ components:
               type: string
               example: >-
                 eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+            verificationHash:
+              description: >-
+                The calculated hash of the assertion that has been uploaded.
+                The verificationHash must be calculated using the SHA256 hashing algorithm.
+              type: string
+              example: aef5bb5e3ab49150a53b89628ab8593315b6686f3f96497277feb9d658527acb
     authRegistry:
       title: authRegistry
       description: >-
@@ -1795,6 +1810,8 @@ components:
     partyResponse:
       title: PartyResponse
       type: object
+      required:
+        - partyToken
       properties:
         partyToken:
           type: string
@@ -1935,15 +1952,15 @@ components:
             Compliance requirements of this role has been met by party. 
             Possible values are yes, no and not-applicable
           type: string
-          enum: [yes, no, not-applicable]
-          example: yes
+          enum: ["yes", "no", not-applicable]
+          example: "yes"
         legalAdherence:
           description: >-
             Legal requirements of this role has been met by party including
             signing of appropriate agreements
           type: string
-          enum: [yes, no, not-applicable]
-          example: yes
+          enum: ["yes", "no", not-applicable]
+          example: "yes"
     capabilitiesInfo:
       title: capabilitiesInfo
       type: object
@@ -2032,9 +2049,9 @@ components:
             "deprecated" or "active".
           type: string
           example: active
-          x-enum-elements:
-            - name: deprecated
-            - name: active
+          enum:
+            - deprecated
+            - active
         serviceType:
           description: >-
             Can be either "framework-defined", "dataspace-defined" or "self-defined". 
@@ -2044,11 +2061,11 @@ components:
             service is define by the provider of the service (actual data services 
             are part of this category).
           type: string
-          example: active
-          x-enum-elements:
-            - name: framework-defined
-            - name: dataspace-defined
-            - name: self-defined
+          example: framework-defined
+          enum:
+            - framework-defined
+            - dataspace-defined
+            - self-defined
         version:
           title: version
           type: object
@@ -2091,6 +2108,8 @@ components:
     trustedListResponse:
       title: TrustedListResponse
       type: object
+      required:
+        - trustedListToken
       properties:
         trustedListToken:
           type: string
@@ -2099,6 +2118,8 @@ components:
     capabilitiesResponse:
       title: CapabilitiesResponse
       type: object
+      required:
+        - capabilitiesToken
       properties:
         capabilitiesToken:
           type: string
@@ -2107,6 +2128,8 @@ components:
     partiesResponse:
       title: partiesResponse
       type: object
+      required:
+        - partiesToken
       properties:
         partiesToken:
           type: string
@@ -2115,6 +2138,8 @@ components:
     claimsResponse:
       title: ClaimsResponse
       type: object
+      required:
+        - claimsToken
       properties:
         claimsToken:
           type: string
@@ -2123,6 +2148,8 @@ components:
     claimResponse:
       title: ClaimResponse
       type: object
+      required:
+        - claimToken
       properties:
         claimToken:
           type: string
@@ -2205,6 +2232,8 @@ components:
     dataspacesResponse:
       title: DataspacesResponse
       type: object
+      required:
+        - dataspacesToken
       properties:
         dataspacesToken:
           type: string
@@ -2224,6 +2253,8 @@ components:
     frameworksResponse:
       title: FrameworksResponse
       type: object
+      required:
+        - frameworksToken
       properties:
         frameworksToken:
           type: string
@@ -2406,8 +2437,8 @@ components:
                   Whether a participant in this role is required to have an 
                   x.509 certificate.
                 type: string
-                enum: [yes, no]
-                example: yes
+                enum: ["yes", "no"]
+                example: "yes"
               agreements:
                 description: >-
                   Array of agreement IDs that a participant in this role is
@@ -2422,15 +2453,15 @@ components:
                   Whether a participant in this role must provide a Level of 
                   Assurance (LoA) statement.
                 type: string
-                enum: [yes, no]
-                example: yes
+                enum: ["yes", "no"]
+                example: "yes"
               technicalComplianceRequired:
                 description: >-
                   Whether a participant in this role must provide a technical 
                   compliance statement.
                 type: string
-                enum: [yes, no]
-                example: yes
+                enum: ["yes", "no"]
+                example: "yes"
     jwtPayloadFrameworksToken:
       title: jwtPayloadFrameworksToken
       description: JWT containing list of frameworks
@@ -2555,8 +2586,8 @@ components:
                   Whether a participant in this role is required to have an 
                   x.509 certificate.
                 type: string
-                enum: [yes, no]
-                example: yes
+                enum: ["yes", "no"]
+                example: "yes"
               agreements:
                 description: >-
                   Array of agreement IDs that a participant in this role is
@@ -2571,15 +2602,15 @@ components:
                   Whether a participant in this role must provide a Level of 
                   Assurance (LoA) statement.
                 type: string
-                enum: [yes, no]
-                example: yes
+                enum: ["yes", "no"]
+                example: "yes"
               technicalComplianceRequired:
                 description: >-
                   Whether a participant in this role must provide a technical 
                   compliance statement.
                 type: string
-                enum: [yes, no]
-                example: yes
+                enum: ["yes", "no"]
+                example: "yes"
     connectTokenResponse:
       title: ConnectTokenResponse
       type: object
@@ -2594,7 +2625,8 @@ components:
           example:
             "Bearer"
         expires_in:
-          type: number
+          type: integer
+          format: int32
           example:
             3600
     delegationPolicyCreationRequest:
@@ -2866,6 +2898,8 @@ components:
     userinfoResponse:
       title: UserinfoResponse
       type: object
+      required:
+        - userinfoToken
       properties:
         userinfoToken:
           type: string
@@ -2899,12 +2933,12 @@ components:
           type: string
           example: 378a47c4-2822-4ca5-a49a-7e5a1cc7ea59
         exp:
-          format: int32
+          format: int64
           description: UNIX timestamp in seconds until when this JWT is valid.
           type: integer
           example: 1504684475
         iat:
-          format: int32
+          format: int64
           description: UNIX timestamp in seconds when this JWT was issued.
           type: integer
           example: 1504683475
@@ -2960,7 +2994,7 @@ components:
       description: List of allowed HTTP methods
       schema:
         type: string
-      example: GET, PUT, POST, PATCH, OPTIONS
+      example: GET, POST, PATCH, OPTIONS
   parameters:
     delegation-evidence:
       deprecated: false
@@ -3023,5 +3057,4 @@ components:
       type: http
       scheme: bearer
       description: OAuth 2.0 authorization based on bearer token. MUST contain “Bearer “ + access token value. Must be provided if restricted endpoints are needed.
-  responses: {}
 security: []

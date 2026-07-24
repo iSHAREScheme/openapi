@@ -45,7 +45,7 @@ tags:
   - name: Authorisation Registry (Optional)
     description: Optional endpoints for the iSHARE Authorisation Registry API.
 paths:
-  /[v3.0]/capabilities:
+  /v3.0/capabilities:
     get:
       tags:
         - Participant Registry (Required)
@@ -86,7 +86,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwtHeader' and 'jwtPayloadCapabilitiesToken' which indicate
         what the decoded response will look like.
-  /[v3.0]/trustedList:
+  /v3.0/trustedList:
     get:
       tags:
         - Participant Registry (Required)
@@ -113,7 +113,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwtHeader' and 'jwtPayloadTrustedListToken' which indicate
         what the decoded response will look like.
-  /[v3.0]/parties/{id}:
+  /v3.0/parties/{id}:
     options:
       tags:
         - Participant Registry (Optional)
@@ -221,7 +221,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwtHeader' and 'jwtPayloadPartyToken' which indicate what
         the decoded response will look like.
-  /[v3.0]/parties:
+  /v3.0/parties:
     options:
       tags:
         - Participant Registry (Optional)
@@ -375,7 +375,7 @@ paths:
         For all roles except for Service Consumer and Entitled Party an x509Certificate 
         claim is required. Service Consumer and Entitled Party MUST either provide 
         a x509Certificate claim or idpAssertion claim if authenticating via Identity Provider.
-  /[v3.0]/parties/{partyId}/claims:
+  /v3.0/parties/{partyId}/claims:
     options:
       tags:
         - Participant Registry (Required)
@@ -475,7 +475,7 @@ paths:
       summary: Create new claim for a party
       description: >-
         Used to create a new claim for a participant.
-  /[v3.0]/parties/{partyId}/claims/{claimId}:
+  /v3.0/parties/{partyId}/claims/{claimId}:
     options:
       tags:
         - Participant Registry (Required)
@@ -635,7 +635,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwtHeader' and 'jwtPayloadClaimToken' which indicate what
         the decoded response will look like.
-  /[v3.0]/dataspaces:
+  /v3.0/dataspaces:
     get:
       tags:
         - Participant Registry (Required)
@@ -694,7 +694,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwtHeader' and 'jwtPayloadDataspacesToken' which indicate
         what the decoded response will look like.
-  /[v3.0]/frameworks:
+  /v3.0/frameworks:
     get:
       tags:
         - Participant Registry (Required)
@@ -753,7 +753,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwtHeader' and 'jwtPayloadFrameworksToken' which indicate
         what the decoded response will look like.
-  /[v3.0]/connect/token:
+  /v3.0/connect/token:
     post:
       requestBody:
         content:
@@ -863,7 +863,7 @@ paths:
         to their business specific logic. Note: Additional headers for security,
         statefulnes, application functionality could be added and is out of
         scope of this specification.
-  /[v3.0]/delegation:
+  /v3.0/delegation:
     post:
       requestBody:
         description: >-
@@ -900,7 +900,7 @@ paths:
         response is a signed JSON Web Token. Please refer to the models
         'jwtHeader' and 'jwtPayloadDelegationEvidenceToken' which indicate what
         the decoded response will look like.
-  /[v3.0]/connect/userinfo:
+  /v3.0/connect/userinfo:
     get:
       tags:
         - Identity Provider (Required)
@@ -928,7 +928,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwtHeader' and 'jwtPayloadUserinfoToken' which indicate what
         the decoded response will look like.
-  /[v3.0]/connect/authorize:
+  /v3.0/connect/authorize:
     post:
       requestBody:
         content:
@@ -1093,7 +1093,7 @@ paths:
             specific response requirements for this endpoint.
         '400':
           description: bad request or request is malformed
-  /[v3.0]/delegationPolicy:
+  /v3.0/delegationPolicy:
     post:
       tags:
         - Authorisation Registry (Optional)

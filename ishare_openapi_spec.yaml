@@ -36,7 +36,7 @@ tags:
   - name: Authorisation Registry
     description: Endpoints that form the Authorisation Registry API specification.
 paths:
-  /[v2.2]/capabilities:
+  /v2.2/capabilities:
     get:
       tags:
         - Participant Registry
@@ -53,6 +53,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/CapabilitiesResponse'
           description: OK
+        '401':
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '500':
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: /capabilities
       summary: Retrieves iSHARE capabilities
@@ -74,7 +78,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_capabilities_token' which indicate
         what the decoded response will look like.
-  /[v2.2]/trusted_list:
+  /v2.2/trusted_list:
     get:
       tags:
         - Participant Registry
@@ -87,6 +91,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/TrustedListResponse'
           description: OK
+        '401':
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '500':
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: /trusted_list
       summary: Retrieves list of trusted certificate authorities
@@ -98,7 +106,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_trusted_list_token' which indicate
         what the decoded response will look like.
-  /[v2.2]/parties/{id}:
+  /v2.2/parties/{id}:
     options:
       tags:
         - Participant Registry
@@ -119,7 +127,7 @@ paths:
         '204':
           headers:
             Allow:
-              $ref: '#/components/headers/optionsAllowHeader'
+              $ref: '#/components/headers/optionsAllowHeaderItem'
           description: List the allowed HTTP methods for this endpoint
     get:
       tags:
@@ -142,6 +150,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/PartyResponse'
           description: OK
+        '401':
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '500':
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: /parties/id
       summary: Retrieves one party
@@ -180,6 +192,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/PartyResponse'
           description: ''
+        '400':
+          description: Bad request. The request is malformed or fails validation.
+        '401':
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '500':
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: /party-update
       summary: Update an existing party
@@ -187,7 +205,7 @@ paths:
         Used to programmatically update a participant. The existing party 
         will be replaced with the provided party, so all values must be 
         provided. Can also be used to update the status of a party.
-  /[v2.2]/parties:
+  /v2.2/parties:
     options:
       tags:
         - Participant Registry
@@ -199,7 +217,7 @@ paths:
         '204':
           headers:
             Allow:
-              $ref: '#/components/headers/optionsAllowHeader'
+              $ref: '#/components/headers/optionsAllowHeaderCollection'
           description: List the allowed HTTP methods for this endpoint
     get:
       tags:
@@ -239,6 +257,7 @@ paths:
         - style: form
           explode: true
           name: eori
+          deprecated: true
           description: >-
             Optional parameter used to search by party's EORI. Can contain
             a single * as wildcard. It searches through the party_id array 
@@ -325,8 +344,7 @@ paths:
           name: companyPhone
           description: Search a party by their company phone number
           schema:
-            format: int32
-            type: integer
+            type: string
           in: query
         - style: form
           explode: true
@@ -495,7 +513,9 @@ paths:
           name: certificate_subject_name
           description: >-
             Search parties based on the subject name of their PKI (x509)
-            certificates. Usually to find a party who is requesting tokens
+            certificates. Usually to find a party who is requesting tokens.
+            Note: this is a duplicate of the `subjectName` query parameter and
+            is retained for backward compatibility; prefer `subjectName`.
           schema:
             type: string
             example: >-
@@ -508,6 +528,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/PartiesResponse'
           description: ''
+        '401':
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '500':
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: /parties
       summary: Lists and searches parties
@@ -538,12 +562,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/PartyResponse'
           description: ''
+        '400':
+          description: Bad request. The request is malformed or fails validation.
+        '401':
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '409':
+          description: Conflict. The request conflicts with the current state of the resource.
+        '500':
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: /parties-new
       summary: Create new party
       description: >-
         Used to programatically create a participant.
-  /[v2.2]/versions:
+  /v2.2/versions:
     get:
       tags:
         - Participant Registry
@@ -557,6 +589,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionsResponse'
           description: OK
+        '401':
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '500':
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: /versions
       summary: Retrieves active and planned versions of iSHARE
@@ -565,7 +601,7 @@ paths:
         current state. Server response is an iSHARE signed JSON Web Token.
         Please refer to the models 'jwt_header' and 'jwt_payload_versions_token'
         which indicate what the decoded response will look like. 
-  /[v2.2]/dataspaces:
+  /v2.2/dataspaces:
     get:
       tags:
         - Participant Registry
@@ -578,6 +614,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/DataspacesResponse'
           description: OK
+        '401':
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '500':
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: /dataspaces
       summary: Retrieves list of dataspaces
@@ -588,7 +628,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_dataspaces_token' which indicate
         what the decoded response will look like.
-  /[v2.2]/connect/token:
+  /v2.2/connect/token:
     post:
       requestBody:
         content:
@@ -648,6 +688,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ConnectTokenResponse'
           description: OK
+        '400':
+          description: Bad request. The OAuth request is malformed or contains an unsupported parameter.
+        '401':
+          description: Unauthorized. OAuth client authentication failed.
       deprecated: false
       operationId: /connect/token
       summary: Obtains access token
@@ -656,7 +700,7 @@ paths:
         Registry or Service Provider. The access token must be added 
         under "Authorization" header attribute for secured endpoints. Refer to relevant 
         endpoints on proper usage.
-  /[v2.2]/ep_creation:
+  /v2.2/ep_creation:
     post:
       requestBody:
         content:
@@ -675,6 +719,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/EpCreationResponse'
           description: ''
+        '400':
+          description: Bad request. The request is malformed or fails validation.
+        '401':
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '500':
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: /ep_creation
       summary: Create Entitled Party
@@ -720,7 +770,7 @@ paths:
         to their business specific logic. Note: Additional headers for security,
         statefulnes, application functionality could be added and is out of
         scope of this specification.
-  /[v2.2]/delegation:
+  /v2.2/delegation:
     post:
       requestBody:
         description: >-
@@ -742,6 +792,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/DelegationResponse'
           description: ''
+        '400':
+          description: Bad request. The request is malformed or fails validation.
+        '401':
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '403':
+          description: Forbidden. The authenticated client is not authorised to perform this operation.
+        '500':
+          description: Server error. The server was unable to process the request.
       operationId: /delegation
       summary: Obtains delegation evidence
       description: >-
@@ -749,7 +807,7 @@ paths:
         response is a signed JSON Web Token. Please refer to the models
         ‘jwt_header’ and ‘jwt_payload_delegation_evidence_token’ which indicate what
         the decoded response will look like.
-  /[v2.2]/connect/userinfo:
+  /v2.2/connect/userinfo:
     get:
       tags:
         - Identity Provider
@@ -762,6 +820,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserinfoResponse'
           description: OK
+        '401':
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
+        '500':
+          description: Server error. The server was unable to process the request.
       deprecated: false
       operationId: /connect/userinfo
       summary: Obtaining attributes of a Human Service Consumer
@@ -773,7 +835,7 @@ paths:
         Server response is an iSHARE signed JSON Web Token. Please refer to the
         models 'jwt_header' and 'jwt_payload_userinfo_token' which indicate what
         the decoded response will look like.
-  /[v2.2]/connect/authorize:
+  /v2.2/connect/authorize:
     post:
       requestBody:
         content:
@@ -820,12 +882,26 @@ paths:
       parameters:
         - $ref: '#/components/parameters/content-type_form'
       responses:
-        '200':
-          content:
-            application/json:
+        '302':
+          description: >-
+            Authentication result delivered to the Service Provider's return
+            endpoint via a browser redirect. On success the redirect query
+            string carries `code`, `state` (and `id_token`, per response_type
+            `code id_token`); on an OAuth2/OpenID Connect error it instead
+            carries `error`, `error_description` and `state`. See the
+            'openid-authorize' model for the shape of the success parameters.
+          headers:
+            Location:
+              description: >-
+                The redirect_uri (the Service Provider's return endpoint) with
+                the authorization response or the error response appended as
+                query parameters.
+              required: true
               schema:
-                $ref: '#/components/schemas/openid-authorize'
-          description: OK
+                type: string
+                format: uri
+        '400':
+          description: Bad request. The OAuth request is malformed or contains an unsupported parameter.
       deprecated: false
       operationId: /authorize
       summary: Redirect human service consumer for authentication
@@ -852,6 +928,7 @@ paths:
                   example: username
                 password:
                   description: Human user’s password.
+                  type: string
                   example: password
         required: true
       tags:
@@ -915,7 +992,7 @@ paths:
             Provider needs to verify state parameter and make use of code
             parameter in order to retrieve the access token. There are no
             specific response requirements for this endpoint.
-  /[v2.2]/delegationPolicy:
+  /v2.2/delegationPolicy:
     post:
       tags:
         - Authorisation Registry
@@ -937,19 +1014,14 @@ paths:
         '200':
           description: >-
             OK: The requested policy is created.
+        '400':
+          description: Bad request. The request is malformed or fails validation.
         '401':
-          description: >-
-            Unauthorized: When Authorization header is either missing, invalid 
-            or token has already expired.
+          description: Unauthorized. Authentication is required and has failed or has not been provided.
         '403':
-          description: >-
-            Forbidden: This error message is return when a policy creation request 
-            could not be processed after rules evaluation. The requested policy 
-            does not comply with the rules as set by the Entitled Party.
+          description: Forbidden. The authenticated client is not authorised to perform this operation.
         '500':
-          description: >-
-            Server Error: When the Authorization Registry was unable to process 
-            the request
+          description: Server error. The server was unable to process the request.
 components:
   schemas:
     licenseRuleList:
@@ -1124,7 +1196,6 @@ components:
           example: Example Corporation
         capability_url:
           description: Capabilities endpoint of the party.
-          pattern: ''
           type: string
           example: https://www.example.com/capabilities
         registrar_id:
@@ -1254,7 +1325,6 @@ components:
           example: Example Corporation
         capability_url:
           description: Capabilities endpoint of the party.
-          pattern: ''
           type: string
           example: https://www.example.com/capabilities
         registrar_id:
@@ -1540,6 +1610,8 @@ components:
     PartyResponse:
       title: PartyResponse
       type: object
+      required:
+        - party_token
       properties:
         party_token:
           type: string
@@ -1711,9 +1783,10 @@ components:
           type: integer
           example: 1504683475
         versions_info:
-          allOf:
-            - $ref: '#/components/schemas/Version'
-            - {}
+          type: array
+          description: List of the active and planned versions.
+          items:
+            $ref: '#/components/schemas/Version'
     jwt_payload_capabilities_token:
       title: jwt_payload_capabilities_token
       required:
@@ -2053,7 +2126,7 @@ components:
           example: ["GET", "POST"]
     VersionStatus:
       title: VersionStatus
-      description: Status of the version. Available values are active and planned.
+      description: Status of the version. Available values are inactive, active and planned.
       enum:
         - inactive
         - active
@@ -2171,6 +2244,8 @@ components:
     TrustedListResponse:
       title: TrustedListResponse
       type: object
+      required:
+        - trusted_list_token
       properties:
         trusted_list_token:
           type: string
@@ -2179,6 +2254,8 @@ components:
     VersionsResponse:
       title: VersionsResponse
       type: object
+      required:
+        - versions_token
       properties:
         versions_token:
           type: string
@@ -2187,6 +2264,8 @@ components:
     CapabilitiesResponse:
       title: CapabilitiesResponse
       type: object
+      required:
+        - capabilities_token
       properties:
         capabilities_token:
           type: string
@@ -2195,6 +2274,8 @@ components:
     PartiesResponse:
       title: PartiesResponse
       type: object
+      required:
+        - parties_token
       properties:
         parties_token:
           type: string
@@ -2224,6 +2305,8 @@ components:
     DataspacesResponse:
       title: DataspacesResponse
       type: object
+      required:
+        - dataspace_list_token
       properties:
         dataspace_list_token:
           type: string
@@ -2238,7 +2321,7 @@ components:
         - jti
         - exp
         - iat
-        - dataspaces_info
+        - dataspace_info
       type: object
       properties:
         iss:
@@ -2363,7 +2446,8 @@ components:
           example:
             Bearer ojwefiwenghktwmrtegnretwlg.....
         expires_in:
-          type: number
+          type: integer
+          format: int32
           example:
             3600
     DelegationPolicyCreationRequest:
@@ -2623,6 +2707,8 @@ components:
     DelegationResponse:
       title: DelegationResponse
       type: object
+      required:
+        - delegation_token
       properties:
         delegation_token:
           type: string
@@ -2640,6 +2726,8 @@ components:
     UserinfoResponse:
       title: UserinfoResponse
       type: object
+      required:
+        - userinfo_token
       properties:
         userinfo_token:
           type: string
@@ -2759,11 +2847,16 @@ components:
           allOf:
             - $ref: '#/components/schemas/delegationPolicyRequest'
   headers:
-    optionsAllowHeader:
-      description: List of allowed HTTP methods
+    optionsAllowHeaderCollection:
+      description: List of allowed HTTP methods for the /parties collection resource.
       schema:
         type: string
-      example: GET, PUT, POST, OPTIONS
+      example: GET, POST, OPTIONS
+    optionsAllowHeaderItem:
+      description: List of allowed HTTP methods for the /parties/{id} item resource.
+      schema:
+        type: string
+      example: GET, PUT, OPTIONS
   parameters:
     delegation-evidence:
       deprecated: false

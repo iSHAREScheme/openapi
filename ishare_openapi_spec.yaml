@@ -643,9 +643,32 @@ paths:
               type: object
               properties:
                 grant_type:
-                  description: OAuth 2.0 grant type. MUST contain “client_credentials”
+                  description: >-
+                    OAuth 2.0 grant type. `client_credentials` for the iSHARE
+                    machine-to-machine (M2M) flow; `authorization_code` for the
+                    Identity Provider OpenID Connect Authorization Code Flow
+                    code→token exchange.
                   type: string
+                  enum:
+                    - client_credentials
+                    - authorization_code
                   example: client_credentials
+                code:
+                  description: >-
+                    Authorization code returned by the /connect/authorize
+                    redirect. REQUIRED when `grant_type=authorization_code`;
+                    MUST be omitted for `client_credentials`.
+                  type: string
+                  example: SplxlOBeZQQYbYS6WxSbIA
+                redirect_uri:
+                  description: >-
+                    The `redirect_uri` used in the authorization request. REQUIRED
+                    when `grant_type=authorization_code` and MUST be identical to
+                    the value sent to /connect/authorize; MUST be omitted for
+                    `client_credentials`.
+                  type: string
+                  format: uri
+                  example: https://rp.example.com/return
                 scope:
                   description: >-
                     OAuth 2.0 scope. MUST contain iSHARE scope value. Other
@@ -687,7 +710,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConnectTokenResponse'
-          description: OK
+          description: >-
+            OK. The body is always a `ConnectTokenResponse` (`access_token`,
+            `token_type`, `expires_in`). For the Identity Provider
+            `authorization_code` grant it additionally carries a REQUIRED
+            `id_token`; for the `client_credentials` (machine-to-machine) grant
+            the `id_token` is absent.
         '400':
           description: Bad request. The OAuth request is malformed or contains an unsupported parameter.
         '401':
@@ -850,10 +878,11 @@ paths:
               properties:
                 response_type:
                   description: >-
-                    OAuth 2.0 Response Type. For iSHARE using the Authorization 
-                    Code Flow, with value `code id_token` is REQUIRED. MUST be identical to the response_type value in the request JWT.
+                    OAuth 2.0 Response Type. For iSHARE using the OpenID Connect
+                    Authorization Code Flow, the value `code` is REQUIRED. MUST be identical to the response_type value in the request JWT.
+                    The id_token is never returned through the user-agent; it is obtained by the RP back-channel at /connect/token.
                   type: string
-                  example: code id_token
+                  example: code
                 scope:
                   description: >-
                     OAuth 2.0 scope for OpenID Connect 1.0. The scope parameter MUST contain atleast the `openid` and the `iSHARE` scope values. In addition to that it MAY also contain one or more [scopes](https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims) identifying the attributes from the Human Service Consumer that are requested (depending on the OpenID implementation of the Identity Provider). The iSHARE scope contains the minimal information required for authorisations. The scope parameter MUST be identical to the scope value in the body parameter of the /authorize request.
@@ -869,12 +898,22 @@ paths:
                   example: did:ishare:EU.NL.NTRNL-10000001
                 request:
                   description: >-
-                    OpenID Connect 1.0 JWT [request parameter](https://openid.net/specs/openid-connect-core-1_0.html#JWTRequests) containing all request 
-                    parameters. See also Generic iSHARE JWT specifications for 
-                    a.o. basic content and signing requirements. Additionally 
-                    the signed JWT MUST be encrypted as a JWE as a user can access this 
-                    JWT itself and decode the data contained therein.
+                    OpenID Connect 1.0 Request Object passed by value
+                    ([OIDC §6.1](https://openid.net/specs/openid-connect-core-1_0.html#JWTRequests) / RFC 9101),
+                    carrying all request parameters. See the
+                    `jwt_payload_authorize_request` model for the decoded claims,
+                    and Generic iSHARE JWT specifications for basic content and
+                    signing requirements.
+                    Intended iSHARE deviation from OIDC: the signed Request Object MUST
+                    additionally be encrypted as a JWE (signed, then encrypted) to the
+                    Identity Provider's public key, because RP and IdP are not
+                    pre-registered and the object passes through the user-agent. The RP
+                    obtains the IdP's public certificate from the iSHARE Participant
+                    Registry: look up the Identity Provider party via the /parties
+                    endpoint and use the public certificate from its `certificates`
+                    (x5c) field.
                   type: string
+                  x-jwt-payload: '#/components/schemas/jwt_payload_authorize_request'
                   example: eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMjU2R0NNIn0.Nuh5_NlmJRUtZKQYn_CLSxIYbyRwaegXZYBl4szaLUDnFIYG1m7jOpqCHmkFVb06Kq4Ir5we1_A9tXaww0c_CfMMTM8PPnV-z6hyNKhyXcdeXi0ywg9yLMWuBglHN4KjeeTzo-2earBq_KebvIearLPL3JtEcZKKU-LIpVmI2Ohcp8UARhVnCgLNn5OEnoI-w_kZGcqFnZK8omJjef1TySXZ8O57ZcH7xX_uOjtW6poootk8hD-1Ga88fkL8_q1CaveNpgbvy_yg9VvC3V9R3lvkJa8BTAhjoEhg5iB5UJeqft1RG3zlaiHOuLSGNEMejcRzTjHr0YS7OFVe--1fsn3GkEReoaoK-eBGy51PsKcZI8DEzq5K2zalmYUE1eDUKBMtwVTJrOOZHhrrRn-j8Irjx3_tUcHnhX04j9u913tlQZTQ42xa88-DDvYir3gyK5OxKYkxzR2E-aOD8IPzZDn5uEFuA0-RwfFTa_g9F9dzADpKMFzCgzWJDfFRBvY-y8_ZFuzgM-Om-5qRYG3p4I9aKCWcVf5MhcNW-arXi41wJS0H2mujqGSHZjJUpBvfXJ7M4-DqRU5WtKTS2qteTkMBd7IDjttQ1F4nULcw4MTihjlmYIREUJXHuAI98a9EbUJ1BSzfXsKYGpphtH8hcCvQIkD6UA89vhSrAnlh_0s.Gwv1eQtS4gZi78wm.XLttIUHGr5FKtxhK1tg6E1SxPgk7EZ1gYaZ2FRuea99bKPla3LVbvrdLIf1D_Ys_s7YcKW-kgTq47gTpCfEqOkvOXpjS-r0FGOyN3Gd2JBrmcxEgoBjzQyLMQCw7BrB8GmyCubwvfIW3tNPSbRkwZHwNpc59yFycIp_3e5-T_RZkS7OpH2bQ0aQyloE89UWzyAnJGkaQZOBCGCxV6CZlko02vNyAal5D9J2RNyGDwy0KKGeal87bIOEkGwS87ElyyNYUr6xZj1D4Q8A35mMwvxEN93lr_8e5GrFP4XH3Xx0gGP-A7dqKiWi5GzFIVLwNlAB0EKPHalkx9swhBoRplDvhKL8MBB93m_ReIgCVyfegBDERAkIDIF1ufd8IcVuX99_76TQr_9-MEWXsFdP4OrlS2Zd5QRZg6vJVh9CBy8xvq52ABD0wWqvXUw2kzvRMbUEgHMXcEHXJuAWj7RwdhuUDx-PhDzRgGvl3jxXqsQ8-ELUAhXJGFH4WWbxiEAFkxYszMp1xxCytKmi-e8CFaOTAeeOtyXqVJccuuVnee9cqWj-4ddyBEC_DtqOzpBWjNJVfibZwXphfeAcoQwRuzw1mKYM8t35HWOEK4F0Y8GiyWRyjSmvb7q-52-k6nDwsWVR1V--XjnfmFjL2AKNAGtZ-VWujJG_hXNO50XMVvoLjhyNEv-R2w9pKIzAJgOEEVUCK9LDdsXhqXrhSP6x9pQj2CoAh9nj2lKAq83z5RSvpWukxo-ROoASXX8RjCNo-zaimTfcI8XERM0pj93NPU4P2bquYQ9LgBkz4HouiWe8Zp-6tKwLMCw_o5iOWekU6fy4DeySCWRBhaawnPgnCnAAGO5w_sE01llyzzLrA46rAzA9k_2QKrPe213Wz7mFTG5gmZqnDknaA4zXXTCP2xwWpTh1pbyEMk9UxgSQUxlDT5HdOpSUMG4l5k6kKEdnQDMCx2E5TBWI6bxp2q1WTwt16k6qZigfgFPjvK0YFxcE3Yq0OkI0TJZMjSQ0CnVKvcHriizM5abIDQwwKxpLAkQ3gJl837vNaJfzIh47gfg7q1BOr0NAcmYyEDPghI3SgItrCqS0NJDWjVw6tZeH5MP7n8uxklf8wCzyUX2TzKwNV_xLk7A5sqKvLActLzW14KfgPSjfOKE9YBdzx3LbII3zwIs3tOcRNaAxPiARI5tYTXfVJuGCHjqlGTa7HoGfWSx8dhG7Py1kfWOfukHtwS1UmQuPsPrvBlA8ZRzn52wHnNgP1IOpBDQAPw7r57EKgEqRXHQc5EzdEEgIAInaNxySMkbSVKVYhcamvkWtowjzRvuq1IHhQYbEDOb4yHAu2w3ODqourlDHRblO3kS3w0a2ei5mhdjTdM1dKlpuuoBJKTIknI2hSBSGtq_V4RrSxL6UUYIGUtOy2gNB_wSyeqc65GoKKi_iBQRTmxpAId3EoG3PIUZ03EJGAZkhs_Q3RU_EyFco3MJbbu4i3fmPZNdrYClMlCJrwqo--hiKtkBrSnbP19oEKIJ5d-fN8YpaVA7UpdaMZnhUMeDjs-_fkDDWmHnWkC43iZ_tT2u5HCGGkVcTSIF932XqNORadCk1r9aPbnU1AlnAa4BWwQzebVPv7SXXKdTquLCbLZeWBWLlydmXx7A1YKExoHDvEd5hzUdU4dRNobkp5ETyyi8EMPswkcMJ9cDRCOnOxrlqTa7AmNZqvB1y8KsCVQlAB69KlpjQzjKytb2-NqbgLmx_HZJl6-g28rBWuefWIrkmZ58rSSxv88K50xtFRH27R_1uO3jS-P0e33q5iWS9RnMigO3cp4m5oABw7J0jbW3UIFfR8ZbOYnbSfz0Mc57ZQHk55a9iFwpEVhU8sPnoc4CsMz9inUhucMkaqi5e5lhiRk9dGkvMBIs-1XI2MREi0ZBLNFc8Yjyxrj-3rM6AKMux3mNSZ95NN9m5Lzp4R9gfcKyUEac-JZ3ECE38iUuMxjewZ5534ZhbZCh5FpSSn0vnvAp-eAWYZ5QGcldQ9kfBfkrGkY5mgTnyELDO-LNW6n80q6hoLErSnvIAzt5gEMFGLvhYUUklfekhA30MwFXnFgRw6qeOmzgOwVUkFRca2E_0zyYvi5f2P-EPhoWfrKpoNAxdjFiVUS7irxBd-FjrKSZEbHAvEhcWmnachdRMYlCA6HhnxUA5dP3SkzFQEK6cLY_XoW6T55xupL40nKxg1sEbl4kHN2Ln-HPvJ78D32W8DVZwk60oIbF-sgsOLnga99UViVa1-Zl7ofZ-7nbLR52OiShHbm12Js2aiHMMsIxI-pP1DfDMLy3Ncf3TugpWjh-bufWeQUldSWX0d5OzXzBzwkKF4QhWdRNsIYdr7MeBDi57SKZ9M52fVXvN7KqVKAJkJmCejBAQ9ppijMCAzuiuxkfgVX1LJBkbUPpgiIhnvVh59szYb8OIS66pfYUWD7NtIQ9e9XdKuBBgLhhZxdSDmKsCjY6coQyT51Vr9Kwyg9Hmy_4BlDHcplQZKgsjGLBzvYYzZv4JL8pRBMc3p7-EkhxgZNCbGBgPJyIixLWL0ZbkR6THoCwTp76UPUYQxefK0VJOH4m-7C9ZPnnFDQwmHOiT0MwjvFflnb1_FRlEuoQRAJdEnUysFYwbITVoB0R5FPqV4J9379JwELFEtGHdHvFgxK-6YywP5-VTnva_cFWbHm7E15B_IFfVOHedlJzfoGHYMPAI7auR9b4E-2zSYsSKkT14mdoVI63toaYZKZ6oZNAvwNLvi7M7D1ulHi0tA8UcM80Jkl4PD3KYZ6pziNhC8tenPlTfs-Ilj19UjyyyF3fxgAek1GOPq61RwTZseU5NsYuaRaVfRpxxBy9kcrwiyA_5YeR9jln9_N0HzJLHo96e40gwlEBzBbJuAHzKR_EwvtH9scct6eGIon9-85qQ3uy99HlMQmYYcoHVWDJNpDlJxkGLUJR_GlQRiZ9pypGyLVME68YCVncWBaPjR_MGek9TvHsmFU1kaevKeVtbl5veX_6j6_nf8UgQaTQseVurcHAyW-dITLUOQv_vn-K90LIT2MADLl-j9AIoW5mjUKINRTbdmAxBFDYa9-xw7gt-jRpqZQCNfOPGVKGpvvt43a8Y81AAB9hBCCy4xYMZbMuIDrMM6CxlBX22P2GwCGJeCgGOL8DZnoqCm3tTyCOTB_-lhzZ-lMFnVf1s7TTBdDag2SVpKZQC2X9cMjga3clLIWxd30rzyQiLIt4fsOWZ0garIMOJ99ZkAX83dJDlpTqR3Fz_RG99xEzghoYjEv1MdLK5fPcBK5KqUbeVu9P3hKdk9qxAtWEyH4vsnACH5jncFpcFftsQ5YlbJTGRlLoyxK7GIWG_0SciyUb9xPPmP17jveoadK4mwN-TJLHFc3F2hnqV72z0x2VreWODuG3801rpsZgEysp-Fj-8Tw9aiX4R0Tim3XgXIhb4mwhMLSAuXsLShaoisz_RK62Drjdhobg1zduid-ZLJ5Nc_FlGZDsH3znVMmWTYFikhz78BxgTGM3wkwOTB8MfZ0BjPbvw4ClFcLEt26w-ikwot52t5lYUT7EgRVySVh0dx3ilgJ0VLGx0snP_TwqaJOx0rO9WHZ4BEoJQSmWwvxIrAhbn9TBc3l58z9-9AcZMhWjveb5ZoMzhRz8lKcQYo7fCUfB-oFXungcIuTrijeu8WXLKai2BQZV-VOdZ296_mpb0RURksux8QsjG21Ac-t8dp2tzsEQNmuiYIrwEBLb1TEUJcxRVWCJKfOcx9nopNrnui9DZouIK5Vi5L_sAE05p_P3fN0ZBQ0WrrUwU9dY1CK14GP_hLhA2ND42VwOXMrOR3dP8o6b5kd7m2ARXvVJZTxKyv-641tTNkQpou6lTKkh6J-pGGtocYJxcSoP-foILQJFEaDgBS3S7ruVXfi8hAV3C5Bj39vYkk0mecbXL3WEMiuUNXOHcTx-p0N80WJ--sl9-2bVcnhxF_MRGsprJrobaJP66tEj5mTo6uMRmoglwHepbY20KA3RLF-353N13dt-Bge-Xz2TnS43wE1K-vBQE-2X10kg57XnBtOcGMFL5E6WMa9deMRhQvcLavokpt7m3-p4IWixNO1zPGLsSYBf3g0p66grMQVGYLe38ZAa4RXudevbGp-72d4bEIkY_S0ekXYi-BDe7MAP8ntoQG76LW9rHlmcWWtcQf4J-PL7dGZGEk5x834CcFWTbmRcyr1zpgrUqGa1Y9v1iHXxiuG4PJ1eNGImRDfSHHgjhNqgeKQZr4JOra3d61bdA7j0urgcDF8J0ArUQHZuJ8znhxtepRkSEaMVqgrUhS-T6eYWYfe0FCGx8UHhlsZmMiYMXzj8RVPtYH1mDqq-kukGnefr7Maz2XHCLR4XjkD0Wq8y-jzk92dtqQoc1U57GOf9S8WlzXfwO3_KgcF565YR01sluJ1Gob0lRS4wl98MTJTF-8f9j6zG-EyOCOkVDJib4ExXRpSK284GV6BqQlktgMawW4b6PtnNwwaDiQ_rXyVyFOuzvlNqZDdFlAqBOKeqxckkGgQKuQpK_o25cfLiEIx46pIzzXrgk41gfSTsemFU1SHu7qYrUlr414xwBzONsRBsvyJ5fNjhoDv14y--LG5ewOLVrLwPjqC7xI0YDjmB82A7BEo4Tf9ZnBbWq_HsEKVk639Rfj3hkxs9wIU1sSIv2K5NOiU7N0jXaEIMh03HD79qgF9ax8g_3PLcpCCNPtxa2jZ27UCT2q65KQkUC1P2z1jwW3PaUH0BFeg3_kZT2Bx5YGOLhF2v3pS4tBtYSnMPDzeDUIFByw0U-6FDMaC4d_-ysXvDRmc7WObZsspPIMd0gyp7rtDAv4y8FDMMBbLMyC2tgzUpiUC9KBQU_RcOxb6lTaeh25TENrB-LS69U9qDC9FTNV6VP8o86ay35QkjDvFCH4cwZE96pZLv4VEv7m40Un9RchJdF-MQfkfbBRWhDi3vb--STSOrZ9nSBRenBkpIQNXGr-c-_X3xMVgZppI0uDPfsbcZVow3XLka4tmhWTPAFN_yU7_RfDrcJrfsfoJs3hsg8zM6-WyNYAZ9mnfn2ltTi8SzvyXyOOLP3raQfV_BxTxRCpG_Kbp5k1CbSGPcwBL13J3OHJgBTB6fdhyzr9hBjKicqoXTm1p9tQ0CSyVwzyyayuM7YnEzgc72Mg6HmEFb4lzRJaRs468IeSGie4HwqNmNDbvtgGHi_E2atYplBYcvPVdqgLbJqw1jjsU6HFfAmcU48YJQFIN98ycSOZUykmfEad5IVwGbbvO0MAcDOtoV43glHGTJSX9QdQzfrAB5dWrg9LW1fvFDmwMa6byPmYqbWCXSrOXdfy4lhCuXktZxhzrgQ5vE0qG3yaPf10ZbvOxoz8Aiy0FMKtJSdey_kXDbdpZA3-T66mgoTboqK_e09sZ5f2vCNICtXGUFmRtjP64OQNMnZWl-OuO3IFaS0nlZDjcCeSQxZ0pB2qi-AOnMjWrXXpxlpGr4IGkc4UO8IteUMfSysQVZ1bdrzxUj4YsDvahL4U6i_99r7Y71XsglxbxN9LSWyMiKFAwh4U2vrlNoLI2TA5prjAExkxXhnftHBONuZv7R_8MYIi7tJUxSuGJSckKC77E27lIXc4EB47W38w4mIiGdK4FwC-agC2OjlPs54aPA7FW0UbLFul8IqeJAME4S_XmrNlF4jyDgL9Km4NbWxKor25x_iflFnq4RahSm8lc0PJCMxD8UHlo4dkgzQTfEY8EBh3Vk4rACLdf5R8MQMvVxhN3dd5i08dkpurKKXrLvYy7Agpbr_AwxvzeLYGJyp41is8b0sCemP1EDhxflCeJS9vf9uYnXE-fIQpqYX3kXOkd9Dg-uKZzV8dlcY-14jCF-MSbY1Qn7e2EvFBP6L8J3qasdFW71hRSsS3CyusCr1XEk_r1YiZyL0zzALBcWaNKT-xCsNfT3SNZqCI5a4M0sislieipZdImFjvi4HaJ7hsx8fS1KMXQ6B6iCYnwQVw_BMhJ4YDAkhKgRV-BXgWd7DobjqIEOqshHix7yulYrxmEy9EKPu1otswITUUxBlgH9TsoUd9FpZVEwE7VmXxHL2ELY7-xPb7Q94M69jGVCOGyyuVtEENhsI4R17bzAo1YQoT0K_-Sd8EWdsVxt83YVijIAoK_P-xy7sOwFkDtCtJzN-H5YZ12Fl3d3DSam_iwON8Lb9sa3MszCCJGZAsAssIPfXQvGEzohQZQmwsd759Rcv5okGzbZFCn0oj-9X67TEA5cpzgp3_hvdicpa5A0qtosnb1GlEbwNcYZu56WWOT2ElQ_6nBudf6B9rPi2tqytqe7z7QRkPyHnu-_F3kusWpIiyMzPJiPexDZXnqNTe3NPwwpqXjvz3HjWXZaWLtkA4lUJYK7rqs7E47bRXr8BHi07TtVrgX038HZ660FJzhTUBr8yvLs_pl8Lo5qDfTfdC4tAHMQjLH4PG7y6DnEjeqnzdbMV7MfFfx8-V4KCWKB3qfYlOSbadelrQDYO4MtnSRBw5TWEdIZhwhH7qxwKkQ_rw7Xbaeici5ETByGKJc7QZC6mjTtYAoXTyKf7gfRibLfTQuo3NRJdDUmITWiPDLVBMMINR3z-tGWD42BD8_inv8TKivcwPKGRT-mWPqJoEBkmyOpufiC9oLzG-vI39IwSInYauR6COHpg9csjB_YC82ZjvfPCzFabCvD6EDYRZa46d0DiXnxWHiAHqXaNrvuwT4i18cpCbN1yV9x9m3g3GDmTXgvIcXEgIrspdcyFukIQN5515VCuiVAFWJFNAr0y3JuaEd5kQAqXkX6QyRuFhKUJElY1CUVuGRkmqyjZ7iNOsJvQCxNr244cGXIAMTgyq82rs2xBE1KtqylNT1ZFGrjPEOjcPARTzagTbtLehoLoslaVCJeDjcmNO6BJLtuDzk6b9qjCBNDYSkfxQZ7q-4vPVNhCXlOggY8Scw8Q9T34xklVLeT_peC767-Eu6NpmOvegC0qczwlH0ePK-2OvIjGUE6fO7AvXfsNvJqYMnYj89IdFQj833VyCttn0jYF3Va346U96TnWxsp3LGtcc3gxoAitia84z2C1-CDcISHWakiAifqOBtDc7szLPf6_FAfLpRoj_8Ovz3kKe5gxyuc5FHBtb5K8eoNC4IuMymn0FiEiM0Tx_YXc-0Iur3PJJrvHX_Fu8uB8BVYNs5ZFd9m_-w0f5BiknvNVQnwpGrIQg1jv4iFg7hg4QA63cnyFq3pRsLoyXEb02AqUvkCBly00Wnt2vN_lt5Ee0SQryxX8oEeoMxUTvnhNTMhDwz02xzjOMSwrssUC7LRV8Ew-tlj_M3UTBm0VT0u1D5yntCOHfTPUsNxPv3pwtwMr4obNIFbQP_nHS8HBQ3MLNSwWLSggo1SeOPUsVN2Fp53EGiTl-2F4WQ3sWGzlUmrKHJc2iUjdUBX6e0U9VISiO2CikTi9pqS8_-YkCkqy9jl9XAL6mg7qcGiAOcfvmFUhuOXj01GB8aKMoGEEDYeKtNhEtoHB0sLybpjwc0z4ltptcQR4qJTJf8kIviFJ0-2sntLwdQki9vZ2UmfLpKwGvJNbnVU2Ko_XTl0VRdTBM5qyPCBzUIIvgaMIKNgVfsSIBNStt8wZnXt2mKHBxaNZEo28FRp0hebSkshcuQ-XWi9E2HwE3JmN1At6DSreac4XeJDXbRaHNtfC3-eKGJizTFhowRzxTLQ207UHzvsD2iBFOIRFf8RN5Ci5E4_zszTWeXaJ2Cn0fcS5FF49oNvN8C-yo9YZYz1GnnX5x3TKqJ7XdgyYalUW4UICk_ZoDIrVjnrGH_oVQ_I1VfIcUuOtqROko4spCJXZVIbm1haLgxjGd2oESj0T6Jn2ov1pc0yKzmcowKxT0UcjMa13z1ewvTJNfOGr9BMMrlVk9pr67GavgYwYyn9MAjt1UPmwwNVFC8-XnVljUz10IK1-logfjm7wz_kU6j9xb8sQcuE3SyIat50XcRNDZ7e5OdXLVRW9obvuKJqOrr4b_C-LO0bPZWP9equvEoCsulfE7XiS2SKWAwBboQeNYBkBVBAhqZ5NoQXpdl5DUeBjZC2MLWWojQSXAZUGIZNFJoidyrZQ_RsR_sPTHCE90TQacqTqKMqolLDCmmZVcig62CsBar15ojju_L4H_4EqwaAlclE7sOiTASQgTxkomvG3CWz1-81E6xvr3hbGwcNztP7Q_jEYaDtrJaNPSaYWTrmI7OuiuFkpQcMwxqnnoGQ_l1cMHlrKuaXswW645wpwppGLYLKFYdItr3bkhQ6_a0WBtLtCjraZuxXZUMdrLqvpdTHglB0DRrGZ6OcTLW6bbhtZYMFrZ2Vsjt_8dza94LeS1e1Kt0E3RkfRqPSx2bg-XV4OMbzyIniq2vK7vZn0zJFfYoyMj3IruJM-9HcNW2RJMJ-6w4zKo8u5haTCdOaMABLb6so0Ogd6m2w4cvpZunGvuVQXcn-6pkNamXlyW2OuUOEn1ILmlHMrHZCPcUXzBomIhUzvgTtO_1KV6hdgETb6uuYHKvKMEa7E97toEfci4gYHJUKqZ1osef9LUeQ9OzwGpX14zhyiaU7Ee7e1xc-wyllyzvym9cDYLhTgk8C0sc1ibZBEScwh8q2T2Fm7h00fDO0kb1fcsoNiu3B_9PxHYHoX03tbTb-pbdCMqt8WzjvrCWxlW_xeUOvbSP6B5KEMghtOB7mOMAlZysYelYee5saKfb5HoOlZ3xk-XhHiSzH1J-IU3V0Q5N3C7QFYFEbOIcOOvMEDQeJB2w04Kges856YMnZZ4BoqSkvUVvlrnghUQVGoPYoo0036HAyScMxvvXtOOK5s6wR6EgVba7GqTuUI5tq89-ZJjVAqeM7o5zVgqba8wk-oEzpb09ZVtdpXDnPIRJ8Gii0fv06Hm6n8pc9-b4TsjiKY7ZgDIbNtsqg_m3gnEom5PLQpOf6uns1WlvZ8SDZq1g6b_wCH3GibvskuC9Cw9Qi24Ng.jhXt3g-QUqeibO6LdVRpzw
         required: true
       tags:
@@ -886,10 +925,11 @@ paths:
           description: >-
             Authentication result delivered to the Service Provider's return
             endpoint via a browser redirect. On success the redirect query
-            string carries `code`, `state` (and `id_token`, per response_type
-            `code id_token`); on an OAuth2/OpenID Connect error it instead
-            carries `error`, `error_description` and `state`. See the
-            'openid-authorize' model for the shape of the success parameters.
+            string carries `code` and `state` (Authorization Code Flow — no
+            token is returned through the user-agent); on an OAuth2/OpenID
+            Connect error it instead carries `error`, `error_description` and
+            `state`. See the 'openid-authorize' model for the shape of the
+            success parameters.
           headers:
             Location:
               description: >-
@@ -2450,6 +2490,16 @@ components:
           format: int32
           example:
             3600
+        id_token:
+          type: string
+          format: application/jwt
+          description: >-
+            OpenID Connect ID Token (JWS), signed by the Identity Provider.
+            Present ONLY for the Identity Provider `authorization_code` grant,
+            where it is REQUIRED (OIDC Core §3.1.3.3). It is absent for the
+            `client_credentials` (machine-to-machine) grant. See
+            jwt_payload_id_token for the decoded payload.
+          x-jwt-payload: '#/components/schemas/jwt_payload_id_token'
     DelegationPolicyCreationRequest:
       title: DelegationPolicyCreationRequest
       required:
@@ -2715,19 +2765,131 @@ components:
           format: application/jwt
           example: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsIng1YyI6WyJNSUlHbERDQ0JIeWdBd0lCQWdJVWJsT1hOMmpiamVSaWJUcnoxN3FzTWd1Tlk4MHdEUVlKS29aSWh2Y05BUUVMQlFBd1hURWVNQndHQTFVRUF3d1ZaVWxFUVZObFUwVkJURTlKUkY5SmMzTkRRVWMwTVJrd0Z3WURWUVJoRXhCT1ZGSk9UQzFwVTBoQlVrVlVSVk5VTVJNd0VRWURWUVFLRXdwcFUwaEJVa1ZVWlhOME1Rc3dDUVlEVlFRR0V3SllXREFlRncweU5ERXhNRFl4TkRNME16SmFGdzB5TnpFeE1EWXhORE0wTXpGYU1ISXhDekFKQmdOVkJBWVRBazVNTVNRd0lnWURWUVFLREJ0VVpYTjBJRUYxZEdodmNtbHpZWFJwYjI0Z1VtVm5hWE4wY25reEpEQWlCZ05WQkFNTUcxUmxjM1FnUVhWMGFHOXlhWE5oZEdsdmJpQlNaV2RwYzNSeWVURVhNQlVHQTFVRVlRd09UbFJTVGt3dE1UQXdNREF3TURRd2dnRWlNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUJEd0F3Z2dFS0FvSUJBUUM4VndPQzIvWXVCNVpXeE5YMzNUYW55WFF6dEUzWWU3TjN0bTZsVGJ1OXEzbDlMYkNJeTlGelZvNHVWTjI1YnpKVDg2MlpQWXp4MFNrVVhvUkVUMFF0MnNMRFpZZ05SdjN0SDFuSkRFM0FKUlM4RUtDVlZ4Rllvc0tiQ2gzNDhadGRwd0tMVUtzUnE1M1VJcTBIaHF1bUptdHhVY2NUYk1OMXYwY1RXaDdXMVdBaVlRY0lqWmQwY0pweFBOYVRmVk5Ha093aHcyRDJTZlA4S0dlL1NicVBxVVUwVjNNNUJlWlRKS21HZDhJUzFlRUk1ZmRrK0ZhUGhRL2ZjbC9NaHRobzhXclJNVW1tNWw2Q21tMkkrbHVxVThSbkVQVjFYUlpJUFlzcmlJc1ZyaUFyb2FjNTdYaTB2SHh3bGUwK2JPdzJWZkpMUmgwM2l3NGFEMTVHKzYxVkFnTUJBQUdqZ2dJMU1JSUNNVEFPQmdOVkhROEJBZjhFQkFNQ0JrQXdEQVlEVlIwVEFRSC9CQUl3QURBZkJnTlZIU01FR0RBV2dCU3pHazlDUU9uWWVKMXIvL3drc0JDeE5EendpVEJYQmdnckJnRUZCUWNCQVFSTE1Fa3dSd1lJS3dZQkJRVUhNQUdHTzJoMGRIQnpPaTh2WTJFM0xtbHphR0Z5WlhSbGMzUXVibVYwT2pnME5ESXZaV3BpWTJFdmNIVmliR2xqZDJWaUwzTjBZWFIxY3k5dlkzTndNQkFHQTFVZElBUUpNQWN3QlFZRFZSMGdNQjhHQTFVZEpRUVlNQllHQ0NzR0FRVUZCd01FQmdvckJnRUVBWUkzQ2dNTU1Gc0dDQ3NHQVFVRkJ3RURCRTh3VFRBVEJnWUVBSTVHQVFZd0NRWUhCQUNPUmdFR0FqQTJCZ2dyQmdFRkJRY0JBd3dxVkdocGN5QnBjeUIwWlhOMElHVnpaV0ZzSUdObGNuUnBabWxqWVhSbElHWnZjaUIwWlhOMGFXNW5NQjRHQldlQkRBTUJCQlV3RXhNRFRsUlNFd0pPVEF3SU1UQXdNREF3TURRd2djY0dBMVVkSHdTQnZ6Q0J2RENCdWFDQnRxQ0JzNGFCc0doMGRIQnpPaTh2WTJFM0xtbHphR0Z5WlhSbGMzUXVibVYwT2pnME5ESXZaV3BpWTJFdmNIVmliR2xqZDJWaUwzZGxZbVJwYzNRdlkyVnlkR1JwYzNRL1kyMWtQV055YkNacGMzTjFaWEk5UTA0bE0wUmxTVVJCVTJWVFJVRk1UMGxFWDBsemMwTkJSelFsTWtOdmNtZGhibWw2WVhScGIyNUpaR1Z1ZEdsbWFXVnlKVE5FVGxSU1Rrd3RhVk5JUVZKRlZFVlRWQ1V5UTA4bE0wUnBVMGhCVWtWVVpYTjBKVEpEUXlVelJGaFlNQjBHQTFVZERnUVdCQlJBdHJ4TFpQQ2JCbnlQYy9ualdYYk9zQy95Q1RBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQWdFQVJzTktsVFBnVWRNTGZMU1V3b2ZuKzNSZmM2amVIR2d6bCtxQ29MMlRkbmxOOWZFdHY1TlMweFZyL2x5Ykx1MDFQdUk0Mmd4bmgvZ1BLUDA2ZlV1VXI1WVpySzVNeHczUUhZdzhpdlNDcndvcE1zSUhob1FjN0g2MUtZNlV1WlFJVXRCUitHdmVBVUx4NC9Vd2pKY0MrdTM3aWd3akZ6QkVneUQ1dzJGNHViajh5N0hlNEthVGhBM2xOVmkwVXprdDhUb1NBNnBoSTA2eTMwREYyUGN3UkloT1NkT1NSMzJZVTZxVXgxSXJnRU13K3VYa3NMYmt4eU0rdjQxek9jMkh5alpXZGpJTFZLbDBQYnhXcE9DYmdndm4wdDE0anhzaVVoekRFcHd1RVNFZHJhUnBoaVVrWlMrbHdqeEhEengyRlhVKys0d053ak9yUldhdXlkSHlsaGZtMlMvMWFwTmlvUk0zcXZscXVrUWEyVzhqZWRYR2Y5d0tEcDZBc2VBK3RlNWJVb1VRUGZTYnNzYWFHMllucWRjNTFDbk1WZldmemlZWTJ3RWpKVHpwZ004SXRmRDlrV1VXbWwxYi9wODhiQ3RTZFZLbHFKRUlXazdvK1V5QTZCUFBIVUhsUkRRNlU5aGlCM3dGeHQ3K3FPNXFDd2hPN0xkSmkzNEZtUEE4WHhOdHZCMjB6dFlveS9PcXlDanVUbUxQU0p6Yk9BcVlPSzl0TmozSU5aMWUvZjdYV2Q0ME9JVnRXeFYzdEM4ZUQ4TS9zV0k3ZUt2ajhET0JWcDBjMkNBL1E2ekVRSzNTNWM5U1ZuVGZLQzQ1RFhWaU8zYTV2cGhHakNlSG5EWWN4SmpHTzZ3d0szR1hmNHVGeVZzRjducGVoN1N2NnR4UDE5QjBnWHprWWdFPSIsIk1JSUYyakNDQThLZ0F3SUJBZ0lVUEczK1RBbnhWT0JjZTlOYVB0OXBUQWdtNVI0d0RRWUpLb1pJaHZjTkFRRUxCUUF3UWpFZU1Cd0dBMVVFQXd3VlpVbEVRVk5sVTBWQlRFOUpSRjlUZFdKRFFVY3pNUk13RVFZRFZRUUtFd3BwVTBoQlVrVlVaWE4wTVFzd0NRWURWUVFHRXdKWVdEQWVGdzB5TXpBNE1qVXdPVEF4TXpKYUZ3MDBPREE0TWpVd09UQXdNRFZhTUYweEhqQWNCZ05WQkFNTUZXVkpSRUZUWlZORlFVeFBTVVJmU1hOelEwRkhOREVaTUJjR0ExVUVZUk1RVGxSU1Rrd3RhVk5JUVZKRlZFVlRWREVUTUJFR0ExVUVDaE1LYVZOSVFWSkZWR1Z6ZERFTE1Ba0dBMVVFQmhNQ1dGZ3dnZ0lpTUEwR0NTcUdTSWIzRFFFQkFRVUFBNElDRHdBd2dnSUtBb0lDQVFEYW5VZ00xL1BReVhOVFgrVU9MR3JaalM4SGFUV1IvUDR4RDhTTUNSeE9YSEt6SExRcUVRT3VIRC93K3J4OS9iRXd6SDR3VmZKMG02L3I1NktPZzB3TFVsVndPeWlrT1hHb0lURDJ1K1VpOXQyNHRZSWt4OHpqTEc3VkhWY3c0ZFhPdDkyc3ZLWTFMeWJ2bHByb1d6VEhsUndvSU8xWVE0aE8rcnlic3cvS0VERVhVYmtvd2psSEFQY3duc09XNjQzNjdFTitlelQxc1M4ZHpGSXhtRzhxQzJMck0yc1hKV3FxNXZKZUUvODZUZloyTk1PK0NVeGtqajd1UGdiVzJWL01PVWhZeUF0R0FqemQvS3dPckxNUk1ZYVhPSWo2MW04UjcxbmgvTFY5bjhkbmowd1RRT05USGh1TTdtZFpReGhxT2RrTDJja1NyQldpM2F0RVZUMU9oQlJYNEZtbWhJaG1TV3VDdGd5S2lEQ0lvdHlHQXNYMm82ODE3ZmVlNFJkdHdmdzlRNG9OM05BaHRvZDYwaU9BV0FwVnQrQlQ1dHZkZ0dPWVdQY2JNUjVwR3picDM4ZEdVeXV3WVpWNExBbklHU201eWF1Y05FMkUyeHJRQ2JFZVptNFJQc3g1SmxlV3ppcGsrNDJkN3ZxdldEODhJUWNRK2JaTTJYNHJKQlpOczE2NkNseCttNkhtS3hLQUxlYlV0anN6c2d5SDhjcTEwZCtrNEFvOG9DYU9ZanYySWFFYk1kK2ZWL1VmOGtQa3pUdEtsdHRkcWlpeG9JcXljWE1FZ0JhU2drdWI3WG9RNksyNnRSUEowdzVRa3V1aDNNS3RHRVdmVzdFRUdtcG5DcWpPdjYvckFNSmlNV3loMUlnTGdOQlVQUDd6YVZQcERBdEM4OE9TSlFJREFRQUJvNEdzTUlHcE1CSUdBMVVkRXdFQi93UUlNQVlCQWY4Q0FRRXdId1lEVlIwakJCZ3dGb0FVNHViWDBwNkRWak45REt0T1dXTVlBcytIeGRRd0dBWURWUjBnQkJFd0R6QUZCZ05WSFNBd0JnWUVWUjBnQURBcEJnTlZIU1VFSWpBZ0JnZ3JCZ0VGQlFjREFnWUlLd1lCQlFVSEF3UUdDaXNHQVFRQmdqY0tBd3d3SFFZRFZSME9CQllFRkxNYVQwSkE2ZGg0bld2Ly9DU3dFTEUwUFBDSk1BNEdBMVVkRHdFQi93UUVBd0lCQmpBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQWdFQVp2NUd1a3gwUEV2VlJFSXQ4TVRhUGZDSDRhd3lpaVl5aTE3aDZSNUxMazFyZXJ3UXNTU1NIZlZxZnRkd1JGMG9jTHAyUFhKaGUwNzVxVjQwNkMwNENqYW1OazNlejlaaU5IQ05qUHRmaWQ2b094cXoxWGs4WFBqTllFbGJBRm1QN2VLbC80NDF2WmhHdWsvUmhYR054UWJ0bzBRMTZnOElSY0dEdldnTmh0cnRCMUcyeFNtdEIxUzJ1VXBTYWlaVk5PcmtkelRoaUVKc2VVUkJvWHhVWElxcEx5UFRSbDZNTWdWYUxHUllSYzN2WWlqNEI3TTJoQk43L2NqbkdMc01WdGdiT3Y2Q1YyMWcyU1hvd2JnT3F6QnlINTFVVFI2T2JIaUdqMGtTQ0FMRzE0SVFQa3pRUGlTcGp1Kys5TTJqQWpQTTNvNDIxWk9VRE1QMjQ2Q3NxUFhyVEFiUFhKVlVSL2dpNHU1M2ttekMyMTBqdlZxOWhId2VseFFPVFBGaGxNNkUxQ2g0SmI0UFFSTEtEUEZsKzVOVzRGeTJKQURqeXVweVZIbmNkTEV1UHkwUGdDTDJZbzE0N0hTcFBqNHU3amMxUm1IVTdOTzEyRVYyWkNNZkZsUndkR3Y2aWY4cU83cy82bHBaSmpwUHRMRU9iQTV0RDRhaGMrYVBOQWk5V0NrMHBlUm0xS0U1VkdEV0tGTlNOQWlMSk56UDdtMlE2eThmT3kzOGNOZ0ZCaEdPRi9LZ0VJc1QxMFYrNUs1byt5bFZWdFBWZVJSRU5FdktPOUVMa3plMElIZ3NUQi82Y3dPaWo0cHhNOUp2YXVqMDZHZ2xoSWhpSUE2cTBpRFVxQjFNVVIwSHppWTlCc25XWTlrUjhod1YzT1crbnNtenRRd0dWRXcya2pVPSIsIk1JSUZqakNDQTNhZ0F3SUJBZ0lVRmo5LzNqR09SaHRJcFo5OE9MUnRSSHMwQVlzd0RRWUpLb1pJaHZjTkFRRUxCUUF3UVRFZE1Cc0dBMVVFQXd3VVpVbEVRVk5sVTBWQlRFOUpSRjlTYjI5MFJ6SXhFekFSQmdOVkJBb1RDbWxUU0VGU1JWUmxjM1F4Q3pBSkJnTlZCQVlUQWxoWU1CNFhEVEl6TURneU5UQTVNREEwTkZvWERUUTRNRGd5TlRBNU1EQXdOVm93UWpFZU1Cd0dBMVVFQXd3VlpVbEVRVk5sVTBWQlRFOUpSRjlUZFdKRFFVY3pNUk13RVFZRFZRUUtFd3BwVTBoQlVrVlVaWE4wTVFzd0NRWURWUVFHRXdKWVdEQ0NBaUl3RFFZSktvWklodmNOQVFFQkJRQURnZ0lQQURDQ0Fnb0NnZ0lCQUw3bnpreW9GWFdnMWdoZEc2Zm51enV2QWRNV3NtL0krbVgzRGJ6M0kvS3lxTGRXdDdYRzNPV1ZTbmhvc0FEMlcyU1hubEdYcXh5ZTBoUHRFZ2tRSWRlbDdGbkZvc1dXcnNFT3JhdGdYbG5NNE5XcFlES01XRVZZcm83aHpIZ0NaMTI2WlBRVUxsczUyTmN2cFJNOFMzZFprK1hLMWtmM1ZlUzBKMmhVU0ZFQVpITHlYQ1hraFRuVUk3cW8xdXIxVG1EV1lzTlF3eERHT3U3Q1F5WllkS0l3S3FJOWVHc1JMZ002UFFsZzN2WkNyb3BPb2RNN2xvVHVpckNsM1VLdzRIckdrMmNPaUFmNElkLy9lYVZDYWZ3a2pLc0pUUXVBYWh1Uno0cU1zSFlBM2tEUXorMCtoZ25SNzRyK2lMcis4bHIwNDRnbG5hV0lXdnJFR2NpUlIrUGVjdGZyTE9RUUlXN2hhMTNkeldvemtUMGFnblQxTGsvQ0dyZ05YVnFob3NHQzBydUFRUEk2RGNQTnkySU5NOUpndENtQnNTak1NMTg1RklCWDRDeTE3bTczaDlyS2pYWk14YjZUeFg3Q0laeWVzZ0FTMGJCUmI2eElwS3NacmxyakVhenNqQzJWSFJSV09NSldZcWNYTEQ1Wk56R01aVXI2VHQyeUNVQXRhbWVjREFUS042L0dic3hlMHRBQk4wcGswcng1aWMrNFRYZEJyb045T0FaY2hINHRKQ3NPQ0tvbkN6QXBQeFZUaEROTXhzb295RnE5RG1nWGh5RVVPT29lUytGcjRGZ0gralNBTm0vbDE3OEpoOWVwZlhROWdFLzZhcVB4WWpOU0JnUzYwUzFFVnFDcHh3MnJUMW1VWWVHZndpYlZtNTNpeEdwdFI4a3RlNzBuQWdNQkFBR2pmVEI3TUE4R0ExVWRFd0VCL3dRRk1BTUJBZjh3SHdZRFZSMGpCQmd3Rm9BVTJMdWJOUzFiUCsvaGE4dk1ETStpTHJwcGVvd3dHQVlEVlIwZ0JCRXdEekFGQmdOVkhTQXdCZ1lFVlIwZ0FEQWRCZ05WSFE0RUZnUVU0dWJYMHA2RFZqTjlES3RPV1dNWUFzK0h4ZFF3RGdZRFZSMFBBUUgvQkFRREFnRUdNQTBHQ1NxR1NJYjNEUUVCQ3dVQUE0SUNBUUI4anFZVXc3VHYrVzRaSDA2UHJhRjZ6ZmRDeFQwM0RoUkNodzRaL1FtMFhWUzJnUnlSd2NNcHRRRkVSaFBOT0EyMjF1OUxxb3paMWFLM0IzNXdrY0dEL2RGSmdKQ0pCOTZTTXR0UWwySHAvRWlRejlQRkYwMmRCU3J1WGhJYXJhUGJNK05JR2RteU4yWnl3R0dYSTFhVTdKRDNYRzI5U2gyQUFkT2t2OGRJNmdFZ3p0L0RIU0lJYmFrYmFMZEVJYzdXQjk1R1VIY0huTmo1OFR6VFN5VmZCbXRiM3ZCSzlKRzBJbzZOQVBXUVl4MlZQOCtmSXlsamEyZDEyOGhnaDBkc0RyWEZBTSs5QVg4aGFlNXZ2eFZpOFRXcy96MmluZytrK2ltbXRTTmZ6ektNaU83cjV3SkFreWp3dFVCbEJTdEtJQTZaZXIyMnBtU1RaWmV1Y0hkRVRoYWJjV1FpZFZabU1QM0lmNml4NVVleVg4VjZPQXcwZ3NJM0lVYjkxUTc2ZDRzTFdiem9HTk9OQVlGQzFJeXoweFdqNDdaZDZQN1oyR2ZoMVZpSWJNeFZpRkRsTm1iRVpmbHBFUzg3Sy95aEJVUS90bkNOR1FvU2R0c3V5dVdnM05mV2J5Sm9OWnpsVTk2Sld4Y3FTYVhrenNlOWo4d2FoYXlLTk02U1dLU1kxWjA1aDhKU2NPQ21GQjVGOFYzYmQ1blAvdUtqYTdIOE80R09BQVBNM090RytlcTM3eFcveE4wb0FzamJ2dDRvam5VYkpzMmtpQXhFZHdYeDBLN21jUGVTN3pXbVZ0OGg0UmRjRG0vUEdURGE5bThPcWhRdWNrODBRbnV4SVVXVnI3R1dhZGgxTHkvdGwwK2J2bWtjbk8yeWJSSitnYnFSRUhEVGUwc3hzdz09IiwiTUlJRmN6Q0NBMXVnQXdJQkFnSVVDdmZTdlFlcmpGRG1NMkx2bWpvVERPSW5MQXd3RFFZSktvWklodmNOQVFFTEJRQXdRVEVkTUJzR0ExVUVBd3dVWlVsRVFWTmxVMFZCVEU5SlJGOVNiMjkwUnpJeEV6QVJCZ05WQkFvVENtbFRTRUZTUlZSbGMzUXhDekFKQmdOVkJBWVRBbGhZTUI0WERUSXpNRGd5TlRBNU1EQXdObG9YRFRRNE1EZ3lOVEE1TURBd05Wb3dRVEVkTUJzR0ExVUVBd3dVWlVsRVFWTmxVMFZCVEU5SlJGOVNiMjkwUnpJeEV6QVJCZ05WQkFvVENtbFRTRUZTUlZSbGMzUXhDekFKQmdOVkJBWVRBbGhZTUlJQ0lqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FnOEFNSUlDQ2dLQ0FnRUF4Vk1LSTlSTWhuT1NBMkxvcmdFQzNZRE5kMml0bjcyTE9kZlJSVXU0NWZHNzBJZXYrRTRrUnJ6SjFrMjNXWEg1c0hUYmNzbHBFVGVBWm5qMC94S0JZZEVMdXdlNkhYOGtJd2QxczZXR2xaYzBsN2tpMWZtajRIcVNzdEdKL0JLR2oxYTcyMzZXd1BKRVdFSHFmeDlRTUVldUpLbFVTVkZGeUU0ak1zZllwODdpZklwdXdFOG9MT3c0eWtERE9QNTJUZDA2dkhDSVlycURCcnZ4RmRBdUVuRnhOeGxQWFJFNGdMc3lnZzYySE94T3VHbWhXZnN5NlRjY0lwNVhJT2RqMkN6ZW9YSjgybTUvaW1CUEp2a2VmbnJqRVFYemlTRTJtaTJJQkR0R1AvQXdGV0k3V3BzRXlEWFdJbU1TUjBUM0N1RG1rZVExNHBObWNxTXAvYnFYM2kxYWV0YWRGVFdzdWhsMG5IMmlScUtaREp4WmxTY3U5OXRvcTVHcmRjRlVjeEdSUXlsK3NGaFVoM1hjQldKVjdZMnduRkwydFk3dGh0UThaUG16VE84a1BLQ2JFbDVVNmdDU0lrcFJQTlpCUEc0ZFQwcXUrOEJkNzFQdTduQXkxaUI0VTZ5czM0Y0ZsT2xKcEdNMEZHcjM1TGVmYlBSOGJnejZNOVhOalJiZ01EUWNYRE1uZmlESjdFODFvVkJwQ1hOOXlkSGkxYmxoYWt1RUJhb2E5TS9rYXppcEdQbUF1eHJXQk1tcDJxMHd6UXA5R1MyZThrZUpJRHdKdXl6RUxhUlpDNHlqVnNWWlFNSy8vRCs0SjNib1U1ZHJDbW1tNkMxcndOUmZTWnVGR05jSVlEWmVIdGVHb0NGNEVBNWpjZ2RGYUlZckRlajZWQWFiNDJ2TjVMVUNBd0VBQWFOak1HRXdEd1lEVlIwVEFRSC9CQVV3QXdFQi96QWZCZ05WSFNNRUdEQVdnQlRZdTVzMUxWcy83K0ZyeTh3TXo2SXV1bWw2akRBZEJnTlZIUTRFRmdRVTJMdWJOUzFiUCsvaGE4dk1ETStpTHJwcGVvd3dEZ1lEVlIwUEFRSC9CQVFEQWdFR01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQ0FRQmJjSHlWMmI1bUd3SFd4Q1NiRHdyNVY3UGdTWklKYTFzY3JDbklIRDNaL3l4RzdYcDVjSWxCajRNeTRsUkhqWnRKVnZVZlRqRnBzRURFdi9QQXE3NE9Jb2xOL2tQZE1mVGN6RkJHcHZzWnIweDJ5VVBFSnpRc1RTTHgwZ3daK3d2b0tIV0UwQzdHcWdrQUJOckZXOEZMcVJ6TnFYc21NNW9JNGMzVjVzeXh3QllGRFVZNU1QV2RxSkVEZlJ2ampKUENYbUtPUDFsTytpK0UwN3ZzRnBEekhTMkZLQjVjNnNUSVprdnQrSC9DRzRoVnU2WnZjRlhYenYySksvRW9WWjZ3VWRDbHQ0cExnVFFaL1cwcVFDSjNHakZlL1BaNzRtY2tXMXgvems5ejBWUWpVcFRxejNBalBMSWpqNjBuTUxUTHA1MG9GY01ManVYc3MwdnY0dFVqQ1RwczJRZzluMEd3TGxEUjQyTnl3MlRLY01NQjZ5Y0VvTmlVRXUwbGdhMUpNMFNWU3NGUDdHU1UvVzlWcWF0Szd4cC9YVzkvR0R2Z3AzWi9wUE0wRTNpMXRxcC9uT1U0M1lvZjhXaTRKSjZ6T2dYQnpxUXhPNk1JTFpKNHFFZmVuQXRJN285NVR5NXlrOXZSYm9Vc3R5d3NmQzZDVnN1MDhOTC90dHc0T1NYT3Zia1ErN3pNeENZVDlZeVFENWwvbHRDM2JnZGovbEJaem5zQnVHWU5PQjE2d0ROY0dwdXVhZWtzZlFmQkRQSFQrdlI2Z1BWRlpweVZ3eS90ekg2TlRwVUdEam9IVnNDeFVqWTg3ME9NNEQySmNqOU9JcXFkbGtDb1dPNmk0VmVjN3NUenhpWDM5b05TcjFHN0NvYmMzc1lkaG54Zy92bGcxQmVDSjg3cDBBPT0iXX0.eyJpc3MiOiJkaWQ6aXNoYXJlOkVVLk5MLk5UUk5MLTEwMDAwMDA0Iiwic3ViIjoiZGlkOmlzaGFyZTpFVS5OTC5OVFJOTC0xMDAwMDAwNCIsImp0aSI6IjdmYTFlYzM5YmFjMzRmZmZhMmNhNDgyMDFlNDhmMDNhIiwiaWF0IjoxNzExNDY2OTg1LCJleHAiOjE3MTE0NjcwMTUsImF1ZCI6ImRpZDppc2hhcmU6RVUuTkwuTlRSTkwtMTAwMDAwMDEiLCJkZWxlZ2F0aW9uRXZpZGVuY2UiOnsibm90QmVmb3JlIjoxNTQxMDU4OTM5LCJub3RPbk9yQWZ0ZXIiOjIxNDc0ODM2NDcsInBvbGljeUlzc3VlciI6ImRpZDppc2hhcmU6RVUuTkwuTlRSTkwtMTAwMDAwMDUiLCJ0YXJnZXQiOnsiYWNjZXNzU3ViamVjdCI6ImRpZDppc2hhcmU6RVUuTkwuTlRSTkwtMTAwMDAwMDEifSwicG9saWN5U2V0cyI6W3sibWF4RGVsZWdhdGlvbkRlcHRoIjowLCJ0YXJnZXQiOnsiZW52aXJvbm1lbnQiOnsibGljZW5zZXMiOlsiSVNIQVJFLjAwMDEiXX19LCJwb2xpY2llcyI6W3sidGFyZ2V0Ijp7InJlc291cmNlIjp7InR5cGUiOiJHUzEuQ09OVEFJTkVSIiwiaWRlbnRpZmllcnMiOlsiMTgwNjIxLkFCQzEyMzQiXSwiYXR0cmlidXRlcyI6WyJHUzEuQ09OVEFJTkVSLkFUVFJJQlVURS5FVEEiXX0sImVudmlyb25tZW50Ijp7InNlcnZpY2VQcm92aWRlcnMiOlsiZGlkOmlzaGFyZTpFVS5OTC5OVFJOTC0xMDAwMDAwMyJdfSwiYWN0aW9ucyI6WyJJU0hBUkUuUkVBRCJdfSwicnVsZXMiOlt7ImVmZmVjdCI6IlBlcm1pdCJ9XX1dfV19fQ.dNiITX_uHj3CJagOm54W-_MD2PXIsh1snviAtuoRbc7a7nRkQXZShJJDpldpyQOugsqFFhgLedUXM5z8kST0-5a9BNaaxrW5KAZNqyXtDgudRgB8T2vrohcmgLin39pgvD1gydoHHIXolJxPHCOYdxAamMD-8umvTzCFogjdwFaB9RMVWUHMbDuAZGYup-lSewuIK2pkwKJZft5ZRWxfignBBt2mauB4wot5Z92VLPReNA8EH0R9C_GkykP6pRCu2Km7La3c116WNP0szN02l8P87rqVNwDsjLpzhpH1cs17shDvbis8DbKb3KsHnq_LALAG9nx4GOFrupxuAadhGw"
     openid-authorize:
+      title: OpenidAuthorizeResponseParameters
+      description: >-
+        Parameters delivered to the Relying Party's redirect_uri by the
+        /connect/authorize 302 redirect. In the Authorization Code Flow only the
+        authorization `code` and `state` are returned; no token is sent through
+        the user-agent. The id_token is obtained later at /connect/token.
       required:
         - code
         - state
       properties:
         code:
           type: string
+          description: OAuth 2.0 authorization code, to be exchanged at /connect/token.
         state:
           type: string
+          description: Opaque value echoed from the request, for CSRF protection.
+    jwt_payload_id_token:
+      title: jwt_payload_id_token
+      description: >-
+        Decoded payload of the OpenID Connect ID Token issued by the iSHARE
+        Identity Provider (OIDC Core §2). Obtained by the RP back-channel at
+        /connect/token in the Authorization Code Flow (never through the
+        user-agent).
+      type: object
+      required:
+        - iss
+        - sub
+        - aud
+        - exp
+        - iat
+        - nonce
+        - organisationIdentifier
+      properties:
+        iss:
+          type: string
+          description: Issuer identifier of the Identity Provider.
+          example: did:ishare:EU.NL.NTRNL-12345678
+        sub:
+          type: string
+          description: Pseudonym of the authenticated human user (see human pseudonym section).
+          example: 419404e1-07ce-4d80-9e8a-eca94vde0003de
+        aud:
+          type: string
+          description: Audience — MUST be the Relying Party's client_id.
+          example: did:ishare:EU.NL.NTRNL-10000001
+        exp:
+          type: integer
+          format: int64
+          description: Expiration time (UNIX timestamp, seconds).
+          example: 1504684475
+        iat:
+          type: integer
+          format: int64
+          description: Issued-at time (UNIX timestamp, seconds).
+          example: 1504683475
+        nonce:
+          type: string
+          description: Value carried over from the request object; binds the ID Token to the RP session.
+          example: n-0S6_WzA2Mj
+        organisationIdentifier:
+          type: string
+          description: >-
+            Validated identifier of the organisation the authenticated user
+            represents. SHOULD follow ETSI EN 319 412-1 V1.5.1 §5.1.4.
+          example: NTRNL-10000001
+    jwt_payload_authorize_request:
+      title: jwt_payload_authorize_request
+      description: >-
+        Decoded payload of the OpenID Connect Request Object (the `request`
+        parameter) sent to /connect/authorize. Signed and then encrypted as a
+        JWE to the Identity Provider (the intended iSHARE deviation). PKCE
+        (code_challenge / code_challenge_method) is not part of the iSHARE IdP
+        profile (confidential PKI clients).
+      type: object
+      required:
+        - iss
+        - aud
+        - response_type
+        - client_id
+        - scope
+        - redirect_uri
+        - state
+        - nonce
+      properties:
+        iss:
+          type: string
+          description: Issuer of the request object — the Relying Party's client_id.
+          example: did:ishare:EU.NL.NTRNL-10000001
+        aud:
+          type: string
+          description: Audience — the Identity Provider's id.
+          example: did:ishare:EU.NL.NTRNL-12345678
+        response_type:
+          type: string
+          enum:
+            - code
+          description: MUST equal the outer response_type.
+          example: code
+        client_id:
+          type: string
+          description: MUST equal the outer client_id (the RP party identifier).
+          example: did:ishare:EU.NL.NTRNL-10000001
+        scope:
+          type: string
+          description: MUST contain `openid` and `iSHARE`; MUST equal the outer scope.
+          example: openid iSHARE
+        redirect_uri:
+          type: string
+          format: uri
+          description: URI the IdP redirects back to; MUST match the value later sent to the token endpoint.
+          example: https://rp.example.com/return
+        state:
+          type: string
+          description: Opaque CSRF token echoed back in the authorize response.
+          example: af0ifjsldkj
+        nonce:
+          type: string
+          description: Random value bound into the id_token to mitigate replay.
+          example: n-0S6_WzA2Mj
     UserinfoResponse:
       title: UserinfoResponse
       type: object
       required:
         - userinfo_token
+      x-jwt-payload: '#/components/schemas/jwt_payload_userinfo_token'
       properties:
         userinfo_token:
           type: string

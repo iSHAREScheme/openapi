@@ -2676,14 +2676,14 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/policySetEvidenceRequest'
-            delegationPath:
-              type: array
-              items:
-                type: string
-            previousSteps:
-              type: array
-              items:
-                type: string
+        delegationPath:
+          type: array
+          items:
+            type: string
+        previousSteps:
+          type: array
+          items:
+            type: string
     policySet:
       required:
         - policies

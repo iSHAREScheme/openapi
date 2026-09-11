@@ -1736,9 +1736,9 @@ components:
           description: >-
             Optional identifier of the Service (Capability) of the Service Provider for 
             which this AR is selected by the Entitled Party 
-            (#/components/schemas/Service/identifier).
+            (#/components/schemas/service/identifier).
           type: string
-          example: /capabilities
+          example: get-capabilities-token
     partiesInfo:
       title: partiesInfo
       allOf:
@@ -2032,7 +2032,7 @@ components:
             for example for specific purposes in a dataspace, then the identifier of the
             extended service must be used.
           type: string
-          example: /capabilities
+          example: get-capabilities-token
         title:
           description: >-
             Free text human readable name of the service.

@@ -2012,6 +2012,15 @@ components:
             $ref: '#/components/schemas/service'
     service:
       title: Service
+      description: >-
+        A service (capability) offered by the party. For self-defined and 
+        dataspace-defined services the granularity of an entry is the provider's 
+        choice: a single entry may describe an entire API, in which case the 
+        identifier is a URI for that API, endpointURL its base URL and 
+        endpointDescription a link to its OpenAPI (or other) description, from 
+        which consumers learn the individual operations. Entries per operation, 
+        identified by their operationId, are only required for framework-defined 
+        services.
       type: object
       required:
         - identifier
@@ -2026,11 +2035,11 @@ components:
             Free text identifier of the service. Must be unique within the capabilities 
             definition, a URI is preferred. For iSHARE defined services, it must contain 
             the predefined identifier (defined as operationId in the iSHARE generic 
-            OpenAPI specification). For other services, it might for instance refer to an 
-            operationId in OpenAPI specifications, or other forms of identifiers in 
-            other specification formats. If an iSHARE defined service is being extended, 
-            for example for specific purposes in a dataspace, then the identifier of the
-            extended service must be used.
+            OpenAPI specification). For other services, it may be a URI identifying the 
+            API as a whole, an operationId in an OpenAPI specification, or another form 
+            of identifier from the specification format used. If an iSHARE defined 
+            service is being extended, for example for specific purposes in a dataspace, 
+            then the identifier of the extended service must be used.
           type: string
           example: get-capabilities-token
         title:
@@ -2123,8 +2132,9 @@ components:
               example: "1.0"
         methods:
           description: >-
-            Array of operations supported by the endpoint. It could be HTTP methods 
-            when the endpoint is HTTP based, for example: GET, POST, etc.
+            Array of operations supported by the endpoint, for use when an entry 
+            covers more than one operation. It could be HTTP methods when the 
+            endpoint is HTTP based, for example: GET, POST, etc.
           type: array
           items:
             type: string

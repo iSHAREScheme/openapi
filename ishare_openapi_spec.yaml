@@ -2129,6 +2129,33 @@ components:
           items:
             type: string
           example: ["GET", "POST"]
+        authRegistry:
+          title: authRegistry
+          description: >-
+            Optional object which contains details about the Authorisation Registry 
+            that must be used for this service. Publishing it per service lets other 
+            participants discover the Authorisation Registry for a specific capability 
+            directly from the capabilities response, before falling back to the 
+            Participant Registry (see the Authorisation Registry discovery logic in 
+            the iSHARE framework).
+          required:
+            - partyId
+            - url
+          type: object
+          properties:
+            partyId:
+              description: >-
+                Party Identifier of the Authorisation Registry provider that must be 
+                used for this service.
+              type: string
+              example: did:ishare:EU.NL.NTRNL-12345678
+            url:
+              description: >-
+                The URL pointer specific to the party where authorisations can be 
+                queried/checked from.
+              type: string
+              format: uri
+              example: https://ar.isharetest.net
     trustedListResponse:
       title: TrustedListResponse
       type: object

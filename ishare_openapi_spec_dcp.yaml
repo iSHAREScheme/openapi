@@ -135,7 +135,9 @@ paths:
 
         The credential types that are defined by the iSHARE Framework are defined on the [iSHARE Schemas Site](https://schemas.ishare.eu/v3/).
 
-        An iSHARE Participant Registry must at minimum issue a [Participant Credential](https://schemas.ishare.eu/v3/party/schema.json). An iSHARE Authorization Registry must at minimum issue a [Data Rights Credential](https://schemas.ishare.eu/v3/data-rights/schema.json).
+        An iSHARE Participant Registry must at minimum issue a [Party ID Credential](https://schemas.ishare.eu/v3/party-id/schema.json). An iSHARE Authorization Registry must at minimum issue a [Data Rights Credential](https://schemas.ishare.eu/v3/datarights/schema.json).
+
+        Which other participant credentials a Participant Registry issues depends on the [credential packaging model](https://schemas.ishare.eu/models.html) it serves: a Framework Compliance and a Dataspace Participant Credential (semi-modular), a Trusted Participant Credential (consolidated), or one credential per claim (fully modular).
       operationId: get-metadata
       responses:
         '200':
@@ -153,10 +155,47 @@ paths:
                       "issuer": "did:web:issuer-url",
                       "credentialsSupported": [
                         {
-                          "id": "https://schemas.ishare.eu/v3/party/schema.json",
+                          "id": "https://schemas.ishare.eu/v3/party-id/schema.json",
                           "type": "CredentialObject",
-                          "credentialType": "PartyCredential",
-                          "credentialSchema": "https://schemas.ishare.eu/v3/party/schema.json",
+                          "offerReason": "reissue",
+                          "credentialType": "PartyIdCredential",
+                          "credentialSchema": "https://schemas.ishare.eu/v3/party-id/schema.json",
+                          "bindingMethods": [
+                            "did:ishare",
+                            "did:web"
+                          ],
+                          "profile": "vc20-bssl/jwt"
+                        },
+                        {
+                          "id": "https://schemas.ishare.eu/v3/framework-compliance/schema.json",
+                          "type": "CredentialObject",
+                          "offerReason": "reissue",
+                          "credentialType": "FrameworkComplianceCredential",
+                          "credentialSchema": "https://schemas.ishare.eu/v3/framework-compliance/schema.json",
+                          "bindingMethods": [
+                            "did:ishare",
+                            "did:web"
+                          ],
+                          "profile": "vc20-bssl/jwt"
+                        },
+                        {
+                          "id": "https://schemas.ishare.eu/v3/dataspace-participant/schema.json",
+                          "type": "CredentialObject",
+                          "offerReason": "reissue",
+                          "credentialType": "DataspaceParticipantCredential",
+                          "credentialSchema": "https://schemas.ishare.eu/v3/dataspace-participant/schema.json",
+                          "bindingMethods": [
+                            "did:ishare",
+                            "did:web"
+                          ],
+                          "profile": "vc20-bssl/jwt"
+                        },
+                        {
+                          "id": "https://schemas.ishare.eu/v3/trusted-participant/schema.json",
+                          "type": "CredentialObject",
+                          "offerReason": "reissue",
+                          "credentialType": "TrustedParticipantCredential",
+                          "credentialSchema": "https://schemas.ishare.eu/v3/trusted-participant/schema.json",
                           "bindingMethods": [
                             "did:ishare",
                             "did:web"

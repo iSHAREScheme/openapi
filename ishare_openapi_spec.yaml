@@ -1882,11 +1882,17 @@ components:
           type: boolean
           example: false
         countriesOfOperation:
-          description: An array of ISO names of the countries where the party operates
+          description: >-
+            An array of ISO 3166-1 alpha-2 country codes of the countries where
+            the party operates
           type: array
           items:
             type: string
-          example: []
+            pattern: ^[A-Z]{2}$
+          example:
+            - NL
+            - BE
+            - DE
         sectorIndustry:
           description: An array of GICS based sectors/industry that party serves in
           type: array
@@ -1894,9 +1900,13 @@ components:
             type: string
           example: []
         tags:
-          description: An free text field containing keywords relevant for party
-          type: string
-          example: mobility transport_operator
+          description: Keywords relevant for the party
+          type: array
+          items:
+            type: string
+          example:
+            - logistics
+            - eu-north
     jwtPayloadCapabilitiesToken:
       title: jwtPayloadCapabilitiesToken
       description: JWT Containing list of capabilities
